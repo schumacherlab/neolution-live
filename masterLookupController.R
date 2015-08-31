@@ -1,5 +1,5 @@
-## this script controls for which datasets the lookups are being performed
-## if lookups need to be started, it also checks where lookups should start (in case of premature termination)
+## this script controls for which datasets the lookups are to be performed
+## if lookups need to be started, it also checks where lookups should start (in case of premature lookup termination)
 
 suppressMessages(library(RMySQL))
 suppressMessages(library(gtools))
@@ -12,38 +12,47 @@ numberOfWorkers=5
 registerDoMC(numberOfWorkers)
 
 queryDatabaseForLookupProgress=function(){
-  res=NULL
-  attempt=1
-  while(is.null(res) && attempt<=10){
-    attempt=attempt+1
-    dbConnection=dbConnect(MySQL(),
-                           host="medoid",
-                           user="l.fanchi",
-                           password="MpRi1RKd",
-                           dbname="SchumiDB")
-    tryCatch(
-{
-  res<-dbGetQuery(dbConnection, paste('SELECT dataset, progress, total ',
-                                      'FROM lookupProgress ',";",
-                                      sep=""))
-  dbDisconnect(dbConnection)
-  return(as.data.table(res))
-}
-,
-error=function(err){
-  write(x=paste("Problem with query for lookupProgress. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/",fileName,"_error.log",sep=""),append=TRUE)
-  if (!is.null(res)){
-    dbClearResult(res)
-  }
-  res=NULL
-  dbDisconnect(dbConnection)
-}
-    )
-  }
+	res=NULL
+	attempt=1
+	while(is.null(res) && attempt<=10){
+		attempt=attempt+1
+
+		tryCatch(
+		{
+			dbConnection=dbConnect(MySQL(),
+				host="medoid",
+				user="l.fanchi",
+				password="MpRi1RKd",
+				dbname="SchumiDB")
+			res<-dbGetQuery(dbConnection, paste('SELECT dataset, progress, total ',
+												'FROM lookupProgress ',";",
+				sep=""))
+			dbDisconnect(dbConnection)
+			return(as.data.table(res))
+		}
+		,
+		error=function(err){
+			write(x=paste0("Problem with query for lookupProgress. ",
+							"File: ",fileName," | ",
+							"index: ",i," | ",err),
+			file=paste(scriptPath,"/",fileName,"_error.log",sep=""),
+			append=TRUE)
+
+			if (!is.null(res)){
+				dbClearResult(res)
+			}
+
+			res=NULL
+
+			if(exists("dbConnection")){
+				dbDisconnect(dbConnection)
+			}
+		})
+	}
 }
 
 startDatabaseQuery=function(datasetpath,tissuetype,progressindex){
-  system(paste("nice -n 9 Rscript /home/NKI/l.fanchi/working_environments/fasdb_run/queryDatabase_v5.1.R",datasetpath,tissuetype,progressindex))
+  system(paste("nice -n 9 Rscript /home/NKI/l.fanchi/working_environments/fasdb_run/queryDatabase.R",datasetpath,tissuetype,progressindex))
 }
 
 scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_run"
@@ -70,27 +79,19 @@ allProgressPerDataset=allProgressPerDataset[c(datasetOrder),]
 
 # exclude datasets which are complete
 inProgressPerDataset=rbindlist(sapply(seq(1,nrow(allProgressPerDataset),1), function(x)
-  if (!(allProgressPerDataset$progress[x]==allProgressPerDataset$total[x])){
-    return (allProgressPerDataset[x,])
-  },simplify = FALSE))
-
-# create commandline calls for necessary datasets (check which are running and/or which have been completed)
-#cmdlineCalls=sapply(seq(1,nrow(inProgressPerDataset),1), function(x) paste("nice -n 9 Rscript /home/NKI/l.fanchi/working_environments/fasdb_run/queryDatabase_v5.R ",datasetFolder,"/",inProgressPerDataset$dataset[x],".csv ",inProgressPerDataset$tissueType[x]," ",inProgressPerDataset$progress[x]," &",sep=""))
+	if (!(allProgressPerDataset$progress[x]==allProgressPerDataset$total[x])){
+		return (allProgressPerDataset[x,])
+		},
+		simplify = FALSE))
 
 write(paste(Sys.time(),
             " - Job list:\n",
             paste(inProgressPerDataset$dataset,inProgressPerDataset$tissueType,inProgressPerDataset$progress,collapse="\n"),"\n",sep=""),
-            file="/home/NKI/l.fanchi/masterLookupController.log",append=TRUE)
-
-# start lookups with index and tissuetype
-# invisible(x=foreach(i=1:length(cmdlineCalls)) %dopar% {
-#   pid=Sys.getpid()
-#   system(cmdlineCalls[i])
-#   while(pid %in% list(ofPIDs)){
-#     Sys.sleep(3600)
-#   }
-# })
+            file="/home/NKI/l.fanchi/masterLookupController.log",
+            append=TRUE)
 
 invisible(x=foreach(i=1:nrow(inProgressPerDataset)) %dopar% {
-  startDatabaseQuery(paste(scriptPath,"/",datasetFolder,"/",inProgressPerDataset$dataset[i],".csv",sep=""),inProgressPerDataset$tissueType[i],inProgressPerDataset$progress[i])
+  startDatabaseQuery(datasetpath = paste(scriptPath,"/",datasetFolder,"/",inProgressPerDataset$dataset[i],".csv",sep=""),
+  					tissuetype = inProgressPerDataset$tissueType[i],
+  					progressindex = inProgressPerDataset$progress[i])
 })
