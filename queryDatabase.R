@@ -1,64 +1,7 @@
-#####################################################################################################################################
-### this script takes an input file (specified or as commandline argument) and queries the Schumi FAS db with the entries         ###
-#####################################################################################################################################
-### from v3 onwards, the script does not use ENSG and Strand data from input, but performs the lookup in the Schumi FASdb instead ###
-#####################################################################################################################################
-
-#####################################################################################################################################
-### IMPORTANT NOTE BEFORE RUNNING: IF INPUT IS ALEXANDROV SNVS, MAKE SURE INCLUDE SAMPLE_ID IN CODE FOR PROXIMAL LOCATION FINDING ###
-#####################################################################################################################################
-
-# NOT IMPLEMENTED:  filtering on affinity/chop/pmbec (currently, database only contains rows that contain at least 1 affinity <500nM AKA 'slimmed-down' db)
-# NOT IMPLEMENTED:  PBMEC score retrieval
-# IMPLEMENT?:       Parallel queries? PREFERRED: run multiple tumor types at the same time by starting multiple instances
-
-# changelog:
-# v5.1 (20150820)
-# - fixed a bug which prevented correct output when two transcripts were present on one chromosomal location
-# - fixed a bug that caused peptides with proximal mutations to get incorrect or no processing scores
-# - fixed a bug where merging two data.tables could result in cartesian joins (joining tables with duplicate 'by' values)
-# - moved dbConnect calls into tryCatch blocks, so errors during connection establishment are caught as well
-# v5 (20150723)
-# - split main code logic into multiple R subscripts for clarity
-# - refactored some code
-# - changed script flow to do complete pipeline (lookup, filtering & self-sim) on one SNV before moving to next; output is written to disk after each SNV
-# - added SNV info to output (ChromosomeID, ChromosomeLocation, Mutant Base)
-# - (wt->mut) codon change now reported
-# - (wt->mut) amino acid change now reported
-# - location of mutated amino acids now reported
-# - presence of proximal mutations now reported
-# - epitopes not passing self-sim test are reported in tumor epitope list
-# - changed perPepAffinityScores (high affinity values simulated) table to perPepAffinityScores_NEW (all affinity values calculated)
-# - added filter in buildPeptides function, so now only peptides with AA mutations are returned (previously synonymous mutations could be returned)
-# v4.3 (20141110)
-# - RNAlikelihood scores now merge based on ENSG, not Gene Symbol
-# v4.2 (20141106)
-# - fixed bug where multiple ENSGs on one Chromosomal location weren't handled correctly
-# - cases where database returns duplicates handled correctly (shouldn't be an issue if database is filled correctly)
-# - added output of list of peptides not filtered for self-similarity
-# v4.1 (20141104)
-# - add wildtype epitopes to self-peptide list for self-similarity checking
-# v4.0 (20141021)
-# - extended self-similarity check performed on output peptides
-# - RNAlikelihood scores included in output list
-# v3.5 (20141016)
-# - entries which have proximal mutations are now saved in separate list to allow quantification
-# v3.4 (20140915)
-# - optimized code and added some comments
-# v3.3 (20140915)
-# - added peptideStart to ProcessingScore lookup query (in case peptide is present multiple times in protein)
-# v3.2 (20140915)
-# - multiple mutations in same codon are now handled correctly
-# v3.1 (20140912)
-# - refactored code to fix scoping issues
-# v3 (20140911)
-# - implemented looking up ENSG and transcribed strand from new table in database (ENSGtoStrand)
-# - removed dependency on input ENSG & Strand (both now obtained from FASdb)
-# - script can now handle cases where one SNV returns two (or more) ENSGs/Transcribed strands
-# v2.1 (20140910)
-# - removed bug where, in case of one or more proximal SNVs, the mutant codons for the proximal mutations could be constructed incorrectly
-# v2
-# - proximal mutations are taken into account (mutations surrounding chromLoc/Pos)
+######################################################################################################################################
+### IMPORTANT NOTE BEFORE RUNNING: IF INPUT IS ALEXANDROV LISTS, MAKE SURE INCLUDE SAMPLE_ID IN CODE FOR PROXIMAL LOCATION FINDING ###
+######################################################################################################################################
+# NOT IMPLEMENTED:  PBMEC score retrieval & PMBEC filtering
 
 suppressMessages(library(RMySQL))
 suppressMessages(library(data.table))
