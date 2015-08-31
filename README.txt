@@ -1,6 +1,6 @@
 Foreign Antigenic Space database query script & dependencies
 
-Main script takes takes an input file (specified in script or as commandline argument) and queries the Schumi FAS database with the entries it finds
+Main script takes takes an input file (specified in script or as commandline argument) and queries the Schumi FAS database with the entries it parses
 
 Required commandline arguments:
 (1) input file path & filename (csv)
