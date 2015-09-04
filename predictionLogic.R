@@ -1,25 +1,6 @@
 ## this support script allows live predictions through netMHCpan v2.4 for peptides that have proximal mutations (and there not likely to be in the FASdb) or are not in the FASdb for some other reason
 ## it will also allow us to, in the future, either (1) switch completely to 'live' predictions or (2) perform 'live' predictions for in-dels
 
-# set netmhc, netchop paths (e.g. relative to home dir '~')
-netMHCpath="/home/NKI/l.fanchi/netMHC-3.0/netMHC-3.0"
-netMHCpanpath="/home/NKI/l.fanchi/netMHCpan-2.4/netMHCpan"
-netChoppath="/home/NKI/l.fanchi/netchop-3.1/bin/netChop"  
-
-# check for presence of necessary tools
-checkNetAppPaths=function(){
-  predictors_list=c(netMHCpanpath,netChoppath)
-  print("Checking for presence of predictors...")
-  for(i in 1:length(predictors_list)){
-    if (!file.exists(predictors_list[i])){
-      stop(paste("Missing: ",predictors_list[i],", stopping script execution",sep=""))
-    } else {
-      print(paste("Predictor:",predictors_list[i],"present",sep=" "))
-    }
-  }
-  print("All necessary predictors present")
-}
-
 performAffinityPredictions=function(peptides,allele,xmer){
   ## use on local Mac
   # perform predictions on HPC from local Mac
