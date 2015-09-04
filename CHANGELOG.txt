@@ -1,5 +1,10 @@
 CHANGELOG.txt
 
+v5.1.2 (...)
+- refactored queryLogic (now outputs query_errors.log per tumor type)
+- added checking if dbConnection object exists, before calling dbDisconnect for other functions where lookups are involved
+- moved output of errors during logging of lookupProgress to /logs folder (now outputs logProgress_errors.log per tumor type)
+
 v5.1.1 (20150831)
 - added check to see if dbConnection object exists, before calling dbDisconnect on it (only for dbUpdateRecord: was throwing errors and aborting lookups)
 
