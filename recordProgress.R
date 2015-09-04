@@ -51,10 +51,12 @@ dbUpdateRecord=function(dbtable, data=NULL, primary, vars) {
         ,
         error=function(err)
         {
-          write(x=paste("Problem with logging progress. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"error.log",sep="/"),append=TRUE)
+          write(x=paste0(format(Sys.Date(),"%Y%m%d")," - Problem with logging progress | file: ",fileName," | index: ",i," | error: ",err),file=paste(scriptPath,"/logs/",fileName,"_logProgress_errors.log",sep=""),append=TRUE)
+
           if (!is.null(res)){
             dbClearResult(res)
           }
+
           res=NULL
           if(exists("dbConnection")){
             dbDisconnect(dbConnection)  
