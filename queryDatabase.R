@@ -11,77 +11,55 @@ suppressMessages(library(parallel))
 suppressMessages(library(foreach))
 suppressMessages(library(doMC))
 
-# get number of cores available for parallel processing
-numberOfWorkers=5
-registerDoMC(numberOfWorkers)
-#message(paste("Using",numberOfWorkers,"cores for parallel processing",sep=" "))
 
-# set min. affinity (in nM), min. chop score & min. RNA expression
-affinityLimit=500
-chopLimit=0.5
-expressionLimit=0
+#scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_run"
+scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_dev"  # use when debugging dev
+setwd(scriptPath)
+
+# load external scripts
+source(paste(scriptPath,"supportFunctions.R",sep="/"))
+source(paste(scriptPath,"runConfig.R",sep="/"))
+source(paste(scriptPath,"queryLogic.R",sep="/"))
+source(paste(scriptPath,"peptideConstructionLogic.R",sep="/"))
+source(paste(scriptPath,"predictionLogic.R",sep="/"))
+source(paste(scriptPath,"selfSimilarityLogic.R",sep="/"))
+source(paste(scriptPath,"recordProgress.R",sep="/"))
 
 # get commandline arguments and process them
 argsFalse=commandArgs(FALSE)
 argsTrue=commandArgs(TRUE)
-scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_run" # uncomment for production code
+
 fileInput=argsTrue[1] # uncomment for production code
 fileName=strsplit(fileInput,"/");fileName=gsub(".csv","",fileName[[1]][length(fileName[[1]])],fixed=TRUE)
 tissueTypeInput=argsTrue[2]
 lookupProgress=as.numeric(argsTrue[3])+1
-xMer=9
-setwd(scriptPath)
 
-# load support functions
-source(paste(scriptPath,"supportFunctions.R",sep="/"))
+# register parallel back-end
+registerDoMC(numberOfWorkers)
 
-# fixed objects
-#scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_test"  # comment out for production code
-#fileInput="/home/NKI/l.fanchi/working_environments/fas_database/input_data/20141016_rte_database_input.csv" # comment out for production code
 currentDate=format(Sys.Date(), "%Y%m%d")
-hlaTypes=c("A0101","A0201","A0301","B0702","B0801")
-rnaExpressionFile="20150723_RNAexpression_likelihood_TCGA_IlluminaHiSeq.csv"
 
 # prepare some empty lists
-selfEpitopes=vector("list", length(hlaTypes))
 affinityPredictions=vector("list",length(hlaTypes))
-tumorEpitopes_HLA=vector("list",length(hlaTypes))
-tumorEpitopes_filtered=vector("list",length(hlaTypes))
-
-# create lists to hold wildtype output (only since dataWT and dataMT cannot be merged using slimmed-down FASdb)
+normalEpitopes=data.table()
 normalEpitopes_HLA=vector("list",length(hlaTypes))
 normalEpitopes_filtered=vector("list",length(hlaTypes))
+tumorEpitopes=data.table()
+tumorEpitopes_HLA=vector("list",length(hlaTypes))
+tumorEpitopes_filtered=vector("list",length(hlaTypes))
+selfEpitopes=vector("list", length(hlaTypes))
+entriesWithProximalMutations=data.table()
 
-# prepare list of tumor types with available RNAseq data
+# read RNA expression data and make a list of which tissue types are available
 rnaExpressionData=fread(paste(scriptPath,"rna_expr_data",rnaExpressionFile,sep="/"),sep="auto",skip=0,header=TRUE)
 availableTissueTypes=gsub("RNA_LKLIHD_",
                           "",
                           colnames(rnaExpressionData[,-c(which(colnames(rnaExpressionData) %in% c("ENSG_v58","ENSG","ENTREZ_ID","GENE_SYMBOL"))),with=FALSE]))
 
-checkTissueTypeInput=function(){
-  if (any(tissueTypeInput==availableTissueTypes)){
-    #message(paste("Input tissuetype: ",tissueTypeInput,sep=""))
-  } else{
-    #message(paste("Input tissue type (",tissueTypeInput,") has no available RNAseq data",sep=""))
-    #message(paste("Available tissues: ", paste(availableTissueTypes,collapse=","),sep=""))
-    stop("Try again")
-  }
-}
-checkTissueTypeInput()
-
-source(paste(scriptPath,"queryLogic.R",sep="/"))
-source(paste(scriptPath,"peptideConstructionLogic.R",sep="/"))
-source(paste(scriptPath,"selfSimilarityLogic.R",sep="/"))
-source(paste(scriptPath,"predictionLogic.R",sep="/"))
-source(paste(scriptPath,"recordProgress.R",sep="/"))
+checkTissueTypeInput(tissueTypeInput,availableTissueTypes)
 
 # check availability of predictors
-#checkNetAppPaths()
-
-# empty tables to hold final query outputs
-normalEpitopes=data.table()
-tumorEpitopes=data.table()
-entriesWithProximalMutations=data.table()
+#checkPredictorPaths()
 
 ## import list of data for query building
 input=fread(fileInput)
@@ -89,17 +67,11 @@ input=fread(fileInput)
 #input=unique(input,by=colnames(input)[-match("SAMPLE_ID",colnames(input))]) # we want this to only happen within a SAMPLE ID, remove this statement for production code
 input=unique(input,by=colnames(input)) 
 
-#message(paste("Input file:",fileName))
-#message(paste("Number of input rows:",nrow(input)))
-
-# create directory to hold output
-dir.create(paste(scriptPath,currentDate,sep="/"),showWarnings=F)
+# create directory to hold output, if necessary
+dir.create(paste(scriptPath,"output",sep="/"),showWarnings=FALSE)
 
 # start looping over every row in input data and perform queries
-#message("********** Query FASdb for SNV & peptide info..")
 for (i in lookupProgress:nrow(input)){
-  #cat('\rCurrently on row ',i,' of ',nrow(input),"; ",ceiling(i/nrow(input)*100),"%",sep="")
-  
   sampleID=as.character(input$SAMPLE_ID[i])
   chromID=input$ChromosomeID[i]
   chromLoc=input$ChromosomeLocation[i]
@@ -262,7 +234,9 @@ for (i in lookupProgress:nrow(input)){
     
     # split processing of different HLA types
     for(j in 1:length(hlaTypes)){
-      #tumorEpitopes_HLA[[j]]=subset(tumorEpitopes_RNA, select=c("SAMPLE_ID","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","CODON_CHANGE","PEPTIDE_TUMOR","PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[i],sep=""),paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[i],sep=""),"CHOP_SCORE_TUMOR","CHOP_SCORE_NORMAL",paste("RNA_LKLIHD_",tissueTypeInput,sep=""))) # can only be used when using full FASdb
+      #tumorEpitopes_HLA[[j]]=subset(tumorEpitopes_RNA, select=c("SAMPLE_ID","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","CODON_CHANGE","PEPTIDE_TUMOR",
+      #"PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[i],sep=""),paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[i],sep=""),"CHOP_SCORE_TUMOR","CHOP_SCORE_NORMAL",
+      #paste("RNA_LKLIHD_",tissueTypeInput,sep=""))) # can only be used when using full FASdb
       tumorEpitopes_HLA[[j]]=subset(tumorEpitopes_RNA,
                                     select=c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","CODON_CHANGE",
                                              "AA_CHANGE","AA_POSITION","PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[j],sep=""),"CHOP_SCORE_TUMOR",
@@ -282,7 +256,7 @@ for (i in lookupProgress:nrow(input)){
       # filtering for tumor epitopes
       tumorEpitopes_filtered[[j]]=tumorEpitopes_HLA[[j]][tumorEpitopes_HLA[[j]][[paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[j],sep="")]]<=affinityLimit & 
                                                            tumorEpitopes_HLA[[j]][["CHOP_SCORE_TUMOR"]]>=chopLimit,] #& 
-      #tumorEpitopes_HLA[[j]][[paste("RNA_LKLIHD_",tissueTypeInput,sep="")]]>expressionLimit,]
+                                                          #tumorEpitopes_HLA[[j]][[paste("RNA_LKLIHD_",tissueTypeInput,sep="")]]>expressionLimit,]
       row.names(tumorEpitopes_filtered[[j]])=NULL
     }
     
@@ -299,8 +273,9 @@ for (i in lookupProgress:nrow(input)){
     # write predicted epitopes to disk
     for (j in 1:length(hlaTypes)) {
       if (nrow(tumorEpitopes_filtered[[j]])>0){
-        #tumorEpitopes_filtered[[i]]=tumorEpitopes_filtered[[i]][mixedorder(tumorEpitopes_filtered[[i]]$AFFINITY_Kd.nM_TUMOR),];row.names(tumorEpitopes_filtered[[i]])=NULL # to sort lists on affinity; comment out for large lists
-        #setcolorder(epitopeInput_filtered[[i]], c("SAMPLE_ID","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","PEPTIDE_TUMOR","PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[i],sep=""),paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[i],sep=""),"CHOP_SCORE_TUMOR","CHOP_SCORE_NORMAL",paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT","NON_SELF")) # only in case full FASdb is used
+        #setcolorder(epitopeInput_filtered[[i]], c("SAMPLE_ID","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","PEPTIDE_TUMOR","PEPTIDE_NORMAL",
+        #paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[i],sep=""),paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[i],sep=""),"CHOP_SCORE_TUMOR","CHOP_SCORE_NORMAL",paste("RNA_LKLIHD_",tissueTypeInput,sep=""),
+        #"HAS_PROX_MUT","NON_SELF")) # only in case full FASdb is used
         setcolorder(tumorEpitopes_filtered[[j]],
                     c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE",
                       "AA_POSITION","PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[j],sep=""),"CHOP_SCORE_TUMOR",
@@ -310,7 +285,6 @@ for (i in lookupProgress:nrow(input)){
                 paste(scriptPath,"/",currentDate,"/",currentDate,"_",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""),
                 append = TRUE)
         }
-        #write.csv(tumorEpitopes_filtered[[i]],paste(scriptPath,"/",currentDate,"/",currentDate,"_",fileName,"_",tissueTypeInput,"_",hlaTypes[i],"_fasdb.csv", sep=""),row.names=FALSE) # we want every epitope to be written to disk as soon as it is predicted
         for (k in 1:nrow(tumorEpitopes_filtered[[j]])){
           write(paste(tumorEpitopes_filtered[[j]][k],collapse=",",sep=""),
                 paste(scriptPath,"/",currentDate,"/",currentDate,"_",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""),
@@ -323,8 +297,6 @@ for (i in lookupProgress:nrow(input)){
   dbUpdateRecord(dbtable="lookupProgress",data=data.table(dataset=fileName,progress=i,total=nrow(input)),primary="dataset",vars=c("progress","total"))
 }
 cat('\n')
-
-#stop("Stopping now..")
 
 detach(package:RMySQL)
 detach(package:data.table)
