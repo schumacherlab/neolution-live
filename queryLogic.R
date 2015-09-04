@@ -1,3 +1,10 @@
+## Error logging
+logQueryErrorToDisk=function(querytype,error){
+  write(x=paste0(format(Sys.Date(),"%Y%m%d")," - Problem with query for ",querytype," | file: ",fileName," | index: ",i," | error: ",error),
+        file=paste(scriptPath,"/logs/",fileName,"_query_errors.log",sep=""),
+        append=TRUE)
+}
+
 ## Query functions
 queryDatabaseForLookupProgress=function(){
   res=NULL
@@ -20,14 +27,18 @@ queryDatabaseForLookupProgress=function(){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for lookupProgress. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("lookupProgress",err)
+
         if (!is.null(res)){
           dbClearResult(res)
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )
+      )
   }
 }
 
@@ -54,14 +65,18 @@ queryDatabaseWithChromIdAndLocation=function(chromID,chromLoc){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for SNV info. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("SNV info",err)
+
         if (!is.null(res)){
           dbClearResult(res)
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )
+      )
   }
 }
 
@@ -87,14 +102,18 @@ queryDatabaseWithENSGForStrand=function(ENSG){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for strand. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("strandInfo",err)
+
         if (!is.null(res)){
           dbClearResult(res)  
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )
+      )
   }
 }
 
@@ -121,14 +140,18 @@ queryDatabaseWithENSGAndProteinPositionFor9Mers=function(ENSG,protPos){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for 9mers. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("input mutation context (9mers)",err)
+
         if (!is.null(res)){
           dbClearResult(res)  
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )  
+      )
   }
 }
 
@@ -155,14 +178,18 @@ queryDatabaseWithENSGAndProteinPositionForProcessing=function(ENSG,protPos){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for peptideStretch. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("peptide context for processing predictions",err)
+
         if (!is.null(res)){
           dbClearResult(res)  
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )  
+      )  
   }
 }
 
@@ -188,14 +215,18 @@ queryDatabaseWithCodon=function(codon){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for aminoAcid. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("codon to aac conversion",err)
+
         if (!is.null(res)){
           dbClearResult(res)  
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )  
+      )
   }
 }
 
@@ -223,14 +254,18 @@ queryDatabaseWithENSGPeptideAndPeptideStartForProcessingScore=function(ENSG,pept
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for processingScore. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("processingScore",err)
+
         if (!is.null(res)){
           dbClearResult(res)  
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )  
+      )
   }
 }
 
@@ -257,14 +292,18 @@ queryDatabaseWithPeptideForAffinityScore=function(peptide){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for affinityScore. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("affinityScore",err)
+
         if (!is.null(res)){
           dbClearResult(res)  
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )  
+      )
   }
 }
 
@@ -290,13 +329,17 @@ queryDatabaseWithENSGForGeneIdAndENST=function(ENSG){
       }
       ,
       error=function(err){
-        write(x=paste("Problem with query for geneID & ENST. File:",fileName," | index:",i," | ",err),file=paste(scriptPath,"/logs/",fileName,"_error.log",sep=""),append=TRUE)
+        logQueryErrorToDisk("geneSymbol & ENST info",err)
+
         if (!is.null(res)){
-          dbClearResult(res)  
+          dbClearResult(res)
         }
+
         res=NULL
-        dbDisconnect(dbConnection)
+        if(exists("dbConnection")){
+          dbDisconnect(dbConnection)  
+        }
       }
-    )  
+      )
   }
 }
