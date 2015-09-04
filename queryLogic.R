@@ -6,42 +6,6 @@ logQueryErrorToDisk=function(querytype,error){
 }
 
 ## Query functions
-queryDatabaseForLookupProgress=function(){
-  res=NULL
-  attempt=1
-  while(is.null(res) && attempt<=10){
-    attempt=attempt+1
-    
-    tryCatch(
-      {
-        dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
-        res<-dbGetQuery(dbConnection, paste('SELECT dataset, progress, total ',
-                                            'FROM lookupProgress ',";",
-                                            sep=""))
-        dbDisconnect(dbConnection)
-        return(as.data.table(res))
-      }
-      ,
-      error=function(err){
-        logQueryErrorToDisk("lookupProgress",err)
-
-        if (!is.null(res)){
-          dbClearResult(res)
-        }
-
-        res=NULL
-        if(exists("dbConnection")){
-          dbDisconnect(dbConnection)  
-        }
-      }
-      )
-  }
-}
-
 queryDatabaseWithChromIdAndLocation=function(chromID,chromLoc){
   res=NULL
   attempt=1
