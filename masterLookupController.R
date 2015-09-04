@@ -32,11 +32,9 @@ queryDatabaseForLookupProgress=function(){
 		}
 		,
 		error=function(err){
-			write(x=paste0("Problem with query for lookupProgress. ",
-							"File: ",fileName," | ",
-							"index: ",i," | ",err),
-			file=paste(scriptPath,"/",fileName,"_error.log",sep=""),
-			append=TRUE)
+			write(x=paste0("Problem with query for lookupProgress | ",err),
+				file=paste(scriptPath,"/logs/","getProgress_errors.log",sep=""),
+				append=TRUE)
 
 			if (!is.null(res)){
 				dbClearResult(res)
@@ -56,8 +54,8 @@ startDatabaseQuery=function(datasetpath,tissuetype,progressindex){
 }
 
 scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_run"
-setwd(scriptPath)
 datasetFolder="20150722_input_lists"
+setwd(scriptPath)
 
 ## make a table that contains which datasets use which tissuetype
 tissueTypePerDataset=data.table(dataset=
@@ -87,7 +85,7 @@ inProgressPerDataset=rbindlist(sapply(seq(1,nrow(allProgressPerDataset),1), func
 write(paste(Sys.time(),
             " - Job list:\n",
             paste(inProgressPerDataset$dataset,inProgressPerDataset$tissueType,inProgressPerDataset$progress,collapse="\n"),"\n",sep=""),
-            file="/home/NKI/l.fanchi/masterLookupController.log",
+            file=paste(scriptPath,"/logs/","masterLookupController.log",sep=""),
             append=TRUE)
 
 invisible(x=foreach(i=1:nrow(inProgressPerDataset)) %dopar% {
