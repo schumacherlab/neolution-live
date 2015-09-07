@@ -15,10 +15,10 @@ queryDatabaseWithChromIdAndLocation=function(chromID,chromLoc){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT chromosomeID, chromosomeLocation, ENSG, codonPosition, proteinPosition ',
                                             'FROM perChromosomeLocationENSG ',
                                             'WHERE chromosomeID="',chromID,'" ',
@@ -53,10 +53,10 @@ queryDatabaseWithENSGForStrand=function(ENSG){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT ENSG, Strand ',
                                             'FROM ENSGtoStrand ',
                                             'WHERE ENSG="',ENSG,'"',";",
@@ -90,10 +90,10 @@ queryDatabaseWithENSGAndProteinPositionFor9Mers=function(ENSG,protPos){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT ENSG, proteinPosition, codon, AA ',
                                             'FROM perProteinAAC ',
                                             'WHERE ENSG="',ENSG,'" ',
@@ -128,10 +128,10 @@ queryDatabaseWithENSGAndProteinPositionForProcessing=function(ENSG,protPos){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT ENSG, proteinPosition, codon, AA ',
                                             'FROM perProteinAAC ',
                                             'WHERE ENSG="',ENSG,'" ',
@@ -166,10 +166,10 @@ queryDatabaseWithCodon=function(codon){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT codon, AA ',
                                             'FROM codonToAAC ',
                                             'WHERE codon="',codon,'"',";",
@@ -203,10 +203,10 @@ queryDatabaseWithENSGPeptideAndPeptideStartForProcessingScore=function(ENSG,pept
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT ENSG, peptide, peptideStart, processingScore ',
                                             'FROM perGenePepProcessingScores ',
                                             'WHERE ENSG="',ENSG,'" ',
@@ -242,10 +242,10 @@ queryDatabaseWithPeptideForAffinityScore=function(peptide){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         # suppress typecast warnings (fixed in RMySQL dev v0.11, but not in stable yet)
         res<-suppressWarnings(dbGetQuery(dbConnection, paste('SELECT peptide, ',paste(hlaTypes,"affinity",collapse=", ",sep=""),' ',
                                                              'FROM perPepAffinityScores_NEW ',
@@ -280,10 +280,10 @@ queryDatabaseWithENSGForGeneIdAndENST=function(ENSG){
     tryCatch(
       {
         dbConnection=dbConnect(MySQL(),
-                               host="medoid",
-                               user="l.fanchi",
-                               password="MpRi1RKd",
-                               dbname="SchumiDB")
+                               host=sqlhost,
+                               user=sqluser,
+                               password=sqlpass,
+                               dbname=sqldbname)
         res<-dbGetQuery(dbConnection, paste('SELECT ENSG, ENST, geneID ',
                                             'FROM idInfo ',
                                             'WHERE ENSG="',ENSG,'"',";",
