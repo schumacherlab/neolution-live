@@ -8,10 +8,10 @@ dbUpdateRecord=function(dbtable, data=NULL, primary, vars) {
     tryCatch(
         {
           dbConnection=dbConnect(MySQL(),
-                                 host="medoid",
-                                 user="l.fanchi",
-                                 password="MpRi1RKd",
-                                 dbname="SchumiDB")
+                                 host=sqlhost,
+                                 user=sqluser,
+                                 password=sqlpass,
+                                 dbname=sqldbname)
           
           if (!dbExistsTable(dbConnection, dbtable)) {
             stop("The target table \"", dbtable, "\" doesn't exist in the database \"", dbGetInfo(dbConnection)$dbname, "\"\n\n", call. = FALSE)
