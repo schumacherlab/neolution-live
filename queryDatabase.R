@@ -64,7 +64,8 @@ input=fread(fileInput)
 #input=unique(input,by=colnames(input)[-match("SAMPLE_ID",colnames(input))]) # we want this to only happen within a SAMPLE ID, remove this statement for production code
 input=unique(input,by=colnames(input)) 
 
-# create directory to hold output, if necessary
+# create directory to hold logs/output, if necessary
+dir.create(paste(scriptPath,"logs",sep="/"),showWarnings=FALSE)
 dir.create(paste(scriptPath,"output",sep="/"),showWarnings=FALSE)
 
 # start looping over every row in input data and perform queries
