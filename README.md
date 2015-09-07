@@ -65,7 +65,7 @@ Context generation is performed *on-the-fly*, by querying the contents of the FA
 
 #### **MySQL database definition:**
 
-The MySQL database has been filled with information obtained from the group of Michael Stratton at the Sanger Institute. They generated the following data, by making all possible mutations in the coding sequence of all canonical transcripts contained in Ensembl version 58.
+The MySQL database has been filled with information obtained from the group of Michael Stratton at the Sanger Institute. They generated the following data by making all possible mutations in the coding sequence of all canonical transcripts contained in Ensembl version 58.
 
 | Table | Contents | Headers |
 |-------|----------|---------|
