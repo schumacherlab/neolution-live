@@ -1,4 +1,4 @@
-#### **Foreign Antigenic Space (FAS) database prediction pipeline**  
+### **Foreign Antigenic Space (FAS) database prediction pipeline**  
 *Pipeline for the prediction of neo-antigens from (Alexandrov) variant calls through FASdb lookups*
 
 ---
@@ -20,9 +20,9 @@ Important to note is that a MySQL server should be up-and-running before startin
 3. lookup progress (e.g. 123)  
 
 ---
-#### **Extended information:**  
+### **Extended information:**  
 
-**Important drawbacks of this version of the prediction pipeline are:**  
+#### **Important drawbacks of this version of the prediction pipeline are:**  
 
 Context generation is performed *on-the-fly*, by querying the contents of the FAS database. This has the following limitations:  
 
@@ -31,7 +31,7 @@ Context generation is performed *on-the-fly*, by querying the contents of the FA
 
 ---
 
-**Explanation of commandline arguments:**
+#### **Explanation of commandline arguments:**
 
 @1 **input file** should be a csv file containing the variants, containing the following columns:
 
@@ -63,7 +63,7 @@ Context generation is performed *on-the-fly*, by querying the contents of the FA
 
 ---
 
-**MySQL database definition:**
+#### **MySQL database definition:**
 
 The MySQL database has been filled with information obtained from the group of Michael Stratton at the Sanger Institute. They generated the following data, by making all possible mutations in the coding sequence of all canonical transcripts contained in Ensembl version 58.
 
