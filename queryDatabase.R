@@ -11,9 +11,8 @@ suppressMessages(library(parallel))
 suppressMessages(library(foreach))
 suppressMessages(library(doMC))
 
-
-#scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_run"
-scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_dev"  # use when debugging dev
+#scriptPath="/home/NKI/l.fanchi/dev_environments/fasdb"  # use when debugging dev
+scriptPath=thisDirectory()
 setwd(scriptPath)
 
 # load external scripts
