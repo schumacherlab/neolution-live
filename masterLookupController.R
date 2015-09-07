@@ -102,6 +102,7 @@ inProgressPerDataset=rbindlist(sapply(seq(1,nrow(allProgressPerDataset),1), func
 		},
 		simplify = FALSE))
 
+dir.create(paste(scriptPath,"logs",sep="/"),showWarnings=FALSE)
 write(paste(Sys.time(),
             " - Job list:\n",
             paste(inProgressPerDataset$dataset,inProgressPerDataset$tissueType,inProgressPerDataset$progress,collapse="\n"),"\n",sep=""),
