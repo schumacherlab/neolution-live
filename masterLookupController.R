@@ -11,6 +11,7 @@ suppressMessages(library(doMC))
 numberOfWorkers=5
 registerDoMC(numberOfWorkers)
 
+# lookup the progress for all datasets
 queryDatabaseForLookupProgress=function(){
 	res=NULL
 	attempt=1
