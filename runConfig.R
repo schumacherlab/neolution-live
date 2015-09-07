@@ -25,3 +25,5 @@ sqlhost = "medoid"
 sqluser = "l.fanchi"
 sqlpass = "MpRi1RKd"
 sqldbname = "SchumiDB"
+
+sqlprogressdb = "otacon"
