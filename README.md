@@ -24,9 +24,9 @@ Important to note is that a MySQL server should be up-and-running before startin
 
 #### **Important drawbacks of this version of the prediction pipeline are:**  
 
-Context generation is performed *on-the-fly*, by querying the contents of the FAS database. This has the following limitations:  
+Context generation is performed *on-the-fly* by querying the contents of the FAS database. This has the following limitations:  
 
-1. in-dels are not taken into account, as nucleotide information for transcripts is not present in the database
+1. in-dels are not taken into account, as extended nucleotide information for transcripts is not present in the database (e.g. to support STOP_LOST)
 2. the contents of the FAS database are generated from Ensembl version 58 (2010) and are therefore, arguably, outdated
 
 ---
