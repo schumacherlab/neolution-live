@@ -30,6 +30,8 @@ Context generation is performed *on-the-fly*, by querying the contents of the FA
 1. in-dels are not taken into account, as nucleotide information for transcripts is not present in the database
 2. the contents of the FAS database are generated from Ensembl version 58 (2010) and are therefore, arguably, outdated
 
+===============================================================================================================================================================================================================================================================
+
 Explanation of commandline arguments:
 @1 input file should be a csv file containing the variants, containing the following columns:
 
@@ -58,6 +60,8 @@ Explanation of commandline arguments:
 |Liver							|LIHC				|Uterus					|UCEC				|
 
 @3 lookup progress specifies where to start in input file, starts at passed index +1; is automatically obtained from FAS database when lookups are controlled through masterLookupController.R
+
+===============================================================================================================================================================================================================================================================
 
 MySQL database definition:
 
