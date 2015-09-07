@@ -11,7 +11,7 @@ dbUpdateRecord=function(dbtable, data=NULL, primary, vars) {
                                  host=sqlhost,
                                  user=sqluser,
                                  password=sqlpass,
-                                 dbname=sqldbname)
+                                 dbname="otacon")
           
           if (!dbExistsTable(dbConnection, dbtable)) {
             stop("The target table \"", dbtable, "\" doesn't exist in the database \"", dbGetInfo(dbConnection)$dbname, "\"\n\n", call. = FALSE)
