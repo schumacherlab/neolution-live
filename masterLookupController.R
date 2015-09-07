@@ -74,7 +74,7 @@ startDatabaseQuery=function(datasetpath,tissuetype,progressindex){
 
 #scriptPath="/home/NKI/l.fanchi/working_environments/fasdb"
 scriptPath=thisDirectory()
-datasetFolder="20150722_input_lists"
+datasetFolder="input"
 setwd(scriptPath)
 
 ## make a table that contains which datasets use which tissuetype
