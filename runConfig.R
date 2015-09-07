@@ -18,4 +18,10 @@ rnaExpressionFile="20150723_RNAexpression_likelihood_TCGA_IlluminaHiSeq.csv"
 # set predictor paths
 netMHCpath="/home/NKI/l.fanchi/netMHC-3.0/netMHC-3.0"
 netMHCpanpath="/home/NKI/l.fanchi/netMHCpan-2.4/netMHCpan"
-netChoppath="/home/NKI/l.fanchi/netchop-3.1/bin/netChop"  
+netChoppath="/home/NKI/l.fanchi/netchop-3.1/bin/netChop"
+
+# set mysql configuration
+sqlhost = "medoid"
+sqluser = "l.fanchi"
+sqlpass = "MpRi1RKd"
+sqldbname = "SchumiDB"
