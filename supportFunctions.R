@@ -3,6 +3,25 @@
 # define negation of %in% operator, returns logical vector for 'NOT IN'
 '%ni%'=Negate('%in%')
 
+
+# return directory where script is executed
+thisDirectory=function() {
+  cmdArgs <- commandArgs(trailingOnly = FALSE)
+  needle <- "--file="
+  match <- grep(needle, cmdArgs)
+  if (length(match) > 0) {
+    # Rscript
+    abspath=normalizePath(sub(needle, "", cmdArgs[match]))
+    absdir=dirname(abspath)
+    return(absdir)
+  } else {
+    # 'source'd via R console
+    abspath=normalizePath(sys.frames()[[1]]$ofile)
+    absdir=dirname(abspath)
+    return(absdir)
+  }
+}
+
 # allow natural sorting on multiple columns
 multiMixedOrder=function(..., na.last = TRUE, decreasing = FALSE){
   do.call(order, c(
