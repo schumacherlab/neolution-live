@@ -1,4 +1,4 @@
-####**Foreign Antigenic Space (FAS) database prediction pipeline**  
+#### **Foreign Antigenic Space (FAS) database prediction pipeline**  
 *Pipeline for the prediction of neo-antigens from (Alexandrov) variant calls through FASdb lookups*
 
 ---
@@ -20,7 +20,7 @@ Important to note is that a MySQL server should be up-and-running before startin
 3. lookup progress (e.g. 123)  
 
 ---
-####**Extended information:**  
+#### **Extended information:**  
 
 **Important drawbacks of this version of the prediction pipeline are:**  
 
