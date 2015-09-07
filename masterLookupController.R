@@ -50,11 +50,30 @@ queryDatabaseForLookupProgress=function(){
 	}
 }
 
-startDatabaseQuery=function(datasetpath,tissuetype,progressindex){
-  system(paste("nice -n 9 Rscript /home/NKI/l.fanchi/working_environments/fasdb_run/queryDatabase.R",datasetpath,tissuetype,progressindex))
+# return directory where script is executed
+thisDirectory=function() {
+  cmdArgs <- commandArgs(trailingOnly = FALSE)
+  needle <- "--file="
+  match <- grep(needle, cmdArgs)
+  if (length(match) > 0) {
+    # Rscript
+    abspath=normalizePath(sub(needle, "", cmdArgs[match]))
+    absdir=dirname(abspath)
+    return(absdir)
+  } else {
+    # 'source'd via R console
+    abspath=normalizePath(sys.frames()[[1]]$ofile)
+    absdir=dirname(abspath)
+    return(absdir)
+  }
 }
 
-scriptPath="/home/NKI/l.fanchi/working_environments/fasdb_run"
+startDatabaseQuery=function(datasetpath,tissuetype,progressindex){
+  system(paste0("nice -n 9 Rscript ",scriptPath,"/queryDatabase.R ",datasetpath," ",tissuetype," ",progressindex))
+}
+
+#scriptPath="/home/NKI/l.fanchi/working_environments/fasdb"
+scriptPath=thisDirectory()
 datasetFolder="20150722_input_lists"
 setwd(scriptPath)
 
