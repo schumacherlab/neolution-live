@@ -26,4 +26,6 @@ sqluser = "l.fanchi"
 sqlpass = "MpRi1RKd"
 sqldbname = "SchumiDB"
 
-sqlprogressdb = "otacon"
+sqlprogressuser = "otacon"
+sqlprogresspass = "DSmxaoxA"
+sqlprogressdbname = "otacon"
