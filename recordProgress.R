@@ -9,9 +9,9 @@ dbUpdateRecord=function(dbtable, data=NULL, primary, vars) {
         {
           dbConnection=dbConnect(MySQL(),
                                  host=sqlhost,
-                                 user=sqluser,
-                                 password=sqlpass,
-                                 dbname=sqlprogressdb)
+                                 user=sqlprogressuser,
+                                 password=sqlprogresspass,
+                                 dbname=sqlprogressdbname)
           
           if (!dbExistsTable(dbConnection, dbtable)) {
             stop("The target table \"", dbtable, "\" doesn't exist in the database \"", dbGetInfo(dbConnection)$dbname, "\"\n\n", call. = FALSE)
