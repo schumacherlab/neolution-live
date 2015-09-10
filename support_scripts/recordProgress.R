@@ -51,8 +51,8 @@ dbUpdateRecord=function(dbtable, data=NULL, primary, vars) {
         ,
         error=function(err)
         {
-          write(x=paste0(format(Sys.Date(),"%Y%m%d")," - Problem with logging progress | file: ",fileName," | index: ",i," | error: ",err),
-            file=paste(scriptPath,"/logs/",fileName,"_logProgress_errors.log",sep=""),
+          write(x=paste0(Sys.time()," - Problem with logging progress | file: ",fileName," | index: ",i," | error: ",err),
+            file=paste0("./logs/",fileName,"_logProgress_errors.log"),
             append=TRUE)
 
           if (!is.null(res)){
