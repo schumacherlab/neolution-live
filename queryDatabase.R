@@ -44,11 +44,10 @@ normalEpitopes_filtered=vector("list",length(hlaTypes))
 tumorEpitopes=data.table()
 tumorEpitopes_HLA=vector("list",length(hlaTypes))
 tumorEpitopes_filtered=vector("list",length(hlaTypes))
-selfEpitopes=vector("list", length(hlaTypes))
 entriesWithProximalMutations=data.table()
 
 # read RNA expression data and make a list of which tissue types are available
-rnaExpressionData=fread(paste(scriptPath,"rna_expr_data",rnaExpressionFile,sep="/"),sep="auto",skip=0,header=TRUE)
+rnaExpressionData=fread(rnaExpressionPath,sep="auto",skip=0,header=TRUE)
 availableTissueTypes=gsub("RNA_LKLIHD_",
                           "",
                           colnames(rnaExpressionData[,-c(which(colnames(rnaExpressionData) %in% c("ENSG_v58","ENSG","ENTREZ_ID","GENE_SYMBOL"))),with=FALSE]))
@@ -56,7 +55,7 @@ availableTissueTypes=gsub("RNA_LKLIHD_",
 checkTissueTypeInput(tissueTypeInput,availableTissueTypes)
 
 # check availability of predictors
-#checkPredictorPaths()
+checkPredictorPaths(predictorPaths)
 
 ## import list of data for query building
 input=fread(fileInput)
