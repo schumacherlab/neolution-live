@@ -57,6 +57,21 @@ returnSNVAminoAcidPosition=function(peptideStart,proteinPosition){
                                             {pos=proteinPosition[x]-peptideStart+1; if (pos<=9 & pos>0){return (pos)}})
 }
 
+returnChromosomalLocations=function(peptideStart, inputMutations){
+  peptideEnd=peptideStart+8
+  return(subset(x=inputMutations, subset=ProteinPosition %in% c(peptideStart:peptideEnd))$ChromosomeLocation)
+}
+
+returnMutantCode=function(peptideStart, inputMutations){
+  peptideEnd=peptideStart+8
+  return(subset(x=inputMutations, subset=ProteinPosition %in% c(peptideStart:peptideEnd))$MutantCode)
+}
+
+returnCodonPosition=function(peptideStart, inputMutations){
+  peptideEnd=peptideStart+8
+  return(subset(x=inputMutations, subset=ProteinPosition %in% c(peptideStart:peptideEnd))$CodonPosition)
+}
+
 returnCodonChange=function(peptideStart,proteinPosition,wildtypeCodon,mutantCodon){
   sapply(seq(1,length(proteinPosition),1), function(x) 
                                             {pos=proteinPosition[x]-peptideStart+1; if (pos<=9 & pos>0){return (paste(wildtypeCodon[x],mutantCodon[x],sep="->"))}})
