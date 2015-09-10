@@ -64,8 +64,9 @@ input=fread(fileInput)
 input=unique(input,by=colnames(input)) 
 
 # create directory to hold logs/output, if necessary
-dir.create(paste(scriptPath,"logs",sep="/"),showWarnings=FALSE)
-dir.create(paste(scriptPath,"output",sep="/"),showWarnings=FALSE)
+dir.create("./logs",showWarnings=FALSE)
+dir.create("./tmp",showWarnings=FALSE)
+dir.create("./output",showWarnings=FALSE)
 
 # start looping over every row in input data and perform queries
 for (i in lookupProgress:nrow(input)){
