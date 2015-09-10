@@ -157,9 +157,9 @@ for (i in lookupProgress:nrow(input)){
     setnames(normalEpitopes,
               colnames(normalEpitopes),
               c("PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes,sep=""),"ENSG_v58","PEPTIDE_START","CHOP_SCORE_NORMAL","SAMPLE_ID","CHR_ID","CHR_LOC",
-                "MUT_CODE","GENE_SYMBOL_FASDB","ENST","CODON_CHANGE","AA_CHANGE","AA_POSITION","HAS_PROX_MUT"))
+                "MUT_CODE","POS_IN_CODON","GENE_SYMBOL_FASDB","ENST","CODON_CHANGE","AA_CHANGE","AA_POSITION","HAS_PROX_MUT"))
     setcolorder(normalEpitopes,
-              c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE","AA_POSITION","PEPTIDE_START",
+              c("SAMPLE_ID","CHR_ID","CHR_LOC","GENE_SYMBOL_FASDB","ENSG_v58","ENST","MUT_CODE","POS_IN_CODON","CODON_CHANGE","AA_CHANGE","AA_POSITION","PEPTIDE_START",
                 "PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes,sep=""),"CHOP_SCORE_NORMAL","HAS_PROX_MUT"))
     
     # merge RNAseq data for wildtype epitopes (only since dataWT and dataMT cannot be merged using slimmed-down FASdb)
@@ -172,7 +172,7 @@ for (i in lookupProgress:nrow(input)){
     for(j in 1:length(hlaTypes)){
       # split predictions by HLA for wildtype epitopes (only since dataWT and dataMT cannot be merged using slimmed-down FASdb)
       normalEpitopes_HLA[[j]]=subset(normalEpitopes_RNA,
-                                      select=c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","CODON_CHANGE",
+                                      select=c("SAMPLE_ID","CHR_ID","CHR_LOC","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","MUT_CODE","POS_IN_CODON","CODON_CHANGE",
                                                "AA_CHANGE","AA_POSITION","PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[j],sep=""),"CHOP_SCORE_NORMAL",
                                                paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT"))
     }
@@ -197,7 +197,7 @@ for (i in lookupProgress:nrow(input)){
     for (j in 1:length(hlaTypes)) {
       if (nrow(normalEpitopes_filtered[[j]])>0){
         setcolorder(normalEpitopes_filtered[[j]],
-                    c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE",
+                    c("SAMPLE_ID","CHR_ID","CHR_LOC","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","MUT_CODE","POS_IN_CODON","CODON_CHANGE","AA_CHANGE",
                       "AA_POSITION","PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[j],sep=""),"CHOP_SCORE_NORMAL",
                       paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT"))
         if (!file.exists(paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""))){
@@ -219,9 +219,9 @@ for (i in lookupProgress:nrow(input)){
     setnames(tumorEpitopes,
              colnames(tumorEpitopes),
              c("PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes,sep=""),"ENSG_v58","PEPTIDE_START","CHOP_SCORE_TUMOR","SAMPLE_ID","CHR_ID","CHR_LOC",
-               "MUT_CODE","GENE_SYMBOL_FASDB","ENST","CODON_CHANGE","AA_CHANGE","AA_POSITION","HAS_PROX_MUT"))
+               "MUT_CODE","POS_IN_CODON","GENE_SYMBOL_FASDB","ENST","CODON_CHANGE","AA_CHANGE","AA_POSITION","HAS_PROX_MUT"))
     setcolorder(tumorEpitopes,
-                c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE","AA_POSITION","PEPTIDE_START",
+                c("SAMPLE_ID","CHR_ID","CHR_LOC","GENE_SYMBOL_FASDB","ENSG_v58","ENST","MUT_CODE","POS_IN_CODON","CODON_CHANGE","AA_CHANGE","AA_POSITION","PEPTIDE_START",
                   "PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes,sep=""),"CHOP_SCORE_TUMOR","HAS_PROX_MUT"))
     
     # merge epitopes with TCGA RNAseq info
@@ -236,7 +236,7 @@ for (i in lookupProgress:nrow(input)){
       #"PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[i],sep=""),paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[i],sep=""),"CHOP_SCORE_TUMOR","CHOP_SCORE_NORMAL",
       #paste("RNA_LKLIHD_",tissueTypeInput,sep=""))) # can only be used when using full FASdb
       tumorEpitopes_HLA[[j]]=subset(tumorEpitopes_RNA,
-                                    select=c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","CODON_CHANGE",
+                                    select=c("SAMPLE_ID","CHR_ID","CHR_LOC","GENE_SYMBOL","GENE_SYMBOL_FASDB","ENSG","ENSG_v58","ENST","MUT_CODE","POS_IN_CODON","CODON_CHANGE",
                                              "AA_CHANGE","AA_POSITION","PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[j],sep=""),"CHOP_SCORE_TUMOR",
                                              paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT"))
     }
@@ -275,7 +275,7 @@ for (i in lookupProgress:nrow(input)){
         #paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[i],sep=""),paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[i],sep=""),"CHOP_SCORE_TUMOR","CHOP_SCORE_NORMAL",paste("RNA_LKLIHD_",tissueTypeInput,sep=""),
         #"HAS_PROX_MUT","NON_SELF")) # only in case full FASdb is used
         setcolorder(tumorEpitopes_filtered[[j]],
-                    c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE",
+                    c("SAMPLE_ID","CHR_ID","CHR_LOC","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","MUT_CODE","POS_IN_CODON","CODON_CHANGE","AA_CHANGE",
                       "AA_POSITION","PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[j],sep=""),"CHOP_SCORE_TUMOR",
                       paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT","NON_SELF"))
         if (!file.exists(paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""))){
