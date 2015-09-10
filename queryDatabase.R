@@ -93,13 +93,13 @@ for (i in lookupProgress:nrow(input)){
                       MutantCode=mutantCode,
                       StopReason="Genomic location not found, possibly transcript is missing")
     
-    if(!file.exists(paste(scriptPath,"/output/",fileName,"_prematureStops.csv",sep=""))){
+    if(!file.exists(paste("./output/",fileName,"_prematureStops.csv",sep=""))){
       write(paste(colnames(output),collapse=",",sep=""),
-                  paste(scriptPath,"/output/",fileName,"_prematureStops.csv",sep=""),
+                  paste("./output/",fileName,"_prematureStops.csv",sep=""),
                   append = TRUE)
     }
     write(paste(output,collapse=",",sep=""),
-                paste(scriptPath,"/output/",fileName,"_prematureStops.csv",sep=""),
+                paste("./output/",fileName,"_prematureStops.csv",sep=""),
                 append = TRUE)
     # send progress to "lookupProgress" table in FASdb
     dbUpdateRecord(dbtable="lookupProgress",data=data.table(dataset=fileName,progress=i,total=nrow(input)),primary="dataset",vars=c("progress","total"))
@@ -138,15 +138,15 @@ for (i in lookupProgress:nrow(input)){
     setcolorder(entriesWithProximalMutations,
                 c("SAMPLE_ID","ChromosomeID","ChromosomeLocation","ENSG","CodonPosition","ProteinPosition","Strand"))
     
-    if(!file.exists(paste(scriptPath,"/output/",fileName,"_entriesWithProximalMutations.csv",sep=""))){
+    if(!file.exists(paste("./output/",fileName,"_entriesWithProximalMutations.csv",sep=""))){
       write(paste(colnames(entriesWithProximalMutations),collapse=",",sep=""),
-            paste(scriptPath,"/output/",fileName,"_entriesWithProximalMutations.csv",sep=""),
+            paste("./output/",fileName,"_entriesWithProximalMutations.csv",sep=""),
             append = TRUE)
     }
 
     for (j in nrow(entriesWithProximalMutations)){
       write(paste(entriesWithProximalMutations[j],collapse=",",sep=""),
-            paste(scriptPath,"/output/",fileName,"_entriesWithProximalMutations.csv",sep=""),
+            paste("./output/",fileName,"_entriesWithProximalMutations.csv",sep=""),
             append = TRUE) 
     }
   }
@@ -200,14 +200,14 @@ for (i in lookupProgress:nrow(input)){
                     c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE",
                       "AA_POSITION","PEPTIDE_NORMAL",paste("AFFINITY_Kd.nM_NORMAL_",hlaTypes[j],sep=""),"CHOP_SCORE_NORMAL",
                       paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT"))
-        if (!file.exists(paste(scriptPath,"/output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""))){
+        if (!file.exists(paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""))){
           write(paste(colnames(normalEpitopes_filtered[[j]]),collapse=",",sep=""),
-                paste(scriptPath,"/output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""),
+                paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""),
                 append = TRUE)
         }
         for (k in 1:nrow(normalEpitopes_filtered[[j]])){
           write(paste(normalEpitopes_filtered[[j]][k],collapse=",",sep=""),
-                paste(scriptPath,"/output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""),
+                paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_normalEpitopes_fasdb.csv", sep=""),
                 append = TRUE)
         }
       }
@@ -278,14 +278,14 @@ for (i in lookupProgress:nrow(input)){
                     c("SAMPLE_ID","CHR_ID","CHR_LOC","MUT_CODE","GENE_SYMBOL","ENSG","GENE_SYMBOL_FASDB","ENSG_v58","ENST","CODON_CHANGE","AA_CHANGE",
                       "AA_POSITION","PEPTIDE_TUMOR",paste("AFFINITY_Kd.nM_TUMOR_",hlaTypes[j],sep=""),"CHOP_SCORE_TUMOR",
                       paste("RNA_LKLIHD_",tissueTypeInput,sep=""),"HAS_PROX_MUT","NON_SELF"))
-        if (!file.exists(paste(scriptPath,"/output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""))){
+        if (!file.exists(paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""))){
           write(paste(colnames(tumorEpitopes_filtered[[j]]),collapse=",",sep=""),
-                paste(scriptPath,"/output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""),
+                paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""),
                 append = TRUE)
         }
         for (k in 1:nrow(tumorEpitopes_filtered[[j]])){
           write(paste(tumorEpitopes_filtered[[j]][k],collapse=",",sep=""),
-                paste(scriptPath,"/output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""),
+                paste("./output/",fileName,"_",tissueTypeInput,"_",hlaTypes[j],"_tumorEpitopes_fasdb.csv", sep=""),
                 append = TRUE)
         }
       }
