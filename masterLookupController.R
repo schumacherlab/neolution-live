@@ -34,7 +34,7 @@ queryDatabaseForLookupProgress=function(){
 		,
 		error=function(err){
 			write(x=paste0("Problem with query for lookupProgress | ",err),
-				file=paste(scriptPath,"/logs/","getProgress_errors.log",sep=""),
+				file=paste0("./logs/getProgress_errors.log"),
 				append=TRUE)
 
 			if (!is.null(res)){
@@ -102,15 +102,15 @@ inProgressPerDataset=rbindlist(sapply(seq(1,nrow(allProgressPerDataset),1), func
 		},
 		simplify = FALSE))
 
-dir.create(paste(scriptPath,"logs",sep="/"),showWarnings=FALSE)
+dir.create("./logs",showWarnings=FALSE)
 write(paste(Sys.time(),
             " - Job list:\n",
-            paste(inProgressPerDataset$dataset,inProgressPerDataset$tissueType,inProgressPerDataset$progress,collapse="\n"),"\n",sep=""),
-            file=paste(scriptPath,"/logs/","masterLookupController.log",sep=""),
+            paste0(inProgressPerDataset$dataset,inProgressPerDataset$tissueType,inProgressPerDataset$progress,collapse="\n"),"\n"),
+            file="./logs/masterLookupController.log",
             append=TRUE)
 
 invisible(x=foreach(i=1:nrow(inProgressPerDataset)) %dopar% {
-  startDatabaseQuery(datasetpath = paste(scriptPath,"/",datasetFolder,"/",inProgressPerDataset$dataset[i],".csv",sep=""),
-  					tissuetype = inProgressPerDataset$tissueType[i],
-  					progressindex = inProgressPerDataset$progress[i])
+  startDatabaseQuery(datasetpath = paste0(scriptPath,"/",datasetFolder,"/",inProgressPerDataset$dataset[i],".csv"),
+                     tissuetype = inProgressPerDataset$tissueType[i],
+                     progressindex = inProgressPerDataset$progress[i])
 })
