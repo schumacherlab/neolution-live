@@ -11,18 +11,18 @@ suppressMessages(library(parallel))
 suppressMessages(library(foreach))
 suppressMessages(library(doMC))
 
+# load external scripts
+source("./runConfig.R")
+source("./support_scripts/queryLogic.R")
+source("./support_scripts/recordProgress.R")
+source("./support_scripts/predictionLogic.R")
+source("./support_scripts/supportFunctions.R")
+source("./support_scripts/selfSimilarityLogic.R")
+source("./support_scripts/peptideConstructionLogic.R")
+
 #scriptPath="/home/NKI/l.fanchi/dev_environments/fasdb"  # use when debugging dev
 scriptPath=thisDirectory()
-setwd(scriptPath)
-
-# load external scripts
-source(paste(scriptPath,"supportFunctions.R",sep="/"))
-source(paste(scriptPath,"runConfig.R",sep="/"))
-source(paste(scriptPath,"queryLogic.R",sep="/"))
-source(paste(scriptPath,"peptideConstructionLogic.R",sep="/"))
-source(paste(scriptPath,"predictionLogic.R",sep="/"))
-source(paste(scriptPath,"selfSimilarityLogic.R",sep="/"))
-source(paste(scriptPath,"recordProgress.R",sep="/"))
+#setwd(scriptPath)
 
 # get commandline arguments and process them
 argsFalse=commandArgs(FALSE)
