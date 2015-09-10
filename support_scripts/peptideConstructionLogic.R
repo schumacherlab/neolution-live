@@ -354,8 +354,15 @@ getWildtypeAndMutatedEpitopes=function(sampleID,query1InputMutation,mutantCode,i
       outputWT=as.data.table(merge(outputAffinityWT,outputProcessingWT,by="peptide"));setnames(outputWT,"peptide","peptideWT")
       outputWT[,"SAMPLE_ID":=as.list(sampleID)]
       outputWT[,"CHR_ID":=as.list(query1InputMutation$ChromosomeID[j])]
-      outputWT[,"CHR_LOC":=as.list(query1InputMutation$ChromosomeLocation[j])]
-      outputWT[,"MUT_CODE":=as.list(mutantCode)]
+      outputWT[,"CHR_LOC":=sapply(seq(1,nrow(outputWT),1), function(x) paste(returnChromosomalLocations(peptideStart=outputWT$peptideStart[x],
+                                                                                                        inputMutations=inputAndProximalMutations),
+                                                                              collapse="|"))]
+      outputWT[,"MUT_CODE":=sapply(seq(1,nrow(outputWT),1), function(x) paste(returnMutantCode(peptideStart=outputWT$peptideStart[x],
+                                                                                                inputMutations=inputAndProximalMutations),
+                                                                              collapse="|"))]
+      outputWT[,"POS_IN_CODON":=sapply(seq(1,nrow(outputWT),1), function(x) paste(returnCodonPosition(peptideStart=outputWT$peptideStart[x],
+                                                                                                      inputMutations=inputAndProximalMutations),
+                                                                                  collapse="|"))]
       outputWT[,"GENE_SYMBOL":=as.list(inputAndProximalMutations$GeneID[1])]
       outputWT[,"ENST":=as.list(inputAndProximalMutations$ENST[1])]
       outputWT[,"CODON_CHANGE":=sapply(seq(1,nrow(outputWT),1), function(x) 
@@ -387,8 +394,15 @@ getWildtypeAndMutatedEpitopes=function(sampleID,query1InputMutation,mutantCode,i
       outputMT=as.data.table(merge(outputAffinityMT,outputProcessingMT,by="peptide"));setnames(outputMT,"peptide","peptideMT")
       outputMT[,"SAMPLE_ID":=as.list(sampleID)]
       outputMT[,"CHR_ID":=as.list(query1InputMutation$ChromosomeID[j])]
-      outputMT[,"CHR_LOC":=as.list(query1InputMutation$ChromosomeLocation[j])]
-      outputMT[,"MUT_CODE":=as.list(mutantCode)]
+      outputMT[,"CHR_LOC":=sapply(seq(1,nrow(outputMT),1), function(x) paste(returnChromosomalLocations(peptideStart=outputMT$peptideStart[x],
+                                                                                                        inputMutations=inputAndProximalMutations),
+                                                                              collapse="|"))]
+      outputMT[,"MUT_CODE":=sapply(seq(1,nrow(outputMT),1), function(x) paste(returnMutantCode(peptideStart=outputMT$peptideStart[x],
+                                                                                                inputMutations=inputAndProximalMutations),
+                                                                              collapse="|"))]
+      outputMT[,"POS_IN_CODON":=sapply(seq(1,nrow(outputMT),1), function(x) paste(returnCodonPosition(peptideStart=outputMT$peptideStart[x],
+                                                                                                      inputMutations=inputAndProximalMutations),
+                                                                              collapse="|"))]
       outputMT[,"GENE_SYMBOL":=as.list(inputAndProximalMutations$GeneID[1])]
       outputMT[,"ENST":=as.list(inputAndProximalMutations$ENST[1])]
       outputMT[,"CODON_CHANGE":=sapply(seq(1,nrow(outputMT),1), function(x) 
