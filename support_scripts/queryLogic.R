@@ -1,7 +1,7 @@
 ## Error logging
-logQueryErrorToDisk=function(querytype,error){
-  write(x=paste0(format(Sys.Date(),"%Y%m%d")," - Problem with query for ",querytype," | file: ",fileName," | index: ",i," | error: ",error),
-        file=paste(scriptPath,"/logs/",fileName,"_query_errors.log",sep=""),
+logQueryErrorToDisk=function(querytype,file,index,error){
+  write(x=paste0(Sys.time()," - Problem with query for ",querytype," | file: ",file," | index: ",index," | error: ",error),
+        file=paste0("./logs/",file,"_query_errors.log"),
         append=TRUE)
 }
 
@@ -29,7 +29,7 @@ queryDatabaseWithChromIdAndLocation=function(chromID,chromLoc){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("SNV info",err)
+        logQueryErrorToDisk(querytype="SNV info",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)
@@ -66,7 +66,7 @@ queryDatabaseWithENSGForStrand=function(ENSG){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("strandInfo",err)
+        logQueryErrorToDisk(querytype="strandInfo",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)  
@@ -104,7 +104,7 @@ queryDatabaseWithENSGAndProteinPositionFor9Mers=function(ENSG,protPos){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("input mutation context (9mers)",err)
+        logQueryErrorToDisk(querytype="input mutation context (9mers)",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)  
@@ -142,7 +142,7 @@ queryDatabaseWithENSGAndProteinPositionForProcessing=function(ENSG,protPos){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("peptide context for processing predictions",err)
+        logQueryErrorToDisk(querytype="peptide context for processing predictions",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)  
@@ -179,7 +179,7 @@ queryDatabaseWithCodon=function(codon){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("codon to aac conversion",err)
+        logQueryErrorToDisk(querytype="codon to aac conversion",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)  
@@ -218,7 +218,7 @@ queryDatabaseWithENSGPeptideAndPeptideStartForProcessingScore=function(ENSG,pept
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("processingScore",err)
+        logQueryErrorToDisk(querytype="processingScore",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)  
@@ -256,7 +256,7 @@ queryDatabaseWithPeptideForAffinityScore=function(peptide){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("affinityScore",err)
+        logQueryErrorToDisk(querytype="affinityScore",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)  
@@ -293,7 +293,7 @@ queryDatabaseWithENSGForGeneIdAndENST=function(ENSG){
       }
       ,
       error=function(err){
-        logQueryErrorToDisk("geneSymbol & ENST info",err)
+        logQueryErrorToDisk(querytype="geneSymbol & ENST info",file=fileName,index=i,error=err)
 
         if (!is.null(res)){
           dbClearResult(res)
