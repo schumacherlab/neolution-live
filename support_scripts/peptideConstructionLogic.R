@@ -266,17 +266,13 @@ getWildtypeAndMutatedEpitopes=function(sampleID,query1InputMutation,mutantCode,i
       if(nrow(peptidesWithProximalMutationsWithoutAffinity)>0){
         invisible(sapply(seq(1,nrow(peptidesWithProximalMutationsWithoutAffinity),1), function(x) 
                                                                               write(x=sprintf(">%i\n%s",x,peptidesWithProximalMutationsWithoutAffinity$peptide[x]),
-                                                                                    file=paste(scriptPath,"/tmp/",randomNumbers[1],"_peps.fas",sep=""),
+                                                                                    file=paste0("./tmp/",randomNumbers[1],"_peps.fas"),
                                                                                     append=TRUE,
-                                                                                    sep="\n")
-                        )
-                  )
-        # transfer to HPC, remove when on HPC
-        #system(paste("scp ",scriptPath,"/peps.fas l.fanchi@paranoid:/home/NKI/l.fanchi",sep=""))
+                                                                                    sep="\n")))
         
         # perform affinity predictions - change peps.fas path for production code
         affinityPredictions=foreach(k=1:length(hlaTypes)) %dopar% {
-          affinityPredictions[[k]]=performAffinityPredictions(paste(scriptPath,"/tmp/",randomNumbers[1],"_peps.fas",sep=""),hlaTypes[k],peptideLength)
+          affinityPredictions[[k]]=performAffinityPredictions(paste0("./tmp/",randomNumbers[1],"_peps.fas"),hlaTypes[k],peptideLength)
           return(affinityPredictions[[k]])
         }
         affinityPredictions=Reduce(function(x,y) merge(x,y,by="peptide"), affinityPredictions)
@@ -287,7 +283,7 @@ getWildtypeAndMutatedEpitopes=function(sampleID,query1InputMutation,mutantCode,i
         outputAffinityWT=unique(rbindlist(list(outputAffinityWT,affinityPredictionsWT)),by="peptide")
         outputAffinityMT=unique(rbindlist(list(outputAffinityMT,affinityPredictionsMT)),by="peptide")
         
-        file.remove(paste(scriptPath,"/tmp/",randomNumbers[1],"_peps.fas",sep=""))
+        file.remove(paste0("./tmp/",randomNumbers[1],"_peps.fas"))
       }
       
       # check if we need to generate processing data for some peptides
@@ -308,18 +304,18 @@ getWildtypeAndMutatedEpitopes=function(sampleID,query1InputMutation,mutantCode,i
           mtAminoAcidContext[match(inputAndProximalMutations$ProteinPosition[k],mtAminoAcidContext$proteinPosition),]$AA=inputAndProximalMutations$MutantAminoAcid[k]
         }
         write(x=sprintf(">1\n%s",paste(wtAminoAcidContext$AA,collapse="")),
-              file=paste(scriptPath,"/tmp/",randomNumbers[2],"_wtPeptidestretch.fas",sep=""),
+              file=paste0("./tmp/",randomNumbers[2],"_wtPeptidestretch.fas"),
               append=FALSE,
               sep="\n")
         
         write(x=sprintf(">1\n%s",paste(mtAminoAcidContext$AA,collapse="")),
-              file=paste(scriptPath,"/tmp/",randomNumbers[3],"_mtPeptidestretch.fas",sep=""),
+              file=paste0("./tmp/",randomNumbers[3],"_mtPeptidestretch.fas"),
               append=FALSE,
               sep="\n")
         
         # perform processing predictions & change 'position' so positions reflect n-termini of 9mer peptides (should be changed in future if 10 & 11-mers are to be included!!)
-        processingPredictionsWT=performProcessingPredictions(paste(scriptPath,"/tmp/",randomNumbers[2],"_wtPeptidestretch.fas",sep=""))
-        processingPredictionsMT=performProcessingPredictions(paste(scriptPath,"/tmp/",randomNumbers[3],"_mtPeptidestretch.fas",sep=""))
+        processingPredictionsWT=performProcessingPredictions(paste0("./tmp/",randomNumbers[2],"_wtPeptidestretch.fas"))
+        processingPredictionsMT=performProcessingPredictions(paste0("./tmp/",randomNumbers[3],"_mtPeptidestretch.fas"))
         
         processingPredictionsWT=merge(data.table(peptide=wtPeptidesWithoutProcessing$peptideWT,peptideStart=wtPeptidesWithoutProcessing$PeptideStart),
                                       data.table(peptideStart=wtAminoAcidContext$proteinPosition-8,processingScore=processingPredictionsWT$processingScore),
@@ -334,8 +330,8 @@ getWildtypeAndMutatedEpitopes=function(sampleID,query1InputMutation,mutantCode,i
         outputProcessingWT=unique(rbindlist(list(outputProcessingWT,processingPredictionsWT),use.names=TRUE),by=c("peptide","peptideStart"))
         outputProcessingMT=unique(rbindlist(list(outputProcessingMT,processingPredictionsMT),use.names=TRUE),by=c("peptide","peptideStart"))
         
-        file.remove(paste(scriptPath,"/tmp/",randomNumbers[2],"_wtPeptidestretch.fas",sep=""))
-        file.remove(paste(scriptPath,"/tmp/",randomNumbers[3],"_mtPeptidestretch.fas",sep=""))
+        file.remove(paste0("./tmp/",randomNumbers[2],"_wtPeptidestretch.fas"))
+        file.remove(paste0("./tmp/",randomNumbers[3],"_mtPeptidestretch.fas"))
       }
     }
     
