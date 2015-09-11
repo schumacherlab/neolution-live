@@ -32,6 +32,7 @@ fileInput=argsTrue[1] # uncomment for production code
 fileName=strsplit(fileInput,"/");fileName=gsub(".csv","",fileName[[1]][length(fileName[[1]])],fixed=TRUE)
 tissueTypeInput=argsTrue[2]
 lookupProgress=as.numeric(argsTrue[3])+1
+runStart=format(Sys.Date(),"%Y%m%d")
 
 # register parallel back-end
 registerDoMC(numberOfWorkers)
@@ -72,7 +73,7 @@ dir.create("./output",showWarnings=FALSE)
 write(x = paste0(Sys.time()," - FASdb run start\n\n",
                  "branch:\t\t\t\t\t",system("git symbolic-ref --short -q HEAD",intern = TRUE),"\n",
                  "commit hash:\t\t",system("git rev-parse HEAD",intern = TRUE),"\n"),
-      file = "./output/runInfo.txt",
+      file = paste0("./output/",runStart,"_",fileName,"_runInfo.txt"),
       append = FALSE)
 
 # start looping over every row in input data and perform queries
@@ -304,7 +305,7 @@ for (i in lookupProgress:nrow(input)){
 
 write(x = paste0(Sys.time()," - FASdb run end\n\n",
                  "comments:"),
-      file = "./output/runInfo.txt",
+      file = paste0("./output/",runStart,"_",fileName,"_runInfo.txt"),
       append = TRUE)
 
 detach(package:RMySQL)
