@@ -1,10 +1,13 @@
-### **Foreign Antigenic Space (FAS) database prediction pipeline**  
-*Pipeline for the prediction of neo-antigens from (Alexandrov) variant calls through FASdb lookups*
+### **Neolution pipeline**  
+*Pipeline for the prediction of neo-antigens*
 
 ---
 
-Main script (queryDatabase.R) takes takes an input file (specified as a commandline argument) and queries contents of the Schumi FAS database with the entries it parses.  
-**IMPORTANT:** For additional information regarding drawbacks & the required commandline arguments, read the **Extended information** segment below.
+Two branches are currently under development:
+1. fasdb-based - uses csv input and epitopes in fasdb for initial lookups (any missing data is generated on-the-fly)
+2. live - uses vcf input and performs all predictions live (to be used e.g. for patient predictions)
+
+**IMPORTANT:** For additional information regarding the required commandline arguments, read the **Extended information** segment below.
 
 **Usage example:**  
 `Rscript ~/fasdb/queryDatabase.R /input_data/AML.csv LAML 123`
@@ -20,24 +23,10 @@ Important to note is that a MySQL server should be up-and-running before startin
 3. lookup progress (e.g. 123)  
 
 ---
-### **Extended information:**  
-
-#### **Important drawbacks of this version of the prediction pipeline are:**  
-
-Context generation is performed *on-the-fly* by querying the contents of the FAS database. This has the following limitations:  
-
-1. in-dels are not taken into account, as extended nucleotide information for transcripts is not present in the database (e.g. to support STOP_LOST)
-2. the contents of the FAS database are generated from Ensembl version 58 (2010) and are therefore, arguably, outdated
-
----
 
 #### **Explanation of commandline arguments:**
 
-@1 **input file** should be a csv file containing the variants, containing the following columns:
-
-|SAMPLE_ID|ChromosomeID|ChromosomeLocation|MutantCode|
-|---------|-------------|------------------|----------|
-|  .....  |    .....    |       .....      |  ......  |
+@1 **input file** should be a vcf file containing the variants
 
 @2 **tissue type** depends on RNA expression data used; for RNAlikelihood score the following tissue type codes can be used:
 
@@ -59,7 +48,7 @@ Context generation is performed *on-the-fly* by querying the contents of the FAS
 |Kidney Papillary|KIRP|Thyroid|THCA|
 |Liver|LIHC|Uterus|UCEC|
 
-@3 **lookup progress** specifies where to start in input file, starts at passed index +1; is automatically obtained from FAS database when lookups are controlled through masterLookupController.R
+@3 **lookup progress** specifies where to start in input file, starts at passed index +1; is automatically obtained from MySQL server when lookups are controlled through masterLookupController.R
 
 ---
 
@@ -69,12 +58,5 @@ The MySQL database has been filled with information obtained from the group of M
 
 | Table | Contents | Headers |
 |-------|----------|---------|
-|codonToAAC| Conversion table of codon to amino acid residue |'codon' ; 'AA' |
-|ENSGtoStrand| Transcript orientation for each ENSG# | 'ENSG' ; 'Strand' |
-|idInfo| For every ENSG#, canonical ENST#, CCDS# and Gene Symbol | 'geneID' ; 'ENSG' ; 'CCDS' ; 'ENST' |
 |lookupProgress| Index of last processed line per dataset | 'dataset' ; 'progress' ; 'total' |
-|perChromosomeLocationENSG| Genomic coordinates and transcript-/codon-/protein positions for all ENSG# | 'chromosomeID' ; 'chromosomeLocation' ; 'ENSG' ; 'transcriptPosition' ; 'codonPosition' ; 'proteinPosition' |
-|perGenePepProcessingScores| Proteasomal processing scores for all peptides per ENSG# | 'ENSG' ; 'peptide' ; 'peptideStart' ; 'processingScore' |
 |perPepAffinityScores_NEW| MHC binding affinity scores for all generated peptides | 'peptide' ; 'A0101affinity' ; 'A0201affinity' ; 'A0301affinity' ; 'B0702affinity' ; 'B0801affinity' |
-|perProteinAAC| Wildtype codon and amino acid at all protein positions per ENSG# | 'ENSG' ; 'proteinPosition' ; 'codon' ; 'AA' |
-|pmbecScores| PMBEC scores for all possible amino acid substitutions | 'AA1' ; 'AA2' ; 'PMBECscore' |
