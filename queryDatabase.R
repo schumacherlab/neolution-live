@@ -68,6 +68,13 @@ dir.create("./logs",showWarnings=FALSE)
 dir.create("./tmp",showWarnings=FALSE)
 dir.create("./output",showWarnings=FALSE)
 
+# write run info to log
+write(x = paste0(Sys.time()," - FASdb run start\n\n",
+                 "branch:\t\t\t\t\t",system("git symbolic-ref --short -q HEAD",intern = TRUE),"\n",
+                 "commit hash:\t\t",system("git rev-parse HEAD",intern = TRUE),"\n"),
+      file = "./output/runInfo.txt",
+      append = FALSE)
+
 # start looping over every row in input data and perform queries
 for (i in lookupProgress:nrow(input)){
   sampleID=as.character(input$SAMPLE_ID[i])
@@ -294,7 +301,11 @@ for (i in lookupProgress:nrow(input)){
   # send progress to "lookupProgress" table in FASdb
   dbUpdateRecord(dbtable="lookupProgress",data=data.table(dataset=fileName,progress=i,total=nrow(input)),primary="dataset",vars=c("progress","total"))
 }
-cat('\n')
+
+write(x = paste0(Sys.time()," - FASdb run end\n\n",
+                 "comments:"),
+      file = "./output/runInfo.txt",
+      append = TRUE)
 
 detach(package:RMySQL)
 detach(package:data.table)
