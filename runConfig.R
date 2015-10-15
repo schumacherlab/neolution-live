@@ -1,7 +1,7 @@
 #### Lookup parameters and other configuration options can be set here ####
 
 # set number of cores available for parallel processing
-numberOfWorkers=5
+numberOfWorkers=10
 
 # set min. affinity (in nM), min. chop score & min. RNA expression
 affinityLimit=500
