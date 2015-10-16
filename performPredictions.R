@@ -81,6 +81,7 @@ for(i in 1:nrow(variantInfo)){
     # perform processing predictions
     normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontextnormal)
     
+    # merge prediction info
     normalPredictions=merge(x = peptideList[[1]],
                             y = normalAffinityPredictions,
                             by = "normal_peptide")
@@ -102,6 +103,7 @@ for(i in 1:nrow(variantInfo)){
     # perform processing predictions
     tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontexttumor)
     
+    # merge prediction info
     tumorPredictions=merge(x = peptideList[[2]],
                            y = tumorAffinityPredictions,
                            by = "tumor_peptide")
