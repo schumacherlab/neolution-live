@@ -3,39 +3,75 @@
 # set number of cores available for parallel processing
 numberOfWorkers=10
 
-# set min. affinity (in nM), min. chop score & min. RNA expression
-affinityLimit=500
-chopLimit=0.5
-expressionLimit=0
-
-# set peptide length to be analysed (only 9mers supported at the moment)
-peptideLength=9
-
-# set hla types to be analysed 
-hlaTypes=c("A0101",
-           "A0201",
-           "A0301",
-           "B0702",
-           "B0801")
-
-# set location of file containing RNA expression data
-rnaExpressionPath="./rna_expr_data/20150723_RNAexpression_likelihood_TCGA_IlluminaHiSeq.csv"
-
-# set location and base filename of self-peptide lists
-# self-peptide list filenames should follow convention: 'selfPeptideListBaseName'_'hlaTypes[x]'_'peptideLength'mer_epitopes.csv
-selfPeptideListPath="./selflists_v2.4"
-selfPeptideListBaseName="20140610_human_proteome"
-
 # set predictor paths
 predictorPaths=data.table(netMHCpan="/home/NKI/l.fanchi/netMHCpan-2.4/netMHCpan",
                           netChop="/home/NKI/l.fanchi/netchop-3.1/bin/netChop")
 
-# set mysql configuration
-sqlhost = "medoid"
-sqluser = "l.fanchi"
-sqlpass = "MpRi1RKd"
-sqldbname = "SchumiDB"
+# commandline option specification, do not change
+optionList = list(make_option(opt_str = c("-a", "--affinity"),
+                              action="store",
+                              type = "double",
+                              default=500,
+                              help="netMHCpan affinity cutoff (optional, default: %default)"),
+                  make_option(opt_str = c("-c", "--chop"),
+                              action="store",
+                              type = "double",
+                              default=0.5,
+                              help="netChop score cutoff (optional, default: %default)"),
+                  make_option(opt_str = c("-e", "--expression"),
+                              action="store",
+                              type = "double",
+                              default=0,
+                              help="RNA expression cutoff (optional, default > %default)"),
+                  make_option(opt_str = c("-f", "--file"),
+                              action="store",
+                              type = "character",
+                              default=NULL,
+                              help="Full path to file containing variant calls (required)"),
+                  make_option(opt_str = c("-m", "--mhc"),
+                              action="store",
+                              type = "character",
+                              default=NULL,
+                              help="MHC/HLA allele, formatted as follows: A0201 (required)"),
+                  make_option(opt_str = c("-l", "--length"),
+                              action="store",
+                              type = "integer",
+                              default=NULL,
+                              help="Peptide length (required)"))
 
-sqlprogressuser = "otacon"
-sqlprogresspass = "DSmxaoxA"
-sqlprogressdbname = "otacon"
+# parse commandline arguments
+commandlineArguments=parse_args(OptionParser(option_list=optionList))
+
+# parse other arguments
+if (is.null(commandlineArguments$file)) {
+  message("File input (-f or --file) is required argument, use -h for help")
+  q(status=1)
+} else if (file.exists(commandlineArguments$file)) {
+  filePath = commandlineArguments$file
+  fileName = basename(filePath)
+  dirPath = dirname(filePath)
+} else {
+  message("Can't find file, make sure to provide full path to file")
+  q(status=1)
+}
+
+if (is.null(commandlineArguments$mhc)) {
+  message("MHC/HLA input (-m or --mhc) is required argument, use -h for help")
+  q(status=1)
+} else if (nchar(commandlineArguments$mhc)!=5) {
+  message("MHC/HLA input should be formatted as follows: A0201")
+  q(status=1)
+} else {
+  hlaType = toupper(commandlineArguments$mhc)
+}
+
+if (is.null(commandlineArguments$length)) {
+  message("Peptide length input (-l or --length) is required argument, use -h for help")
+  q(status=1)
+} else {
+  peptideLength = commandlineArguments$length
+}
+
+affinityCutoff = commandlineArguments$affinity
+chopCutoff = commandlineArguments$chop
+expressionCutoff = commandlineArguments$expression
