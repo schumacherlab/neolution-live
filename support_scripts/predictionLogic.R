@@ -4,15 +4,14 @@
 performAffinityPredictions=function(fastafile,allele,peptidelength){
   ## use on local Mac
   # perform predictions on HPC from local Mac
-#   sshconn=pipe(paste('ssh -l l.fanchi paranoid "',
-#                       paste(netMHCpanpath,
-#                             ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
-#                             ' -l ',xmer,
-#                             ' -f ',peptides,'"',
-#                             sep=""),
-#                       sep="")) # start pipe to paranoid
-#   output=readLines(sshconn) # start job on paranoid and read terminal output
-#   close(sshconn) # close pipe
+  # sshconn=pipe(paste0('ssh -l l.fanchi paranoid "',
+  #                    paste0("nice -n 9 ",
+  #                           predictorPaths$netMHCpan,
+  #                           ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
+  #                           ' -l ',peptidelength,
+  #                           ' -f ',fastafile,'"'))) # start pipe to paranoid
+  # output=readLines(sshconn) # start job on paranoid and read terminal output
+  # close(sshconn) # close pipe
   
   ## use on HPC
   # perform predictions
