@@ -29,11 +29,8 @@ message(paste0("Input file:\t\t",filePath,"\n",
                "Expression cutoff:\t",expressionCutoff))
 
 # # prepare some empty lists
-# affinityPredictions=vector("list",length(hlaTypes))
-# normalEpitopes=data.table()
 # normalEpitopes_HLA=vector("list",length(hlaTypes))
 # normalEpitopes_filtered=vector("list",length(hlaTypes))
-# tumorEpitopes=data.table()
 # tumorEpitopes_HLA=vector("list",length(hlaTypes))
 # tumorEpitopes_filtered=vector("list",length(hlaTypes))
 
