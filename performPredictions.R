@@ -38,7 +38,7 @@ message(paste0("Input file:\t\t",filePath,"\n",
 checkPredictorPaths(predictorPaths)
 
 # create directory to hold logs/output, if necessary
-dir.create(path = paste0(dirPath,"/tmp"),
+dir.create(path = "./tmp",
            showWarnings=FALSE)
 dir.create(path = paste0(dirPath,"/output"),
            showWarnings=FALSE)
