@@ -35,7 +35,7 @@ message(paste0("Input file:\t\t",filePath,"\n",
 # tumorEpitopes_filtered=vector("list",length(hlaTypes))
 
 # check availability of predictors
-# checkPredictorPaths(predictorPaths)
+checkPredictorPaths(predictorPaths)
 
 # create directory to hold logs/output, if necessary
 dir.create(path = paste0(dirPath,"/tmp"),
