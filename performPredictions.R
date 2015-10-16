@@ -71,7 +71,7 @@ for(i in 1:nrow(variantInfo)){
   
   if(nrow(peptideList[[1]])>0){
     invisible(sapply(seq(1,nrow(peptideList[[1]]),1), function(x)
-      write(x=sprintf(">%i\n%s",x,peptideList[[1]]$normal_peptides[x]),
+      write(x=sprintf(">%i\n%s",x,peptideList[[1]]$normal_peptide[x]),
             file=paste0(dirPath,"/tmp/normal_peps.fas"),
             append=TRUE,
             sep="\n")))
@@ -88,7 +88,7 @@ for(i in 1:nrow(variantInfo)){
   
   if(nrow(peptideList[[2]])>0){
     invisible(sapply(seq(1,nrow(peptideList[[2]]),1), function(x)
-      write(x=sprintf(">%i\n%s",x,peptideList[[2]]$tumor_peptides[x]),
+      write(x=sprintf(">%i\n%s",x,peptideList[[2]]$tumor_peptide[x]),
             file=paste0(dirPath,"/tmp/tumor_peps.fas"),
             append=TRUE,
             sep="\n")))
