@@ -75,8 +75,8 @@ for(i in 1:nrow(variantInfo)){
                                                          allele = hlaType,
                                                          peptidelength = peptideLength)
     setnames(x = normalAffinityPredictions,
-             old = "peptide",paste0(hlaType,"affinity"),
-             new = "normal_peptide",paste0("normal_",hlaType,"affinity"))
+             old = c("peptide",paste0(hlaType,"affinity")),
+             new = c("normal_peptide",paste0("normal_",hlaType,"affinity")))
     
     # perform processing predictions
     normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontextnormal)
@@ -101,8 +101,8 @@ for(i in 1:nrow(variantInfo)){
                                                         allele = hlaType,
                                                         peptidelength = peptideLength)
     setnames(x = tumorAffinityPredictions,
-             old = "peptide",paste0(hlaType,"affinity"),
-             new = "tumor_peptide",paste0("tumor_",hlaType,"affinity"))
+             old = c("peptide",paste0(hlaType,"affinity")),
+             new = c("tumor_peptide",paste0("tumor_",hlaType,"affinity")))
     
     # perform processing predictions
     tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontexttumor)
