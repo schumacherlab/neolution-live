@@ -101,12 +101,12 @@ performProcessingPredictions=function(peptidestretch){
     # read data into table
     data=as.data.table(read.table(text=output,stringsAsFactors = FALSE));data=data[,-match(c("V3","V5"),colnames(data)),with=FALSE]
   } else{
-    data=as.data.table(setNames(replicate(3,numeric(0), simplify = F), c("c_term_pos","aa","processing_score")))
+    data=as.data.table(setNames(replicate(3,numeric(0), simplify = F), c("c_term_pos","c_term_aa","processing_score")))
   }
   
   setnames(data,
            colnames(data),
-           c("c_term_pos","aa","processing_score"))
+           c("c_term_pos","c_term_aa","processing_score"))
   
   return(data)
 }
