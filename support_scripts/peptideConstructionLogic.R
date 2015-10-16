@@ -7,7 +7,7 @@ buildPeptideList=function(variant,peptidelength){
   if (n_normal>0){
     normal_peptide=sapply(seq(1,n_normal,1),function(i) substr(x = variant$peptidecontextnormal,start = i, stop = i+(peptidelength-1)))
     c_term_pos=seq(peptidelength,nchar(variant$peptidecontextnormal),1)
-    normal=data.table(normal_peptide,c_term_pos)
+    normal=unique(data.table(normal_peptide,c_term_pos), by = "normal_peptide")
   } else{
     stop()
   }
@@ -15,7 +15,7 @@ buildPeptideList=function(variant,peptidelength){
   if (n_tumor>0){
     tumor_peptide=sapply(seq(1,n_tumor,1),function(i) substr(x = variant$peptidecontexttumor,start = i, stop = i+(peptidelength-1)))
     c_term_pos=seq(peptidelength,nchar(variant$peptidecontexttumor),1)
-    tumor=data.table(tumor_peptide,c_term_pos)
+    tumor=unique(x = data.table(tumor_peptide,c_term_pos), by = "tumor_peptide")
   } else{
     stop()
   }
