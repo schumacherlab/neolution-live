@@ -3,7 +3,8 @@
 
 performAffinityPredictions=function(peptides,allele,peptidelength){
   # write peptides to disk temporarily
-  randomNumber=sample(1:1000000)
+  randomNumber=sample(x = 1:1000000,
+                      size = 1)
   
   invisible(sapply(seq(1,length(peptides),1), function(x)
     write(x=sprintf(">%i\n%s",x,peptides[x]),
@@ -60,7 +61,8 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
 
 performProcessingPredictions=function(peptidestretch){
   # write peptidestretch to disk temporarily
-  randomNumber=sample(1:1000000)
+  randomNumber=sample(x = 1:1000000,
+                      size = 1)
   
   write(x=sprintf(">1\n%s",peptidestretch),
           file=paste0("./tmp/",randomNumber,"_peptidestretch.fas"),
