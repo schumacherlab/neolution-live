@@ -48,7 +48,9 @@ if (is.null(commandlineArguments$file)) {
   q(status=1)
 } else if (file.exists(commandlineArguments$file)) {
   filePath = commandlineArguments$file
-  fileName = basename(filePath)
+  fileName = gsub(pattern = "\\..+$",
+                  replacement = "",
+                  x = basename(filePath))
   dirPath = dirname(filePath)
 } else {
   message("Can't find file, make sure to provide full path to file")
