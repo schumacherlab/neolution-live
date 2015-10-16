@@ -82,8 +82,8 @@ for(i in 1:nrow(variantInfo)){
     normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontextnormal)
     
     setnames(x = normalProcessingPredictions,
-             old = c("c_term_aa","processing_score"),
-             new = c("normal_c_term_aa","normal_processing_score"))
+             old = c("c_term_pos","c_term_aa","processing_score"),
+             new = c("normal_c_term_pos","normal_c_term_aa","normal_processing_score"))
     
     # merge prediction info
     normalPredictions=merge(x = peptideList[[1]],
@@ -108,8 +108,8 @@ for(i in 1:nrow(variantInfo)){
     tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontexttumor)
     
     setnames(x = tumorProcessingPredictions,
-             old = c("c_term_aa","processing_score"),
-             new = c("tumor_c_term_aa","tumor_processing_score"))
+             old = c("c_term_pos","c_term_aa","processing_score"),
+             new = c("tumor_c_term_pos","tumor_c_term_aa","tumor_processing_score"))
     
     # merge prediction info
     tumorPredictions=merge(x = peptideList[[2]],
