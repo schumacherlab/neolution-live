@@ -65,7 +65,7 @@ for(i in 1:nrow(variantInfo)){
                                peptidelength = peptideLength)
   
   # if no tumor peptides found, move to next line
-  if(nrow(peptideList[[2]])==0){
+  if(nrow(peptideList[[2]])<1){
     next
   }
   
