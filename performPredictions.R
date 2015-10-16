@@ -84,6 +84,10 @@ for(i in 1:nrow(variantInfo)){
     normalPredictions=merge(x = peptideList[[1]],
                             y = normalAffinityPredictions,
                             by = "normal_peptide")
+    
+    normalPredictions=merge(x = normalPredictions,
+                            y = normalProcessingPredictions,
+                            by = "c_term_pos")
   }
   
   if(nrow(peptideList[[2]])>0){
@@ -101,6 +105,10 @@ for(i in 1:nrow(variantInfo)){
     tumorPredictions=merge(x = peptideList[[2]],
                            y = tumorAffinityPredictions,
                            by = "tumor_peptide")
+    
+    tumorPredictions=merge(x = tumorPredictions, 
+                           y = tumorProcessingPredictions, 
+                           by = "c_term_pos")
   }
   
   
