@@ -113,6 +113,10 @@ for(i in 1:nrow(variantInfo)){
                            by = "c_term_pos")
   }
   
+  epitopePredictions=merge(x = tumorPredictions,
+                           y = normalPredictions,
+                           by = "c_term_pos",
+                           all.x = TRUE)
   
 }
 
