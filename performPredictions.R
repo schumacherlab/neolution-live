@@ -79,6 +79,7 @@ for(i in 1:nrow(variantInfo)){
     normalPredictions=performAffinityPredictions(fastafile = paste0(dirPath,"/tmp/normal_peps.fas"),
                                                  allele = hlaType,
                                                  peptidelength = peptideLength)
+    setnames(x = normalPredictions,old = "peptide",new = "normal_peptide")
     
     file.remove(paste0(dirPath,"/tmp/normal_peps.fas"))
     
@@ -95,6 +96,7 @@ for(i in 1:nrow(variantInfo)){
     tumorPredictions=performAffinityPredictions(fastafile = paste0(dirPath,"/tmp/tumor_peps.fas"),
                                                  allele = hlaType,
                                                  peptidelength = peptideLength)
+    setnames(x = tumorPredictions,old = "peptide",new = "tumor_peptide")
     
     file.remove(paste0(dirPath,"/tmp/tumor_peps.fas"))
     
