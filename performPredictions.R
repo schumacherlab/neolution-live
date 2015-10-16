@@ -70,35 +70,27 @@ for(i in 1:nrow(variantInfo)){
   }
   
   if(nrow(peptideList[[1]])>0){
-    invisible(sapply(seq(1,nrow(peptideList[[1]]),1), function(x)
-      write(x=sprintf(">%i\n%s",x,peptideList[[1]]$normal_peptide[x]),
-            file=paste0(dirPath,"/tmp/normal_peps.fas"),
-            append=TRUE,
-            sep="\n")))
-    
-    normalPredictions=performAffinityPredictions(fastafile = paste0(dirPath,"/tmp/normal_peps.fas"),
-                                                 allele = hlaType,
-                                                 peptidelength = peptideLength)
+    # perform affinity predictions
+    normalAffinityPredictions=performAffinityPredictions(peptides = peptideList[[1]]$normal_peptide,
+                                                         allele = hlaType,
+                                                         peptidelength = peptideLength)
     setnames(x = normalPredictions,old = "peptide",new = "normal_peptide")
     
-    file.remove(paste0(dirPath,"/tmp/normal_peps.fas"))
+    # perform processing predictions
+    normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontextnormal)
     
     normalPredictions=merge(x = peptideList[[1]],y = normalPredictions,by = "normal_peptide")
   }
   
   if(nrow(peptideList[[2]])>0){
-    invisible(sapply(seq(1,nrow(peptideList[[2]]),1), function(x)
-      write(x=sprintf(">%i\n%s",x,peptideList[[2]]$tumor_peptide[x]),
-            file=paste0(dirPath,"/tmp/tumor_peps.fas"),
-            append=TRUE,
-            sep="\n")))
-    
-    tumorPredictions=performAffinityPredictions(fastafile = paste0(dirPath,"/tmp/tumor_peps.fas"),
-                                                 allele = hlaType,
-                                                 peptidelength = peptideLength)
+    # perform affinity predictions
+    tumorPredictions=performAffinityPredictions(peptides = peptideList[[2]]$tumor_peptide,
+                                                allele = hlaType,
+                                                peptidelength = peptideLength)
     setnames(x = tumorPredictions,old = "peptide",new = "tumor_peptide")
     
-    file.remove(paste0(dirPath,"/tmp/tumor_peps.fas"))
+    # perform processing predictions
+    tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontexttumor)
     
     tumorPredictions=merge(x = peptideList[[2]],y = tumorPredictions,by = "tumor_peptide")
   }
