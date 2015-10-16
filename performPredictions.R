@@ -82,7 +82,7 @@ for(i in 1:nrow(variantInfo)){
     
     file.remove(paste0(dirPath,"/tmp/normal_peps.fas"))
     
-    normalPredictions=merge(x = peptideList[[1]],y = normalPredictions,by = normal_peptides)
+    normalPredictions=merge(x = peptideList[[1]],y = normalPredictions,by = normal_peptide)
   }
   
   if(nrow(peptideList[[2]])>0){
@@ -98,7 +98,7 @@ for(i in 1:nrow(variantInfo)){
     
     file.remove(paste0(dirPath,"/tmp/tumor_peps.fas"))
     
-    tumorPredictions=merge(x = peptideList[[2]],y = tumorPredictions,by = tumor_peptides)
+    tumorPredictions=merge(x = peptideList[[2]],y = tumorPredictions,by = tumor_peptide)
   }
   
   
