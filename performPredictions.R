@@ -74,25 +74,33 @@ for(i in 1:nrow(variantInfo)){
     normalAffinityPredictions=performAffinityPredictions(peptides = peptideList[[1]]$normal_peptide,
                                                          allele = hlaType,
                                                          peptidelength = peptideLength)
-    setnames(x = normalPredictions,old = "peptide",new = "normal_peptide")
+    setnames(x = normalAffinityPredictions,
+             old = "peptide",
+             new = "normal_peptide")
     
     # perform processing predictions
     normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontextnormal)
     
-    normalPredictions=merge(x = peptideList[[1]],y = normalPredictions,by = "normal_peptide")
+    normalPredictions=merge(x = peptideList[[1]],
+                            y = normalAffinityPredictions,
+                            by = "normal_peptide")
   }
   
   if(nrow(peptideList[[2]])>0){
     # perform affinity predictions
-    tumorPredictions=performAffinityPredictions(peptides = peptideList[[2]]$tumor_peptide,
-                                                allele = hlaType,
-                                                peptidelength = peptideLength)
-    setnames(x = tumorPredictions,old = "peptide",new = "tumor_peptide")
+    tumorAffinityPredictions=performAffinityPredictions(peptides = peptideList[[2]]$tumor_peptide,
+                                                        allele = hlaType,
+                                                        peptidelength = peptideLength)
+    setnames(x = tumorAffinityPredictions,
+             old = "peptide",
+             new = "tumor_peptide")
     
     # perform processing predictions
     tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontexttumor)
     
-    tumorPredictions=merge(x = peptideList[[2]],y = tumorPredictions,by = "tumor_peptide")
+    tumorPredictions=merge(x = peptideList[[2]],
+                           y = tumorAffinityPredictions,
+                           by = "tumor_peptide")
   }
   
   
