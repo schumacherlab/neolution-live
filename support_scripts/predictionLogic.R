@@ -1,7 +1,16 @@
 ## this support script allows live predictions through netMHCpan v2.4 for peptides that have proximal mutations (and there not likely to be in the FASdb) or are not in the FASdb for some other reason
 ## it will also allow us to, in the future, either (1) switch completely to 'live' predictions or (2) perform 'live' predictions for in-dels
 
-performAffinityPredictions=function(fastafile,allele,peptidelength){
+performAffinityPredictions=function(peptides,allele,peptidelength){
+  # write peptides to disk temporarily
+  randomNumber=sample(1:1000000)
+  
+  invisible(sapply(seq(1,length(peptides),1), function(x)
+    write(x=sprintf(">%i\n%s",x,peptides[x]),
+          file=paste0("./tmp/",randomNumber,"_peps.fas"),
+          append=TRUE,
+          sep="\n")))
+  
   ## use on local Mac
   # perform predictions on HPC from local Mac
   # sshconn=pipe(paste0('ssh -l l.fanchi paranoid "',
@@ -19,8 +28,10 @@ performAffinityPredictions=function(fastafile,allele,peptidelength){
                                predictorPaths$netMHCpan,
                                ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
                                ' -l ',peptidelength,
-                               ' -f ',fastafile),
+                               ' -f ',paste0("./tmp/",randomNumber,"_peps.fas")),
                 intern=TRUE)
+  
+  file.remove(paste0("./tmp/",randomNumber,"_peps.fas"))
   
   # perform regex on netMHC output
   if (length(output)>57){
@@ -47,7 +58,15 @@ performAffinityPredictions=function(fastafile,allele,peptidelength){
   return(data)
 }
 
-performProcessingPredictions=function(fastafile){
+performProcessingPredictions=function(peptidestretch){
+  # write peptidestretch to disk temporarily
+  randomNumber=sample(1:1000000)
+  
+  write(x=sprintf(">1\n%s",peptidestretch),
+          file=paste0("./tmp/",randomNumber,"_peptidestretch.fas"),
+          append=TRUE,
+          sep="\n")
+  
 #   sshconn=pipe(paste('ssh -l l.fanchi paranoid "',
 #                      paste(netChoppath,
 #                            ' ',peptidestretch,'"',
@@ -60,9 +79,11 @@ performProcessingPredictions=function(fastafile){
   # perform predictions
   output=system(command=paste("nice -n 9",
                               predictorPaths$netChop,
-                              fastafile,
+                              paste0("./tmp/",randomNumber,"_peptidestretch.fas"),
                               sep=" "),
                 intern=TRUE)
+  
+  file.remove(paste0("./tmp/",randomNumber,"_peptidestretch.fas"))
   
   # perform regex on netChop output
   if (length(output)>17){
