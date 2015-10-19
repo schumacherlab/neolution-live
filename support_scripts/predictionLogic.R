@@ -24,7 +24,7 @@ performParallelPredictions=function(peptides,peptidestretch,allele,peptidelength
                                                  expr = numeric(0),
                                                  simplify = FALSE),
                                        c("c_term_pos","peptide","variant_id","gene_symbol","rna_expression_fpkm",
-                                         paste0(hlaType,"affinity"),"c_term_aa","processing_score")))
+                                         paste0(allele,"affinity"),"c_term_aa","processing_score")))
   }
   
   return(predictions)
