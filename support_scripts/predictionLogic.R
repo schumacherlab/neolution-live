@@ -1,6 +1,35 @@
 ## this support script allows live predictions through netMHCpan v2.4 for peptides that have proximal mutations (and there not likely to be in the FASdb) or are not in the FASdb for some other reason
 ## it will also allow us to, in the future, either (1) switch completely to 'live' predictions or (2) perform 'live' predictions for in-dels
 
+performParallelPredictions=function(peptides,peptidestretch,allele,peptidelength){
+  if(nrow(peptides)>0){
+    # perform affinity predictions
+    affinityPredictions=performAffinityPredictions(peptides = peptides$peptide,
+                                                   allele = allele,
+                                                   peptidelength = peptidelength)
+    
+    # perform processing predictions
+    processingPredictions=performProcessingPredictions(peptidestretch = peptidestretch)
+    
+    # merge prediction info
+    predictions=merge(x = peptides,
+                      y = affinityPredictions,
+                      by = "peptide")
+    
+    predictions=merge(x = predictions,
+                      y = processingPredictions,
+                      by = "c_term_pos")
+  } else {
+    predictions=as.data.table(setNames(replicate(n = 8,
+                                                 expr = numeric(0),
+                                                 simplify = FALSE),
+                                       c("c_term_pos","peptide","variant_id","gene_symbol","rna_expression_fpkm",
+                                         paste0(hlaType,"affinity"),"c_term_aa","processing_score")))
+  }
+  
+  return(predictions)
+}
+
 performAffinityPredictions=function(peptides,allele,peptidelength){
   # write peptides to disk temporarily
   randomNumber=sample(x = 1:1000000,
