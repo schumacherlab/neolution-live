@@ -8,6 +8,9 @@ buildPeptideList=function(variant,peptidelength){
     normal_peptide=sapply(seq(1,n_normal,1),function(i) substr(x = variant$peptidecontextnormal,start = i, stop = i+(peptidelength-1)))
     normal_c_term_pos=seq(peptidelength,nchar(variant$peptidecontextnormal),1)
     normal=unique(data.table(normal_peptide,normal_c_term_pos), by = "normal_peptide")
+    normal[,variant_id := variant$variant_id]
+    normal[,gene_symbol := variant$symbol]
+    normal[,rna_expression_fpkm := variant$gene_FPKM]
   } else{
     stop()
   }
@@ -16,6 +19,9 @@ buildPeptideList=function(variant,peptidelength){
     tumor_peptide=sapply(seq(1,n_tumor,1),function(i) substr(x = variant$peptidecontexttumor,start = i, stop = i+(peptidelength-1)))
     tumor_c_term_pos=seq(peptidelength,nchar(variant$peptidecontexttumor),1)
     tumor=unique(x = data.table(tumor_peptide,tumor_c_term_pos), by = "tumor_peptide")
+    tumor[,variant_id := variant$variant_id]
+    tumor[,gene_symbol := variant$symbol]
+    tumor[,rna_expression_fpkm := variant$gene_FPKM]
   } else{
     stop()
   }
