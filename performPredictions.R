@@ -66,6 +66,15 @@ for(i in 1:nrow(variantInfo)){
     next
   }
   
+  ## parallel implementation
+  normalAndTumorPredictions=foreach(i=1:2) %dopar% {
+    performParallelPredictions(peptides = peptideList[[i]],
+                               peptidestretch = peptideStretchVector[i],
+                               allele = hlaType,
+                               peptidelength = peptideLength)
+  }
+  
+  ## sequential implementation
   if(nrow(peptideList[[1]])>0){
     # perform affinity predictions
     normalAffinityPredictions=performAffinityPredictions(peptides = peptideList[[1]]$normal_peptide,
