@@ -84,7 +84,7 @@ for(i in 1:nrow(variantInfo)){
     
     normalPredictions=merge(x = normalPredictions,
                             y = normalProcessingPredictions,
-                            by = "normal_c_term_pos")
+                            by = "c_term_pos")
   }
   
   if(nrow(peptideList[[2]])>0){
