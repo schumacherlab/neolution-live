@@ -34,7 +34,7 @@ dir.create(path = paste0(dirPath,"/output"),
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
-                 "branch:\t\t\t",system("git symbolic-ref --short -q HEAD",intern = TRUE),"\n",
+                 "branch:\t\t\t\t",system("git symbolic-ref --short -q HEAD",intern = TRUE),"\n",
                  "commit hash:\t\t",system("git rev-parse HEAD",intern = TRUE),"\n"),
       file = paste0(dirPath,"/output/",runStart,"_",fileName,"_runInfo.txt"),
       append = FALSE)
