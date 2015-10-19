@@ -66,7 +66,7 @@ for(i in 1:nrow(variantInfo)){
     next
   }
   
-  ## parallel implementation
+  # perform normal and tumor affinity & processing predictions
   normalAndTumorPredictions=foreach(i=1:2) %dopar% {
     performParallelPredictions(peptides = peptideList[[i]],
                                peptidestretch = peptideStretchVector[i],
