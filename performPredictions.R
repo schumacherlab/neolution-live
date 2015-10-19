@@ -1,11 +1,3 @@
-suppressPackageStartupMessages(library(data.table))
-suppressPackageStartupMessages(library(gtools))
-suppressPackageStartupMessages(library(utils))
-suppressPackageStartupMessages(library(parallel))
-suppressPackageStartupMessages(library(foreach))
-suppressPackageStartupMessages(library(doMC))
-suppressPackageStartupMessages(library(optparse))
-
 # load external scripts
 source("./runConfig.R")
 source("./support_scripts/parseLogic.R")
