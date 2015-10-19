@@ -135,10 +135,12 @@ for(i in 1:nrow(variantInfo)){
   ### do we want to do self-sim only on 9-mers? or not do for any?
   
   # merge all info
-  epitopePredictions=merge(x = tumorPredictions,
-                           y = normalPredictions,
-                           by = "c_term_pos",
-                           all.x = TRUE)
+  if (nrow(tumorPredictionsWithFiltersApplied)>0){
+    epitopePredictions=merge(x = tumorPredictionsWithFiltersApplied,
+                             y = normalPredictionsWithFiltersApplied,
+                             by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
+                             all.x = TRUE) 
+  }
 }
 
 # write run info to log
