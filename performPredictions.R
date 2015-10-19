@@ -156,9 +156,16 @@ close(progressBar)
 
 file.remove("./tmp")
 
-write.csv(x = epitopePredictions,
-          file = paste0(dirPath,"/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
-          row.names = FALSE)
+if(nrow(epitopePredictions)>0){
+  write.csv(x = epitopePredictions,
+            file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
+            row.names = FALSE)  
+} else {
+  write.csv(x = "No epitopes predicted",
+            file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
+            row.names = FALSE)  
+}
+
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
