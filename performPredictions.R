@@ -55,8 +55,10 @@ progressBar = txtProgressBar(min = 0,
 
 for(i in 1:nrow(variantInfo)){
   # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
+  # and make vector containing normal and tumor peptide stretches
   peptideList=buildPeptideList(variant = variantInfo[i,],
                                peptidelength = peptideLength)
+  peptideStretchVector=c(variantInfo[i,]$peptidecontextnormal,variantInfo[i,]$peptidecontexttumor)
   
   # if no tumor peptides found, move to next line
   if(nrow(peptideList[[2]])<1){
