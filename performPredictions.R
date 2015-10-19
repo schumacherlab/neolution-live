@@ -48,6 +48,11 @@ sampleId=toupper(gsub(pattern = "_.+$|-.+$",
 variantInfo=returnProcessedVariants(id = sampleId,
                                     variants = kitchensink)
 
+progressBar = txtProgressBar(min = 0,
+                             max = nrow(variantInfo),
+                             width = 100,
+                             style = 3)
+
 for(i in 1:nrow(variantInfo)){
   # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
   peptideList=buildPeptideList(variant = variantInfo[i,],
@@ -55,6 +60,7 @@ for(i in 1:nrow(variantInfo)){
   
   # if no tumor peptides found, move to next line
   if(nrow(peptideList[[2]])<1){
+    setTxtProgressBar(progressBar, i)
     next
   }
   
@@ -140,7 +146,11 @@ for(i in 1:nrow(variantInfo)){
     
     epitopePredictions=rbindlist(list(epitopePredictions,mergedPredictions))
   }
+  
+  setTxtProgressBar(progressBar, i)
 }
+
+close(progressBar)
 
 write.csv(x = epitopePredictions,
           file = paste0(dirPath,"/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
