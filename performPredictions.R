@@ -129,7 +129,7 @@ for(i in 1:nrow(variantInfo)){
   
   # determine self-sim, only if peptide length == 9
   
-  ### do we want to do self-sim only on 9-mers? or not do for any?
+  ### do we want to do self-sim only on 9-mers? or not do for any? ###
   
   # merge all info
   if (nrow(tumorPredictionsWithFiltersApplied)>0){
