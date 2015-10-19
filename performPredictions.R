@@ -17,7 +17,7 @@ message(paste0("Input file:\t\t",filePath,"\n",
                "MHC/HLA allele:\t\t",hlaType,"\n",
                "Peptide length:\t\t",peptideLength,"\n",
                "Affinity cutoff:\t",affinityCutoff," nM\n",
-               "Chop score cutoff:\t",chopCutoff,"\n",
+               "Chop score cutoff:\t",processingCutoff,"\n",
                "Expression cutoff:\t",expressionCutoff))
 
 # prepare empty list
