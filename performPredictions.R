@@ -74,64 +74,13 @@ for(i in 1:nrow(variantInfo)){
                                peptidelength = peptideLength)
   }
   
-  ## sequential implementation
-  if(nrow(peptideList[[1]])>0){
-    # perform affinity predictions
-    normalAffinityPredictions=performAffinityPredictions(peptides = peptideList[[1]]$normal_peptide,
-                                                         allele = hlaType,
-                                                         peptidelength = peptideLength)
-    setnames(x = normalAffinityPredictions,
-             old = c("peptide",paste0(hlaType,"affinity")),
-             new = c("normal_peptide",paste0("normal_",hlaType,"affinity")))
-    
-    # perform processing predictions
-    normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i,]$peptidecontextnormal)
-    
-    setnames(x = normalProcessingPredictions,
-             old = c("c_term_pos","c_term_aa","processing_score"),
-             new = c("c_term_pos","normal_c_term_aa","normal_processing_score"))
-    
-    # merge prediction info
-    normalPredictions=merge(x = peptideList[[1]],
-                            y = normalAffinityPredictions,
-                            by = "normal_peptide")
-    
-    normalPredictions=merge(x = normalPredictions,
-                            y = normalProcessingPredictions,
-                            by = "c_term_pos")
-  } else {
-    normalPredictions=as.data.table(setNames(replicate(n = 8,
-                                                       expr = numeric(0),
-                                                       simplify = FALSE),
-                                             c("c_term_pos","normal_peptide","variant_id","gene_symbol","rna_expression_fpkm",
-                                               paste0("normal_",hlaType,"affinity"),"normal_c_term_aa","normal_processing_score")))
-  }
+  setnames(x = normalAndTumorPredictions[[1]],
+           old = c("peptide",paste0(hlaType,"affinity"),"c_term_aa","processing_score"),
+           new = c("normal_peptide",paste0("normal_",hlaType,"affinity"),"normal_c_term_aa","normal_processing_score"))
   
-  if(nrow(peptideList[[2]])>0){
-    # perform affinity predictions
-    tumorAffinityPredictions=performAffinityPredictions(peptides = peptideList[[2]]$tumor_peptide,
-                                                        allele = hlaType,
-                                                        peptidelength = peptideLength)
-    setnames(x = tumorAffinityPredictions,
-             old = c("peptide",paste0(hlaType,"affinity")),
-             new = c("tumor_peptide",paste0("tumor_",hlaType,"affinity")))
-    
-    # perform processing predictions
-    tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i,]$peptidecontexttumor)
-    
-    setnames(x = tumorProcessingPredictions,
-             old = c("c_term_pos","c_term_aa","processing_score"),
-             new = c("c_term_pos","tumor_c_term_aa","tumor_processing_score"))
-    
-    # merge prediction info
-    tumorPredictions=merge(x = peptideList[[2]],
-                           y = tumorAffinityPredictions,
-                           by = "tumor_peptide")
-    
-    tumorPredictions=merge(x = tumorPredictions, 
-                           y = tumorProcessingPredictions, 
-                           by = "c_term_pos")
-  }
+  setnames(x = normalAndTumorPredictions[[2]],
+           old = c("peptide",paste0(hlaType,"affinity"),"c_term_aa","processing_score"),
+           new = c("tumor_peptide",paste0("tumor_",hlaType,"affinity"),"tumor_c_term_aa","tumor_processing_score"))
   
   # apply various cutoffs
   normalPredictionsWithFiltersApplied=subset(x = normalPredictions,
