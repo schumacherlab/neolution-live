@@ -46,9 +46,13 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
                 replacement="\t",
                 x=output)
     # read data into table
-    data=as.data.table(read.table(text=output,stringsAsFactors = FALSE));data$V7=NULL
+    data=as.data.table(read.table(text = output,
+                                  stringsAsFactors = FALSE));data$V7=NULL
   } else{
-    data=as.data.table(setNames(replicate(6,numeric(0), simplify = F), c("position","allele","peptide","mutation_id","pept_score",paste(allele,"affinity",sep=""))))
+    data=as.data.table(setNames(replicate(n = 6,
+                                          expr = numeric(0),
+                                          simplify = FALSE),
+                                c("position","allele","peptide","variant_id","pept_score",paste0(allele,"affinity"))))
   }
   
   setnames(data,
@@ -99,9 +103,14 @@ performProcessingPredictions=function(peptidestretch){
                 replacement="\t",
                 x=output)
     # read data into table
-    data=as.data.table(read.table(text=output,stringsAsFactors = FALSE));data=data[,-match(c("V3","V5"),colnames(data)),with=FALSE]
+    data=as.data.table(read.table(text = output,
+                                  stringsAsFactors = FALSE))
+    data=data[,-match(x = c("V3","V5"),table = colnames(data)),with=FALSE]
   } else{
-    data=as.data.table(setNames(replicate(3,numeric(0), simplify = F), c("c_term_pos","c_term_aa","processing_score")))
+    data=as.data.table(setNames(replicate(n = 3,
+                                          expr = numeric(0),
+                                          simplify = FALSE),
+                                c("c_term_pos","c_term_aa","processing_score")))
   }
   
   setnames(data,
