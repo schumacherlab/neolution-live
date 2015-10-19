@@ -123,6 +123,7 @@ for(i in 1:nrow(variantInfo)){
                                             subset = paste0("tumor_",hlaType,"affinity") <= affinityCutoff &
                                               "tumor_processing_score" >= processingCutoff &
                                               "rna_expression_fpkm" > expressionCutoff)
+  
   }
   
   epitopePredictions=merge(x = tumorPredictions,
