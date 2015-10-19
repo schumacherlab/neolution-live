@@ -20,11 +20,8 @@ message(paste0("Input file:\t\t",filePath,"\n",
                "Chop score cutoff:\t",chopCutoff,"\n",
                "Expression cutoff:\t",expressionCutoff))
 
-# # prepare some empty lists
-# normalEpitopes_HLA=vector("list",length(hlaTypes))
-# normalEpitopes_filtered=vector("list",length(hlaTypes))
-# tumorEpitopes_HLA=vector("list",length(hlaTypes))
-# tumorEpitopes_filtered=vector("list",length(hlaTypes))
+# prepare empty list
+epitopePredictions=data.table()
 
 # check availability of predictors
 checkPredictorPaths(predictorPaths)
