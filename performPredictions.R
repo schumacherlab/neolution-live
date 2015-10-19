@@ -133,10 +133,12 @@ for(i in 1:nrow(variantInfo)){
   
   # merge all info
   if (nrow(tumorPredictionsWithFiltersApplied)>0){
-    epitopePredictions=merge(x = tumorPredictionsWithFiltersApplied,
-                             y = normalPredictionsWithFiltersApplied,
-                             by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
-                             all.x = TRUE) 
+    mergedPredictions=merge(x = tumorPredictionsWithFiltersApplied,
+                            y = normalPredictionsWithFiltersApplied,
+                            by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
+                            all.x = TRUE)
+    
+    epitopePredictions=rbindlist(list(epitopePredictions,mergedPredictions))
   }
 }
 
