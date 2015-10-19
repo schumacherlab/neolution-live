@@ -67,7 +67,7 @@ for(i in 1:nrow(variantInfo)){
   }
   
   ## parallel implementation
-  normalAndTumorPredictions=foreach(i=1:2,.export = "predictorPaths") %dopar% {
+  normalAndTumorPredictions=foreach(i=1:2,.export = c("peptideList","peptideStretchVector","hlaType","peptideLength","predictorPaths")) %dopar% {
     performParallelPredictions(peptides = peptideList[[i]],
                                peptidestretch = peptideStretchVector[i],
                                allele = hlaType,
