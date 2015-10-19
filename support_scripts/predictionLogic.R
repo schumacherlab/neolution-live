@@ -25,7 +25,7 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
   
   ## use on HPC
   # perform predictions
-  output=system(command=paste0("nice -n 9 ",
+  output=system(command=paste0(#"nice -n 9 ",
                                predictorPaths$netMHCpan,
                                ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
                                ' -l ',peptidelength,
@@ -83,7 +83,7 @@ performProcessingPredictions=function(peptidestretch){
   
   ## use on HPC
   # perform predictions
-  output=system(command=paste("nice -n 9",
+  output=system(command=paste(#"nice -n 9",
                               predictorPaths$netChop,
                               paste0("./tmp/",randomNumber,"_peptidestretch.fas"),
                               sep=" "),
