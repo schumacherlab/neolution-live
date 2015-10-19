@@ -37,7 +37,7 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
   
   invisible(sapply(seq(1,length(peptides),1), function(x)
     write(x=sprintf(">%i\n%s",x,peptides[x]),
-          file=paste0(scriptPath,"/tmp/",randomNumber,"_peps.fas"),
+          file=paste0("./tmp/",randomNumber,"_peps.fas"),
           append=TRUE,
           sep="\n")))
   
@@ -100,7 +100,7 @@ performProcessingPredictions=function(peptidestretch){
                       size = 1)
   
   write(x=sprintf(">1\n%s",peptidestretch),
-          file=paste0(scriptPath,"/tmp/",randomNumber,"_peptidestretch.fas"),
+          file=paste0("./tmp/",randomNumber,"_peptidestretch.fas"),
           append=TRUE,
           sep="\n")
   
