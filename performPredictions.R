@@ -144,6 +144,8 @@ for(i in 1:nrow(variantInfo)){
                             by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
                             all.x = TRUE)
     
+    print(mergedPredictions)
+    
     epitopePredictions=rbindlist(list(epitopePredictions,mergedPredictions))
   }
   
