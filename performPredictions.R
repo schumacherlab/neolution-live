@@ -85,6 +85,12 @@ for(i in 1:nrow(variantInfo)){
     normalPredictions=merge(x = normalPredictions,
                             y = normalProcessingPredictions,
                             by = "c_term_pos")
+  } else {
+    normalPredictions=as.data.table(setNames(replicate(n = 8,
+                                                       expr = numeric(0),
+                                                       simplify = FALSE),
+                                             c("c_term_pos","normal_peptide","variant_id","gene_symbol","rna_expression_fpkm",
+                                               paste0("normal_",hlaType,"affinity"),"normal_c_term_aa","normal_processing_score")))
   }
   
   if(nrow(peptideList[[2]])>0){
