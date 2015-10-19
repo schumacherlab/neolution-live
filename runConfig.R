@@ -12,8 +12,8 @@ optionList = list(make_option(opt_str = c("-a", "--affinity"),
                               action="store",
                               type = "double",
                               default=500,
-                              help="netMHCpan affinity cutoff (optional, default: %default)"),
-                  make_option(opt_str = c("-c", "--chop"),
+                              help="netMHCpan affinity cutoff (optional, default: <= %default)"),
+                  make_option(opt_str = c("-p", "--processing"),
                               action="store",
                               type = "double",
                               default=0.5,
@@ -75,5 +75,5 @@ if (is.null(commandlineArguments$length)) {
 }
 
 affinityCutoff = commandlineArguments$affinity
-chopCutoff = commandlineArguments$chop
+processingCutoff = commandlineArguments$processing
 expressionCutoff = commandlineArguments$expression
