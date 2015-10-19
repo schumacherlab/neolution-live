@@ -113,7 +113,16 @@ for(i in 1:nrow(variantInfo)){
                            by = "tumor_c_term_pos")
   }
   
+  # apply various cutoffs
+  normalPredictionsWithFiltersApplied=subset(x = normalPredictions,
+                                             subset = paste0("normal_",hlaType,"affinity") <= affinityCutoff &
+                                               "normal_processing_score" >= processingCutoff &
+                                               "rna_expression_fpkm" > expressionCutoff)
   
+  tumorPredictionsWithFiltersApplied=subset(x = tumorPredictions,
+                                            subset = paste0("tumor_",hlaType,"affinity") <= affinityCutoff &
+                                              "tumor_processing_score" >= processingCutoff &
+                                              "rna_expression_fpkm" > expressionCutoff)
   }
   
   epitopePredictions=merge(x = tumorPredictions,
