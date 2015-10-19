@@ -57,9 +57,9 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
   
   setnames(data,
             colnames(data),
-            c("position","allele","peptide","mutation_id","pept_score",paste(allele,"affinity",sep="")))
+            c("position","allele","peptide","variant_id","pept_score",paste0(allele,"affinity")))
   data=subset(x = data,
-              select=colnames(data[,-match(c("position","allele","mutation_id","pept_score"),colnames(data)),with=FALSE]))
+              select=colnames(data[,-match(c("position","allele","variant_id","pept_score"),colnames(data)),with=FALSE]))
   return(data)
 }
 
