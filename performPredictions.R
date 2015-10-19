@@ -152,6 +152,8 @@ for(i in 1:nrow(variantInfo)){
 
 close(progressBar)
 
+file.remove("./tmp")
+
 write.csv(x = epitopePredictions,
           file = paste0(dirPath,"/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
           row.names = FALSE)
