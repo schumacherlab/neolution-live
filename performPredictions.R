@@ -142,6 +142,10 @@ for(i in 1:nrow(variantInfo)){
   }
 }
 
+write.csv(x = epitopePredictions,
+          file = paste0(dirPath,"/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
+          row.names = FALSE)
+
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
                  "comments:"),
