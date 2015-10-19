@@ -1,5 +1,5 @@
 returnProcessedVariants=function(id,variants){
-  variants$mutation_id=paste(id,1:nrow(variants),sep = "-")
+  variants$variant_id=paste(id,1:nrow(variants),sep = "-")
   
   # rename column headers in case their differ from NKI GCF columns
   if(all(c("Gene","transcriptid","Cufflinks FPKM value (expression level)") %in% names(variants))){
@@ -10,7 +10,7 @@ returnProcessedVariants=function(id,variants){
   
   # take subset of columns
   variantssubset=unique(x = subset(x = variants,
-                                   select = c("mutation_id","symbol","transcript","peptidecontextnormal","peptidecontexttumor","gene_FPKM")),
+                                   select = c("variant_id","symbol","transcript","peptidecontextnormal","peptidecontexttumor","gene_FPKM")),
                         by = c("peptidecontextnormal","peptidecontexttumor"))
   
   # remove any amino acid sequence after stop codon(s)
