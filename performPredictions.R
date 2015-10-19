@@ -53,7 +53,7 @@ variantInfo=returnProcessedVariants(id = sampleId,
 
 for(i in 1:nrow(variantInfo)){
   # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
-  peptideList=buildPeptideList(variant = variantInfo[i],
+  peptideList=buildPeptideList(variant = variantInfo[i,],
                                peptidelength = peptideLength)
   
   # if no tumor peptides found, move to next line
@@ -71,7 +71,7 @@ for(i in 1:nrow(variantInfo)){
              new = c("normal_peptide",paste0("normal_",hlaType,"affinity")))
     
     # perform processing predictions
-    normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontextnormal)
+    normalProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i,]$peptidecontextnormal)
     
     setnames(x = normalProcessingPredictions,
              old = c("c_term_pos","c_term_aa","processing_score"),
@@ -97,7 +97,7 @@ for(i in 1:nrow(variantInfo)){
              new = c("tumor_peptide",paste0("tumor_",hlaType,"affinity")))
     
     # perform processing predictions
-    tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i]$peptidecontexttumor)
+    tumorProcessingPredictions=performProcessingPredictions(peptidestretch = variantInfo[i,]$peptidecontexttumor)
     
     setnames(x = tumorProcessingPredictions,
              old = c("c_term_pos","c_term_aa","processing_score"),
