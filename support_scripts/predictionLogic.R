@@ -6,10 +6,12 @@ performParallelPredictions=function(peptides,peptidestretch,allele,peptidelength
     # perform affinity predictions
     affinityPredictions=performAffinityPredictions(peptides = peptides$peptide,
                                                    allele = allele,
-                                                   peptidelength = peptidelength)
+                                                   peptidelength = peptidelength,
+                                                   predictors = predictorPaths)
     
     # perform processing predictions
-    processingPredictions=performProcessingPredictions(peptidestretch = peptidestretch)
+    processingPredictions=performProcessingPredictions(peptidestretch = peptidestretch,
+                                                       predictors = predictorPaths)
     
     # merge prediction info
     predictions=merge(x = peptides,
@@ -30,7 +32,7 @@ performParallelPredictions=function(peptides,peptidestretch,allele,peptidelength
   return(predictions)
 }
 
-performAffinityPredictions=function(peptides,allele,peptidelength){
+performAffinityPredictions=function(peptides,allele,peptidelength,predictors){
   # write peptides to disk temporarily
   randomNumber=sample(x = 1:1000000,
                       size = 1)
@@ -55,7 +57,7 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
   ## use on HPC
   # perform predictions
   output=system(command=paste0(#"nice -n 9 ",
-                               predictorPaths$netMHCpan,
+                               predictors$netMHCpan,
                                ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
                                ' -l ',peptidelength,
                                ' -f ',paste0("./tmp/",randomNumber,"_peps.fas")),
@@ -92,7 +94,7 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
   return(data)
 }
 
-performProcessingPredictions=function(peptidestretch){
+performProcessingPredictions=function(peptidestretch,predictors){
   # write peptidestretch to disk temporarily
   randomNumber=sample(x = 1:1000000,
                       size = 1)
@@ -113,7 +115,7 @@ performProcessingPredictions=function(peptidestretch){
   ## use on HPC
   # perform predictions
   output=system(command=paste(#"nice -n 9",
-                              predictorPaths$netChop,
+                              predictors$netChop,
                               paste0("./tmp/",randomNumber,"_peptidestretch.fas"),
                               sep=" "),
                 intern=TRUE)
