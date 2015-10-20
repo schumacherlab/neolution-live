@@ -133,21 +133,23 @@ close(progressBar)
 # remove temp dir
 file.remove("./tmp")
 
-# sort tables
+# sort tables & set new order
 setorderv(x = epitopePredictions,
-          cols = paste0("tumor_",hlaTypes,"affinity"),
-          neworder = c("variant_id","gene_symbol",
-                       "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaTypes,"affinity"),"tumor_processing_score",
-                       "normal_peptide","normal_c_term_aa",paste0("normal_",hlaTypes,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
+          cols = paste0("tumor_",hlaType,"affinity"))
+setcolorder(x=epitopePredictions,
+            neworder = c("variant_id","gene_symbol",
+                         "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaType,"affinity"),"tumor_processing_score",
+                         "normal_peptide","normal_c_term_aa",paste0("normal_",hlaType,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
 
 setorderv(x = epitopePredictionsWithFiltersApplied,
-          cols = paste0("tumor_",hlaTypes,"affinity"),
-          neworder = c("variant_id","gene_symbol",
-                       "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaTypes,"affinity"),"tumor_processing_score",
-                       "normal_peptide","normal_c_term_aa",paste0("normal_",hlaTypes,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
+          cols = paste0("tumor_",hlaTypes,"affinity"))
+setcolorder(x = epitopePredictionsWithFiltersApplied,
+            neworder = c("variant_id","gene_symbol",
+                         "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaType,"affinity"),"tumor_processing_score",
+                         "normal_peptide","normal_c_term_aa",paste0("normal_",hlaType,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
 
 # calculate percentile rank
-epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",hlaTypes,"affinity")]])]
+epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",hlaType,"affinity")]])]
 
 # write predictions to disk
 if(nrow(epitopePredictionsWithFiltersApplied)>0){
