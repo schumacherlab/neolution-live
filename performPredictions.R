@@ -83,6 +83,7 @@ for(i in 1:nrow(variantInfo)){
                                peptidelength = peptideLength)
   }
   
+  # rename columns
   setnames(x = normalAndTumorPredictions[[1]],
            old = c("peptide",paste0(hlaType,"affinity"),"c_term_aa","processing_score"),
            new = c("normal_peptide",paste0("normal_",hlaType,"affinity"),"normal_c_term_aa","normal_processing_score"))
