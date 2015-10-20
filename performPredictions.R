@@ -20,7 +20,7 @@ message(paste0("Input file:\t\t",filePath,"\n",
                "Chop score cutoff:\t",processingCutoff,"\n",
                "Expression cutoff:\t",expressionCutoff))
 
-# prepare empty list
+# prepare empty table
 epitopePredictions=data.table()
 
 # check availability of predictors
