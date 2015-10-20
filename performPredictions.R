@@ -134,7 +134,9 @@ file.remove("./tmp")
 
 # write filtered predictions to disk
 if(nrow(epitopePredictionsWithFiltersApplied)>0){
-  write.csv(x = unique(epitopePredictionsWithFiltersApplied),
+  write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
+                       by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","variant_id"),
+                                                                               table = names(epitopePredictionsWithFiltersApplied))]),
             file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
             row.names = FALSE)  
 } else {
@@ -145,7 +147,9 @@ if(nrow(epitopePredictionsWithFiltersApplied)>0){
 
 # write unfiltered predictions to disk
 if(nrow(epitopePredictions)>0){
-  write.csv(x = unique(epitopePredictions),
+  write.csv(x = unique(x = epitopePredictions,
+                       by = names(epitopePredictions)[-match(x = c("c_term_pos","variant_id"),
+                                                             table = names(epitopePredictions))]),
             file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes_unfiltered.csv"),
             row.names = FALSE)  
 } else {
