@@ -108,19 +108,25 @@ for(i in 1:nrow(variantInfo)){
   
   # merge all info
   if (nrow(tumorPredictionsWithFiltersApplied)>0){
-    mergedPredictions=merge(x = tumorPredictionsWithFiltersApplied,
+    mergedTumorPredictionsWithFiltersApplied=merge(x = tumorPredictionsWithFiltersApplied,
+                                                   y = normalAndTumorPredictions[[1]],
+                                                   by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
+                                                   all.x = TRUE)
+    
+    epitopePredictionsWithFiltersApplied=rbindlist(list(epitopePredictionsWithFiltersApplied,mergedTumorPredictionsWithFiltersApplied))
+  }
+  
+  if (nrow(normalAndTumorPredictions[[2]])>0){
+    mergedPredictions=merge(x = normalAndTumorPredictions[[2]],
                             y = normalAndTumorPredictions[[1]],
                             by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
                             all.x = TRUE)
-    
-    print(mergedPredictions)
     
     epitopePredictions=rbindlist(list(epitopePredictions,mergedPredictions))
   }
   
   setTxtProgressBar(progressBar, i)
 }
-
 close(progressBar)
 
 file.remove("./tmp")
