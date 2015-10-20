@@ -10,6 +10,9 @@ suppressPackageStartupMessages(library(optparse))
 # define negation of %in% operator, returns logical vector for 'NOT IN'
 '%ni%'=Negate('%in%')
 
+# function to make percentile rank
+returnPercentileRank = function(x) trunc(rank(x))/length(x)
+
 # return directory where script is executed
 thisDirectory=function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
