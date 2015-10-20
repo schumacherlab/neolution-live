@@ -129,10 +129,12 @@ for(i in 1:nrow(variantInfo)){
 }
 close(progressBar)
 
+# remove temp dir
 file.remove("./tmp")
 
-if(nrow(epitopePredictions)>0){
-  write.csv(x = epitopePredictions,
+# write filtered predictions to disk
+if(nrow(epitopePredictionsWithFiltersApplied)>0){
+  write.csv(x = unique(epitopePredictionsWithFiltersApplied),
             file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes.csv"),
             row.names = FALSE)  
 } else {
@@ -141,6 +143,16 @@ if(nrow(epitopePredictions)>0){
             row.names = FALSE)  
 }
 
+# write unfiltered predictions to disk
+if(nrow(epitopePredictions)>0){
+  write.csv(x = unique(epitopePredictions),
+            file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes_unfiltered.csv"),
+            row.names = FALSE)  
+} else {
+  write.csv(x = "No epitopes predicted",
+            file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,hlaType,peptideLength,sep="_"),"mer_epitopes_unfiltered.csv"),
+            row.names = FALSE)  
+}
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
