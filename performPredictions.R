@@ -34,8 +34,16 @@ dir.create(path = paste0(dirPath,"/output"),
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
-                 "branch:\t\t\t\t",system("git symbolic-ref --short -q HEAD",intern = TRUE),"\n",
-                 "commit hash:\t\t",system("git rev-parse HEAD",intern = TRUE),"\n"),
+                 "branch:\t\t\t\t\t",system("git symbolic-ref --short -q HEAD",intern = TRUE),"\n",
+                 "commit hash:\t\t",system("git rev-parse HEAD",intern = TRUE),"\n\n",
+                 "Input file:\t\t\t\t\t",filePath,"\n",
+                 "MHC/HLA allele:\t\t\t",hlaType,"\n",
+                 "Peptide length:\t\t\t",peptideLength,"\n",
+                 "Affinity cutoff:\t\t",affinityCutoff," nM\n",
+                 "Processing cutoff:\t",processingCutoff,"\n",
+                 "Expression cutoff:\t",expressionCutoff,"\n\n",
+                 "Affinity predictor:\t\t",predictorPaths$netMHCpan,"\n",
+                 "Processing predictor:\t",predictorPaths$netChop),
       file = paste0(dirPath,"/output/",runStart,"_",fileName,"_runInfo.txt"),
       append = FALSE)
 
