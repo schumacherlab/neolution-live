@@ -145,6 +145,10 @@ setorderv(x = epitopePredictionsWithFiltersApplied,
                        "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaTypes,"affinity"),"tumor_processing_score",
                        "normal_peptide","normal_c_term_aa",paste0("normal_",hlaTypes,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
 
+# calculate percentile rank
+epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",hlaTypes,"affinity")]])]
+
+# write predictions to disk
 if(nrow(epitopePredictionsWithFiltersApplied)>0){
   write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
                        by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","variant_id"),
