@@ -11,7 +11,7 @@ suppressPackageStartupMessages(library(optparse))
 '%ni%'=Negate('%in%')
 
 # function to make percentile rank
-returnPercentileRank = function(x) trunc(rank(x))/length(x)
+returnPercentileRank = function(x) trunc(rank(x))/length(x)*100
 
 # return directory where script is executed
 thisDirectory=function() {
