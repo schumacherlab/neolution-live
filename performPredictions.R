@@ -45,7 +45,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Expression cutoff:\t",expressionCutoff,"\n\n",
                  "Affinity predictor:\t\t",predictorPaths$netMHCpan,"\n",
                  "Processing predictor:\t",predictorPaths$netChop),
-      file = paste0(dirPath,"/output/",runStart,"_",fileName,"_runInfo.txt"),
+      file = paste0(dirPath,"/output/",paste(runStart,fileName,hlaType,peptideLength,sep="_"),"mer_runInfo.txt"),
       append = FALSE)
 
 # import kitchensink data & clean up
