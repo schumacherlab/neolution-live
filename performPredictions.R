@@ -67,9 +67,9 @@ for(i in 1:nrow(variantInfo)){
   }
   
   # perform normal and tumor affinity & processing predictions
-  normalAndTumorPredictions=foreach(i=1:2) %dopar% {
-    performParallelPredictions(peptides = peptideList[[i]],
-                               peptidestretch = peptideStretchVector[i],
+  normalAndTumorPredictions=foreach(k=1:2) %dopar% {
+    performParallelPredictions(peptides = peptideList[[k]],
+                               peptidestretch = peptideStretchVector[k],
                                allele = hlaType,
                                peptidelength = peptideLength)
   }
