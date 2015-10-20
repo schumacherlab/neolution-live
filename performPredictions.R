@@ -22,6 +22,7 @@ message(paste0("Input file:\t\t",filePath,"\n",
 
 # prepare empty table
 epitopePredictions=data.table()
+epitopePredictionsWithFiltersApplied=data.table()
 
 # check availability of predictors
 checkPredictorPaths(predictorPaths)
