@@ -102,9 +102,9 @@ for(i in 1:nrow(variantInfo)){
                                               tumor_processing_score >= processingCutoff &
                                               rna_expression_fpkm > expressionCutoff)
   
-  # determine self-sim, only if peptide length == 9
+  # determine self-sim
   
-  ### do we want to do self-sim only on 9-mers? or not do for any? ###
+  ### use self-sim which supports 9, 10 and 11mers; get from Marit
   
   # merge all info
   if (nrow(tumorPredictionsWithFiltersApplied)>0){
