@@ -132,7 +132,19 @@ close(progressBar)
 # remove temp dir
 file.remove("./tmp")
 
-# write filtered predictions to disk
+# sort tables
+setorderv(x = epitopePredictions,
+          cols = paste0("tumor_",hlaTypes,"affinity"),
+          neworder = c("variant_id","gene_symbol",
+                       "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaTypes,"affinity"),"tumor_processing_score",
+                       "normal_peptide","normal_c_term_aa",paste0("normal_",hlaTypes,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
+
+setorderv(x = epitopePredictionsWithFiltersApplied,
+          cols = paste0("tumor_",hlaTypes,"affinity"),
+          neworder = c("variant_id","gene_symbol",
+                       "tumor_peptide","tumor_c_term_aa",paste0("tumor_",hlaTypes,"affinity"),"tumor_processing_score",
+                       "normal_peptide","normal_c_term_aa",paste0("normal_",hlaTypes,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
+
 if(nrow(epitopePredictionsWithFiltersApplied)>0){
   write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
                        by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","variant_id"),
@@ -145,7 +157,6 @@ if(nrow(epitopePredictionsWithFiltersApplied)>0){
             row.names = FALSE)  
 }
 
-# write unfiltered predictions to disk
 if(nrow(epitopePredictions)>0){
   write.csv(x = unique(x = epitopePredictions,
                        by = names(epitopePredictions)[-match(x = c("c_term_pos","variant_id"),
