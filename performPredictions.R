@@ -161,5 +161,5 @@ if(nrow(epitopePredictions)>0){
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
                  "comments:"),
-      file = paste0(dirPath,"/output/",runStart,"_",fileName,"_runInfo.txt"),
+      file = paste0(dirPath,"/output/",paste(runStart,fileName,hlaType,peptideLength,sep="_"),"mer_runInfo.txt"),
       append = TRUE)
