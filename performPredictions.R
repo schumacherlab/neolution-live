@@ -84,12 +84,12 @@ for(i in 1:nrow(variantInfo)){
   
   # apply various cutoffs
   normalPredictionsWithFiltersApplied=subset(x = normalAndTumorPredictions[[1]],
-                                             subset = paste0("normal_",hlaType,"affinity") <= affinityCutoff &
+                                             subset = normalAndTumorPredictions[[1]][[paste0("normal_",hlaType,"affinity")]] <= affinityCutoff &
                                                normal_processing_score >= processingCutoff &
                                                rna_expression_fpkm > expressionCutoff)
   
   tumorPredictionsWithFiltersApplied=subset(x = normalAndTumorPredictions[[2]],
-                                            subset = paste0("tumor_",hlaType,"affinity") <= affinityCutoff &
+                                            subset = normalAndTumorPredictions[[2]][[paste0("tumor_",hlaType,"affinity")]] <= affinityCutoff &
                                               tumor_processing_score >= processingCutoff &
                                               rna_expression_fpkm > expressionCutoff)
   
