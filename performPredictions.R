@@ -100,7 +100,7 @@ for(i in 1:nrow(variantInfo)){
   # merge all info
   if (nrow(tumorPredictionsWithFiltersApplied)>0){
     mergedPredictions=merge(x = tumorPredictionsWithFiltersApplied,
-                            y = normalPredictionsWithFiltersApplied,
+                            y = normalAndTumorPredictions[[1]],
                             by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
                             all.x = TRUE)
     
