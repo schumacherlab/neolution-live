@@ -4,8 +4,8 @@
 numberOfWorkers=10
 
 # set predictor paths
-predictorPaths=data.table(netMHCpan="/home/NKI/l.fanchi/netMHCpan-2.4/netMHCpan",
-                          netChop="/home/NKI/l.fanchi/netchop-3.1/bin/netChop")
+predictorPaths=data.table(netMHCpan="/home/NFS/users/l.fanchi/netMHCpan-2.4/netMHCpan",
+                          netChop="/home/NFS/users/l.fanchi/netchop-3.1/bin/netChop")
 
 # commandline option specification, do not change
 optionList = list(make_option(opt_str = c("-a", "--affinity"),
