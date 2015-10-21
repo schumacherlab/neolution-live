@@ -28,6 +28,11 @@ optionList = list(make_option(opt_str = c("-a", "--affinity"),
                               type = "double",
                               default = 0,
                               help = "RNA expression cutoff (optional, default: > %default)"),
+                  make_option(opt_str = c("-s", "--single"),
+                              action = "store_true",
+                              type = "logical",
+                              default = FALSE,
+                              help = "Single sequence predictions (not paired normal-tumor) (optional, default: %default)"),
                   make_option(opt_str = c("-f", "--file"),
                               action = "store",
                               type = "character",
@@ -104,3 +109,4 @@ if (is.numeric(commandlineArguments$expression)){
   q(status=1)
 }
 
+doSingleSequencePrediction=commandlineArguments$single
