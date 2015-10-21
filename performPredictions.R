@@ -43,19 +43,23 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
       append = FALSE)
 
 
-# start branching here (use switch)
-
-### write branching logic
-
-# -s == TRUE (single seq input)
-
-# -s == FALSE (normal-tumor input)
-performPairedSequencePredictions(file = filePath,
-                                 allele = hlaType,
-                                 peptidelength = peptideLength,
-                                 affcutoff = affinityCutoff,
-                                 proccutoff = processingCutoff,
-                                 exprcutoff = expressionCutoff)
+# check whether or not we want single seq predictions or paired normal-tumor predictions
+switch(EXPR = as.character(doSingleSequencePrediction),
+       # --single == TRUE (single seq input)
+       "TRUE" = performSingleSequencePredictions(file = filePath,
+                                                 allele = hlaType,
+                                                 peptidelength = peptideLength,
+                                                 affcutoff = affinityCutoff,
+                                                 proccutoff = processingCutoff,
+                                                 exprcutoff = expressionCutoff), 
+       # --single == FALSE (normal-tumor input)
+       "FALSE" = performPairedSequencePredictions(file = filePath,
+                                                  allele = hlaType,
+                                                  peptidelength = peptideLength,
+                                                  affcutoff = affinityCutoff,
+                                                  proccutoff = processingCutoff,
+                                                  exprcutoff = expressionCutoff)
+)
 
 #====================================================================================================================================#
 
