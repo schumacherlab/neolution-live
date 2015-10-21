@@ -2,6 +2,7 @@
 source("./support_scripts/supportFunctions.R")
 source("./support_scripts/runConfig.R")
 source("./support_scripts/parseLogic.R")
+source("./support_scripts/workflowLogic.R")
 source("./support_scripts/predictionLogic.R")
 source("./support_scripts/peptideConstructionLogic.R")
 
