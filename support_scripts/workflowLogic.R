@@ -123,7 +123,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                            "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
   
   # calculate percentile rank
-  epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
+  # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
   
   # write predictions to disk
   if(nrow(epitopePredictionsWithFiltersApplied)>0){
