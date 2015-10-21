@@ -75,10 +75,31 @@ if (is.null(commandlineArguments$mhc)) {
 if (is.null(commandlineArguments$length)) {
   message("Peptide length input (-l or --length) is required argument, use -h for help")
   q(status=1)
-} else {
+} else if (commandlineArguments$length >=8 & commandlineArguments$length <=11) {
   peptideLength = commandlineArguments$length
+} else {
+  message("Peptide length input (-l or --length) should be >=8 and <= 11, use -h for help")
+  q(status=1)
 }
 
-affinityCutoff = commandlineArguments$affinity
-processingCutoff = commandlineArguments$processing
-expressionCutoff = commandlineArguments$expression
+if (is.numeric(commandlineArguments$affinity)){
+  affinityCutoff = commandlineArguments$affinity
+} else {
+  message("Affinity cutoff input (-a or --affinity) should be numeric, use -h for help")
+  q(status=1)
+}
+
+if (is.numeric(commandlineArguments$processing)){
+  processingCutoff = commandlineArguments$processing
+} else {
+  message("Processing cutoff input (-p or --processing) should be numeric, use -h for help")
+  q(status=1)
+}
+
+if (is.numeric(commandlineArguments$expression)){
+  expressionCutoff = commandlineArguments$expression
+} else {
+  message("Expression cutoff input (-e or --expression) should be numeric, use -h for help")
+  q(status=1)
+}
+
