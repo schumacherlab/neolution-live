@@ -1,5 +1,106 @@
 performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,proccutoff,exprcutoff){
+  # create dir for temp files
+  dir.create(path = "./tmp",
+             showWarnings=FALSE)
   
+  # get some info on dataset
+  fileName = gsub(pattern = "\\..+$",
+                  replacement = "",
+                  x = basename(file))
+  dirPath = dirname(file)
+  
+  # import data & clean up
+  sequenceInfo=readFastaFile(file=file)
+  
+  epitopePredictions=foreach(i=1:nrow(sequenceInfo)) %dopar% {
+    # for each sequence line, make list of peptides
+    # and make vector containing sequence peptide stretches
+    peptideList=buildPeptideList(sequences = sequenceInfo[i,],
+                                 peptidelength = peptidelength)
+    peptideStretchVector=sequenceInfo[i,]$sequence
+    
+    # if peptides found, move to next line
+    if(nrow(peptideList)<1){
+      # setTxtProgressBar(progressBar, i)
+      mergedPredictions=data.table()
+      
+      return(mergedPredictions)
+    }
+    
+    # perform affinity & processing predictions
+    affinityAndProcessingPredictions=performParallelPredictions(peptides = peptideList,
+                                                                peptidestretch = peptideStretchVector,
+                                                                allele = allele,
+                                                                peptidelength = peptidelength)
+    
+    # apply various cutoffs
+    affinityAndProcessingPredictionsWithFiltersApplied=subset(x = affinityAndProcessingPredictions,
+                                                              subset = affinityAndProcessingPredictions[[paste0(allele,"affinity")]] <= affcutoff 
+                                                              & processing_score >= proccutoff
+                                                              # & rna_expression_fpkm > exprcutoff
+    )
+    
+    # determine self-sim
+    
+    ### use self-sim which supports 9, 10 and 11mers; get from Marit
+    
+    return(list(affinityAndProcessingPredictionsWithFiltersApplied,affinityAndProcessingPredictions))
+    
+    # setTxtProgressBar(progressBar, i)
+  }
+  # close(progressBar)
+  
+  # remove temp dir
+  file.remove("./tmp")
+  
+  # bind all relevant predictions into one table
+  epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
+  epitopePredictionsWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
+  
+  # sort tables & set new order
+  setorderv(x = epitopePredictionsAll,
+            cols = paste0(allele,"affinity"))
+  setcolorder(x=epitopePredictionsAll,
+              neworder = c("sequence_id",
+                           "peptide","c_term_aa",paste0(allele,"affinity"),"processing_score","c_term_pos"
+                           # ,"rna_expression_fpkm"
+              ))
+  
+  setorderv(x = epitopePredictionsWithFiltersApplied,
+            cols = paste0(allele,"affinity"))
+  setcolorder(x = epitopePredictionsWithFiltersApplied,
+              neworder = c("sequence_id",
+                           "peptide","c_term_aa",paste0(allele,"affinity"),"processing_score","c_term_pos"
+                           # ,"rna_expression_fpkm"
+              ))
+  
+  # calculate percentile rank
+  # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
+  
+  # write predictions to disk
+  if(nrow(epitopePredictionsWithFiltersApplied)>0){
+    write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
+                         by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","sequence_id"),
+                                                                                 table = names(epitopePredictionsWithFiltersApplied))]),
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
+              row.names = FALSE)  
+  } else {
+    write.csv(x = "No epitopes predicted",
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
+              row.names = FALSE)  
+  }
+  
+  if(nrow(epitopePredictionsAll)>0){
+    write.csv(x = unique(x = epitopePredictionsAll,
+                         by = names(epitopePredictionsAll)[-match(x = c("c_term_pos","sequence_id"),
+                                                                  table = names(epitopePredictionsAll))]),
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
+              row.names = FALSE)  
+  } else {
+    write.csv(x = "No epitopes predicted",
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
+              row.names = FALSE)  
+  }
 }
 
 performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,proccutoff,exprcutoff){
@@ -30,7 +131,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   epitopePredictions=foreach(i=1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
     # and make vector containing normal and tumor peptide stretches
-    peptideList=buildPeptideList(variant = variantInfo[i,],
+    peptideList=buildPeptideList(sequences = variantInfo[i,],
                                  peptidelength = peptidelength)
     peptideStretchVector=c(variantInfo[i,]$peptidecontextnormal,variantInfo[i,]$peptidecontexttumor)
     
