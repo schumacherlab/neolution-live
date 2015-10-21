@@ -130,11 +130,11 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
                          by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","variant_id"),
                                                                                  table = names(epitopePredictionsWithFiltersApplied))]),
-              file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
               row.names = FALSE)  
   } else {
     write.csv(x = "No epitopes predicted",
-              file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
               row.names = FALSE)  
   }
   
@@ -142,11 +142,11 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     write.csv(x = unique(x = epitopePredictionsAll,
                          by = names(epitopePredictionsAll)[-match(x = c("c_term_pos","variant_id"),
                                                                table = names(epitopePredictionsAll))]),
-              file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
               row.names = FALSE)  
   } else {
     write.csv(x = "No epitopes predicted",
-              file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
+              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
               row.names = FALSE)  
   }
 }
