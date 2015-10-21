@@ -4,8 +4,8 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
 
 performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,proccutoff,exprcutoff){
   # prepare empty table
-  epitopePredictions=data.table()
-  epitopePredictionsWithFiltersApplied=data.table()
+  # epitopePredictions=data.table()
+  # epitopePredictionsWithFiltersApplied=data.table()
   
   # get some info on dataset
   fileName = gsub(pattern = "\\..+$",
@@ -22,12 +22,12 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   variantInfo=returnProcessedVariants(id = sampleId,
                                       variants = kitchensink)
   
-  progressBar = txtProgressBar(min = 0,
-                               max = nrow(variantInfo),
-                               width = 100,
-                               style = 3)
+  # progressBar = txtProgressBar(min = 0,
+  #                              max = nrow(variantInfo),
+  #                              width = 100,
+  #                              style = 3)
   
-  for(i in 1:nrow(variantInfo)){
+  epitopePredictions=foreach(i=1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
     # and make vector containing normal and tumor peptide stretches
     peptideList=buildPeptideList(variant = variantInfo[i,],
@@ -78,8 +78,8 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                                                      y = normalAndTumorPredictions[[1]],
                                                      by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
                                                      all.x = TRUE)
-      
-      epitopePredictionsWithFiltersApplied=rbindlist(list(epitopePredictionsWithFiltersApplied,mergedTumorPredictionsWithFiltersApplied))
+    } else{
+      mergedTumorPredictionsWithFiltersApplied=data.table()
     }
     
     if (nrow(normalAndTumorPredictions[[2]])>0){
@@ -87,13 +87,19 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                               y = normalAndTumorPredictions[[1]],
                               by = c("variant_id","gene_symbol","rna_expression_fpkm","c_term_pos"),
                               all.x = TRUE)
-      
-      epitopePredictions=rbindlist(list(epitopePredictions,mergedPredictions))
+    } else{
+      mergedPredictions=data.table()
     }
     
-    setTxtProgressBar(progressBar, i)
+    return(list(mergedTumorPredictionsWithFiltersApplied,mergedPredictions))
+    
+    # setTxtProgressBar(progressBar, i)
   }
-  close(progressBar)
+  # close(progressBar)
+  
+  epitopePredictionsTumorWithFiltersApplied=sapply(seq(1,length(epitopePredictions),1), function(x) rbindlist(list(epitopePredictions)))
+  
+  epitopePredictionsAll=rbindlist(list(epitopePredictions))
   
   # sort tables & set new order
   setorderv(x = epitopePredictions,
