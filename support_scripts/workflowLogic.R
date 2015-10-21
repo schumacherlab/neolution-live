@@ -104,12 +104,11 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   }
   # close(progressBar)
   
-  epitopePredictionsTumorWithFiltersApplied=sapply(seq(1,length(epitopePredictions),1), function(x) rbindlist(list(epitopePredictions)))
-  
-  epitopePredictionsAll=rbindlist(list(epitopePredictions))
+  epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
+  epitopePredictionsTumorWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
   
   # sort tables & set new order
-  setorderv(x = epitopePredictions,
+  setorderv(x = epitopePredictionsAll,
             cols = paste0("tumor_",allele,"affinity"))
   setcolorder(x=epitopePredictions,
               neworder = c("variant_id","gene_symbol",
@@ -139,10 +138,10 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
               row.names = FALSE)  
   }
   
-  if(nrow(epitopePredictions)>0){
-    write.csv(x = unique(x = epitopePredictions,
-                         by = names(epitopePredictions)[-match(x = c("c_term_pos","variant_id"),
-                                                               table = names(epitopePredictions))]),
+  if(nrow(epitopePredictionsAll)>0){
+    write.csv(x = unique(x = epitopePredictionsAll,
+                         by = names(epitopePredictionsAll)[-match(x = c("c_term_pos","variant_id"),
+                                                               table = names(epitopePredictionsAll))]),
               file = paste0(dirPath,"/output/",paste(format(Sys.Date(),"%Y%m%d"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
               row.names = FALSE)  
   } else {
