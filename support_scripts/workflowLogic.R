@@ -110,7 +110,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
             cols = paste0("tumor_",allele,"affinity"))
-  setcolorder(x=epitopePredictions,
+  setcolorder(x=epitopePredictionsAll,
               neworder = c("variant_id","gene_symbol",
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
                            "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
