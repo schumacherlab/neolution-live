@@ -10,20 +10,6 @@ source("./support_scripts/peptideConstructionLogic.R")
 registerDoMC(numberOfWorkers)
 
 #scriptPath=thisDirectory()
-#setwd(scriptPath)
-
-runStart=format(Sys.Date(),"%Y%m%d")
-
-message(paste0("Input file:\t\t",filePath,"\n",
-               "MHC/HLA allele:\t\t",hlaType,"\n",
-               "Peptide length:\t\t",peptideLength,"\n",
-               "Affinity cutoff:\t",affinityCutoff," nM\n",
-               "Processsing cutoff:\t",processingCutoff,"\n",
-               "Expression cutoff:\t",expressionCutoff))
-
-# prepare empty table
-epitopePredictions=data.table()
-epitopePredictionsWithFiltersApplied=data.table()
 
 # check availability of predictors
 checkPredictorPaths(predictorPaths)
@@ -33,6 +19,15 @@ dir.create(path = "./tmp",
            showWarnings=FALSE)
 dir.create(path = paste0(dirPath,"/output"),
            showWarnings=FALSE)
+
+# collect information on run; print to console and write to log
+runStart=format(Sys.Date(),"%Y%m%d")
+message(paste0("Input file:\t\t",filePath,"\n",
+               "MHC/HLA allele:\t\t",hlaType,"\n",
+               "Peptide length:\t\t",peptideLength,"\n",
+               "Affinity cutoff:\t",affinityCutoff," nM\n",
+               "Processsing cutoff:\t",processingCutoff,"\n",
+               "Expression cutoff:\t",expressionCutoff))
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
