@@ -49,10 +49,7 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     # setTxtProgressBar(progressBar, i)
   }
   # close(progressBar)
-  
-  # remove temp dir
-  file.remove("./tmp")
-  
+
   # bind all relevant predictions into one table
   epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
   epitopePredictionsWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
@@ -200,9 +197,6 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     # setTxtProgressBar(progressBar, i)
   }
   # close(progressBar)
-  
-  # remove temp dir
-  file.remove("./tmp")
   
   # bind all relevant predictions into one table
   epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
