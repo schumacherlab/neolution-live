@@ -105,7 +105,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   # close(progressBar)
   
   epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
-  epitopePredictionsTumorWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
+  epitopePredictionsWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
   
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
