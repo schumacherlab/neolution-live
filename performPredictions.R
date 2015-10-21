@@ -38,7 +38,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Processing cutoff:\t",processingCutoff,"\n",
                  "Expression cutoff:\t",expressionCutoff,"\n\n",
                  "Affinity predictor:\t\t",predictorPaths$netMHCpan,"\n",
-                 "Processing predictor:\t",predictorPaths$netChop),
+                 "Processing predictor:\t",predictorPaths$netChop,"\n"),
       file = paste0(dirPath,"/output/",paste(runStart,fileName,hlaType,peptideLength,sep="_"),"mer_runInfo.txt"),
       append = FALSE)
 
