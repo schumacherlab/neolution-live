@@ -41,7 +41,10 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     # if no tumor peptides found, move to next line
     if(nrow(peptideList[[2]])<1){
       # setTxtProgressBar(progressBar, i)
-      next
+      mergedTumorPredictionsWithFiltersApplied=data.table()
+      mergedPredictions=data.table()
+      
+      return(list(mergedTumorPredictionsWithFiltersApplied,mergedPredictions))
     }
     
     # perform normal and tumor affinity & processing predictions
