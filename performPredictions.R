@@ -7,7 +7,7 @@ source("./support_scripts/predictionLogic.R")
 source("./support_scripts/peptideConstructionLogic.R")
 
 # register parallel back-end
-registerDoMC(numberOfWorkers)
+registerDoMC(cores = numberOfWorkers)
 
 #scriptPath=thisDirectory()
 
