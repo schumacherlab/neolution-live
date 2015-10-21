@@ -19,7 +19,7 @@ dir.create(path = paste0(dirPath,"/output"),
            showWarnings=FALSE)
 
 # collect information on run; print to console and write to log
-runStart=format(Sys.Date(),"%Y%m%d")
+runStart=format(Sys.time(),"%Y%m%d-%H%M")
 message(paste0("Input file:\t\t",filePath,"\n",
                "MHC/HLA allele:\t\t",hlaType,"\n",
                "Peptide length:\t\t",peptideLength,"\n",
