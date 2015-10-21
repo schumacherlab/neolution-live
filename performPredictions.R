@@ -45,6 +45,8 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
 
 # start branching here (use switch)
 
+### write branching logic
+
 # -s == TRUE (single seq input)
 
 # -s == FALSE (normal-tumor input)
@@ -56,9 +58,6 @@ performPairedSequencePredictions(file = filePath,
                                  exprcutoff = expressionCutoff)
 
 #====================================================================================================================================#
-
-# remove temp dir
-file.remove("./tmp")
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
