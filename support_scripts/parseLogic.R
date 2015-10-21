@@ -1,3 +1,33 @@
+readFastaFile=function(file){
+  # read data
+  lines = readLines(file)
+  
+  # find lines indices with name
+  ind = which(substr(lines, 1L, 1L) == ">")
+  
+  # find how many sequences in data
+  nseq = length(ind)
+  if(nseq == 0){
+    stop("no line starting with a > character found")
+  }
+  
+  # find start(s) and end(s) of sequence data
+  start = ind + 1
+  end = ind - 1
+  end = c(end[-1], length(lines))
+  
+  # get sequences
+  sequences = sapply(seq_len(nseq), function(i) paste(lines[start[i]:end[i]], collapse = ""))
+  
+  # get names of sequences
+  seqnames = sapply(seq_len(nseq), function(i) gsub(pattern = "^>",replacement = "",x = lines[ind[i]]))
+  
+  # put in a table
+  table=data.table(sequence_id=seqnames,sequence=sequences)
+  
+  return(table)
+}
+
 returnProcessedVariants=function(id,variants){
   variants$variant_id=paste(id,1:nrow(variants),sep = "-")
   
