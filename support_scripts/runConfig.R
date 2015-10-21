@@ -12,7 +12,12 @@ optionList = list(make_option(opt_str = c("-a", "--affinity"),
                               action = "store",
                               type = "double",
                               default = 500,
-                              help = "netMHCpan affinity cutoff (optional, default: <= %default)"),
+                              help = "netMHCpan affinity cutoff (optional, default: <= %default nM)"),
+                  make_option(opt_str = c("-r", "--rank"),
+                              action = "store",
+                              type = "integer",
+                              default = -1,
+                              help = "netMHCpan affinity percentile rank cutoff (optional, default cutoff is nM affinity)"),
                   make_option(opt_str = c("-p", "--processing"),
                               action = "store",
                               type = "double",
@@ -37,12 +42,8 @@ optionList = list(make_option(opt_str = c("-a", "--affinity"),
                               action = "store",
                               type = "integer",
                               default = NULL,
-                              help = "Peptide length (required)"),
-                  make_option(opt_str = c("-r", "--rank"),
-                              action = "store",
-                              type = "integer",
-                              default = FALSE,
-                              help = "Percentile rank cutoff (optional)"))
+                              help = "Peptide length (required)")
+)
 
 # parse commandline arguments
 commandlineArguments=parse_args(OptionParser(option_list=optionList))
