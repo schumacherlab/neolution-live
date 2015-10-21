@@ -15,8 +15,6 @@ registerDoMC(numberOfWorkers)
 checkPredictorPaths(predictorPaths)
 
 # create directory to hold logs/output, if necessary
-dir.create(path = "./tmp",
-           showWarnings=FALSE)
 dir.create(path = paste0(dirPath,"/output"),
            showWarnings=FALSE)
 
