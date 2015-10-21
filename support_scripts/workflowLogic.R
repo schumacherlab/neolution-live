@@ -3,10 +3,6 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
 }
 
 performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,proccutoff,exprcutoff){
-  # prepare empty table
-  # epitopePredictions=data.table()
-  # epitopePredictionsWithFiltersApplied=data.table()
-  
   # create dir for temp files
   dir.create(path = "./tmp",
              showWarnings=FALSE)
@@ -104,6 +100,10 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   }
   # close(progressBar)
   
+  # remove temp dir
+  file.remove("./tmp")
+  
+  # bind all relevant predictions into one table
   epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
   epitopePredictionsWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
   
