@@ -7,6 +7,10 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   # epitopePredictions=data.table()
   # epitopePredictionsWithFiltersApplied=data.table()
   
+  # create dir for temp files
+  dir.create(path = "./tmp",
+             showWarnings=FALSE)
+  
   # get some info on dataset
   fileName = gsub(pattern = "\\..+$",
                   replacement = "",
@@ -36,7 +40,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     
     # if no tumor peptides found, move to next line
     if(nrow(peptideList[[2]])<1){
-      setTxtProgressBar(progressBar, i)
+      # setTxtProgressBar(progressBar, i)
       next
     }
     
