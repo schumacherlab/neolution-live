@@ -43,20 +43,20 @@ loadSelfSimilarityMatrix=function(){
 }
 
 # simple self-similarity check
-performSimpleSelfSimilarityCheck=function(epitopes,selfepitopes,normalepitopes=NULL){
+performSimpleSelfSimilarityCheck=function(epitopes,selfepitopes,scorematrix,normalepitopes=NULL){
   # insert code for simple selfsim check
 }
 
 # extended self-similarity check using predicted human proteome epitopes (and normal epitopes)
-performExtendedSelfSimilarityCheck=function(epitopes,selfepitopes,normalepitopes=NULL){
+performExtendedSelfSimilarityCheck=function(epitopes,selfepitopes,scorematrix,normalepitopes=NULL){
   selfepitopes=c(as.character(selfepitopes), # add complete human proteome epitopes
                  as.character(normalepitopes))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
-  not_similar_to_self=mclapply(epitopes,
-                               matchManySequences,
-                               selfepitopes,
-                               scoreMatrix,
+  not_similar_to_self=mclapply(x = epitopes,
+                               FUN = matchManySequences,
+                               seq.list = selfepitopes,
+                               scorematrix = scorematrix,
                                mc.cores=3)
   
   # epitopeInputTumor=as.data.table(mclapply(epitopeInputTumor,unlist, mc.cores=(numberOfWorkers)))
