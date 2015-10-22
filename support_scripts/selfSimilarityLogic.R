@@ -39,7 +39,26 @@ loadSelfSimilarityMatrix=function(){
   return(scoreMatrix)
 }
 
-# self-similarity check functions
+# extended self-similarity check using predicted human proteome epitopes (and normal epitopes)
+performExtendedSelfSimilarityCheck=function(epitopes,selfepitopes,normalepitopes=NULL){
+  selfepitopes=c(as.character(selfepitopes), # add complete human proteome epitopes
+                 as.character(normalepitopes))  # add normal epitopes from predictions list, when available
+  
+  ## test whether peptide is similar to self
+  not_similar_to_self=mclapply(epitopes,
+                               matchManySequences,
+                               selfepitopes,
+                               scoreMatrix,
+                               mc.cores=3)
+  
+  # epitopeInputTumor=as.data.table(mclapply(epitopeInputTumor,unlist, mc.cores=(numberOfWorkers)))
+  
+  not_similar_to_self=unlist(not_similar_to_self)
+  
+  return(not_similar_to_self)
+}
+
+# extended self-similarity check
 matchManySequences=function(single.seq, seq.list, scoreMatrix) {
   all(sapply(seq.list, function(seq) matchSequences(single.seq, seq, scoreMatrix)$keep.in.list))
 }
@@ -80,25 +99,4 @@ matchSequences=function(seq1, seq2, scoreMatrix, threshold=Inf) {
         r$n.mutations >= 2 & r$n.mutations.p6.p7.and.p8 >= 2  # the total # of mutations equals 2 and are both located on the right side of p5
     )
   return(r)
-}
-
-## perform self-similarity check
-performSelfSimilarityCheck=function(epitopeInputNormal,epitopeInputTumor,epitopeInputSelf){
-  tumorPeptides=as.character(epitopeInputTumor$PEPTIDE)
-  selfPeptides=c(as.character(epitopeInputSelf$PEPTIDE),
-                  as.character(epitopeInputNormal$PEPTIDE_NORMAL)) # self-sim testing with complete human proteome peptides (500 nM & 0.5 chop score cutoff) + WT peptides from predictions list (500nM & 0.5 chop score cutoff)
-  
-  ## test whether peptide is similar to self
-  epitopeInputTumor$NON_SELF=mclapply(tumorPeptides,
-                                      matchManySequences,
-                                      selfPeptides,
-                                      scoreMatrix,
-                                      mc.cores=(numberOfWorkers))
-
-  epitopeInputTumor=as.data.table(mclapply(epitopeInputTumor,unlist, mc.cores=(numberOfWorkers)))
-  
-  # filter duplicate rows without taking SAMPLE_ID into account, use SAMPLE_ID for production code
-  #epitopeInputTumor=unique(epitopeInputTumor,by=c(colnames(epitopeInputTumor)[-match("SAMPLE_ID",colnames(epitopeInputTumor))]))
-  epitopeInputTumor=unique(epitopeInputTumor,by=colnames(epitopeInputTumor))
-  return(epitopeInputTumor)
 }
