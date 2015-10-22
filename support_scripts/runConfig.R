@@ -7,6 +7,9 @@ numberOfWorkers=10
 predictorPaths=data.table(netMHCpan="/home/NFS/users/l.fanchi/netMHCpan-2.4/netMHCpan",
                           netChop="/home/NFS/users/l.fanchi/netchop-3.1/bin/netChop")
 
+# set path of self-epitope lists
+selfEpitopeListPath="./selflists_v2.4"
+
 # commandline option specification, do not change
 optionList = list(make_option(opt_str = c("-f", "--file"),
                               action = "store",
