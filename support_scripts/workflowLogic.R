@@ -40,10 +40,6 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                                                               # & rna_expression_fpkm > exprcutoff
     )
     
-    # determine self-sim
-    
-    ### use self-sim which supports 9, 10 and 11mers; get from Marit
-    
     return(list(affinityAndProcessingPredictionsWithFiltersApplied,affinityAndProcessingPredictions))
     
     # setTxtProgressBar(progressBar, i)
@@ -120,10 +116,6 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   variantInfo=returnProcessedVariants(id = sampleId,
                                       variants = kitchensink)
   
-  # progressBar = txtProgressBar(min = 0,
-  #                              max = nrow(variantInfo),
-  #                              width = 100,
-  #                              style = 3)
   
   epitopePredictions=foreach(i=1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
@@ -134,7 +126,6 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     
     # if no tumor peptides found, move to next line
     if(nrow(peptideList[[2]])<1){
-      # setTxtProgressBar(progressBar, i)
       mergedTumorPredictionsWithFiltersApplied=data.table()
       mergedPredictions=data.table()
       
@@ -168,11 +159,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                                               subset = normalAndTumorPredictions[[2]][[paste0("tumor_",allele,"affinity")]] <= affcutoff &
                                                 tumor_processing_score >= proccutoff &
                                                 rna_expression_fpkm > exprcutoff)
-    
-    # determine self-sim
-    
-    ### use self-sim which supports 9, 10 and 11mers; get from Marit
-    
+
     # merge all info
     if (nrow(tumorPredictionsWithFiltersApplied)>0){
       mergedTumorPredictionsWithFiltersApplied=merge(x = tumorPredictionsWithFiltersApplied,
@@ -193,11 +180,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     }
     
     return(list(mergedTumorPredictionsWithFiltersApplied,mergedPredictions))
-    
-    # setTxtProgressBar(progressBar, i)
   }
-  # close(progressBar)
-  
   # bind all relevant predictions into one table
   epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
   epitopePredictionsWithFiltersApplied=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[1]]))
