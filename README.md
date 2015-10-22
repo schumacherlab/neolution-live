@@ -1,62 +1,70 @@
-### **Neolution pipeline**  
+### **Neolution-live pipeline**  
 *Pipeline for the prediction of neo-antigens*
 
 ---
 
-Two branches are currently under development:
-1. fasdb-based - uses csv input and epitopes in fasdb for initial lookups (any missing data is generated on-the-fly)
-2. live - uses vcf input and performs all predictions live (to be used e.g. for patient predictions)
+Two branches are currently under development: 
 
-**IMPORTANT:** For additional information regarding the required commandline arguments, read the **Extended information** segment below.
+1. fasdb-based - performs initial affinity lookups in the fasdb (any missing data is generated on-the-fly)  
+2. live (this one)- performs all predictions live (to be used e.g. for patient predictions)  
 
 **Usage example:**  
-`Rscript ~/fasdb/queryDatabase.R /input_data/AML.csv LAML 123`
+`Rscript performPredictions.R -f /home/NFS/users/l.fanchi/neolution-live/rte_kitchensink.txt -m A0201 -l 9`
 
-The preceding call can be run in the Terminal and will start neo-antigen predictions from line 124 for AML.csv, using RNAlikelihood scores specified in the LAML column of the RNAlikelihood file.  
+The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **rte_kitchensink.txt**, __HLA-A*02:01__ and **9-mer** peptides.
 
-Important to note is that a MySQL server should be up-and-running before starting the script (see extended info for tables).  
+**IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
 
 **Required commandline arguments:**  
 
-1. input file path + filename (e.g. /input_data/AML.csv)  
-2. tissue type (e.g. LAML)  
-3. lookup progress (e.g. 123)  
+1. full input file path
+2. hla/mhc type (e.g. A0201)
+3. peptide length (e.g. 9) 
+
+**Optional commandline arguments:**  
+
+1. netMHCpan affinity cutoff
+2. netChop processing cutoff
+3. rna expression cutoff
+4. simple self-similarity check (9-, 10-, 11-mers)
+5. extended self-similarity check (9-mers only)
+6. single sequence input (not paired tumor-normal)
 
 ---
 
-#### **Explanation of commandline arguments:**
+`Rscript performPredictions.R --help`  
 
-@1 **input file** should be a vcf file containing the variants
+```
+Usage: performPredictions.R [options]
 
-@2 **tissue type** depends on RNA expression data used; for RNAlikelihood score the following tissue type codes can be used:
+Options:
+	-f FILE, --file=FILE
+		Full path to file containing variant calls (required)
 
-| Cancer type | Tissue type code | Cancer type | Tissue type code |
-|-----------------------------|----|-------------|------|
-|ALL (acute lymphoid leukemia)|DLBC|Lung Adeno|LUAD|
-|AML (acute myeloid leukemia)|LAML|Lung Small Cell|LUSMC|
-|Bladder|BLCA|Lung Squamous Cell|LUSC|
-|Breast|BRCA|Lymphoma B-cell|DLBC|
-|Cervix|DLBC|Medulloblastoma|GBM|
-|CLL (chronic lymphoid leukemia)|CESC|Melanoma|SKCM|
-|Colorectum|COAD|Myeloma|DLBC|
-|Esophageal|STAD|Neuroblastoma|ACC|
-|Glioblastoma|GBM|Ovary|OV|
-|Glioma (Low grade)|LGG|Pancreas|PAAD|
-|Head and Neck|HNSC|Pilocytic Astrocytoma|LGG|
-|Kidney Chromophobe|KICH|Prostate|PRAD|
-|Kidney Clear Cell|KIRC|Stomach|STAD|
-|Kidney Papillary|KIRP|Thyroid|THCA|
-|Liver|LIHC|Uterus|UCEC|
+	-m MHC, --mhc=MHC
+		MHC/HLA allele, formatted as follows: A0201 (required)
 
-@3 **lookup progress** specifies where to start in input file, starts at passed index +1; is automatically obtained from MySQL server when lookups are controlled through masterLookupController.R
+	-l LENGTH, --length=LENGTH
+		Peptide length (required)
 
----
+	-a AFFINITY, --affinity=AFFINITY
+		netMHCpan affinity cutoff (optional, default: <= 500 nM)
 
-#### **MySQL database definition:**
+	-p PROCESSING, --processing=PROCESSING
+		netChop processing score cutoff (optional, default: >= 0.5)
 
-The MySQL database has been filled with information obtained from the group of Michael Stratton at the Sanger Institute. They generated the following data by making all possible mutations in the coding sequence of all canonical transcripts contained in Ensembl version 58.
+	-e EXPRESSION, --expression=EXPRESSION
+		RNA expression cutoff (optional, default: > 0)
 
-| Table | Contents | Headers |
-|-------|----------|---------|
-|lookupProgress| Index of last processed line per dataset | 'dataset' ; 'progress' ; 'total' |
-|perPepAffinityScores_NEW| MHC binding affinity scores for all generated peptides | 'peptide' ; 'A0101affinity' ; 'A0201affinity' ; 'A0301affinity' ; 'B0702affinity' ; 'B0801affinity' |
+	-s, --single
+		Single sequence predictions (not paired normal-tumor) (optional, default: FALSE)
+
+	--selfsim
+		Perform simple self-similarity check; compatible with 9-, 10-, 11-mers (optional, default: FALSE)
+
+	--extselfsim
+		Perform extended self-similarity check; only compatible with 9-mers, requires HLA-matched self-epitope list (optional, default: FALSE)
+
+	-h, --help
+		Show this help message and exit
+```
