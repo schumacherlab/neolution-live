@@ -206,16 +206,16 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   setorderv(x = epitopePredictionsAll,
             cols = paste0("tumor_",allele,"affinity"))
   setcolorder(x=epitopePredictionsAll,
-              neworder = c("variant_id","gene_symbol",
+              neworder = c("variant_id","gene_symbol","c_term_pos",
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
-                           "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
+                           "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","rna_expression_fpkm"))
   
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = paste0("tumor_",allele,"affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
-              neworder = c("variant_id","gene_symbol",
+              neworder = c("variant_id","gene_symbol","c_term_pos",
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
-                           "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","c_term_pos","rna_expression_fpkm"))
+                           "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","rna_expression_fpkm"))
   
   # calculate percentile rank
   # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
