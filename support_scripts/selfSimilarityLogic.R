@@ -57,7 +57,7 @@ performExtendedSelfSimilarityCheck=function(epitopes,selfepitopes,scorematrix,no
                                FUN = matchManySequences,
                                seq.list = selfepitopes,
                                scorematrix = scorematrix,
-                               mc.cores=3)
+                               mc.cores=15)
   
   # epitopeInputTumor=as.data.table(mclapply(epitopeInputTumor,unlist, mc.cores=(numberOfWorkers)))
   
