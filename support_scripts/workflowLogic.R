@@ -58,7 +58,7 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   setorderv(x = epitopePredictionsAll,
             cols = paste0(allele,"affinity"))
   setcolorder(x=epitopePredictionsAll,
-              neworder = c("sequence_id",
+              neworder = c("sequence_id","allele","xmer",
                            "peptide","c_term_aa","c_term_pos",paste0(allele,"affinity"),"processing_score"
                            # ,"rna_expression_fpkm"
               ))
@@ -66,7 +66,7 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = paste0(allele,"affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
-              neworder = c("sequence_id",
+              neworder = c("sequence_id","allele","xmer",
                            "peptide","c_term_aa","c_term_pos",paste0(allele,"affinity"),"processing_score"
                            # ,"rna_expression_fpkm"
               ))
@@ -224,14 +224,14 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   setorderv(x = epitopePredictionsAll,
             cols = paste0("tumor_",allele,"affinity"))
   setcolorder(x=epitopePredictionsAll,
-              neworder = c("variant_id","gene_symbol","c_term_pos",
+              neworder = c("variant_id","gene_symbol","c_term_pos","allele","xmer",
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
                            "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","rna_expression_fpkm"))
   
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = paste0("tumor_",allele,"affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
-              neworder = c("variant_id","gene_symbol","c_term_pos",
+              neworder = c("variant_id","gene_symbol","c_term_pos","allele","xmer",
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
                            "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","rna_expression_fpkm"))
   
