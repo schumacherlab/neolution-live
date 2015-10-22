@@ -25,7 +25,9 @@ message(paste0("Input file:\t\t",filePath,"\n",
                "Peptide length:\t\t",peptideLength,"\n",
                "Affinity cutoff:\t",affinityCutoff," nM\n",
                "Processsing cutoff:\t",processingCutoff,"\n",
-               "Expression cutoff:\t",expressionCutoff))
+               "Expression cutoff:\t",expressionCutoff,"\n",
+               "Simple self-similarity:\t",doSimpleSelfSimilarity,"\n",
+               "Extended self-similarity:\t",doExtendedSelfSimilarity,"\n"))
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
@@ -36,14 +38,16 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Peptide length:\t\t\t",peptideLength,"\n",
                  "Affinity cutoff:\t\t",affinityCutoff," nM\n",
                  "Processing cutoff:\t",processingCutoff,"\n",
-                 "Expression cutoff:\t",expressionCutoff,"\n\n",
+                 "Expression cutoff:\t",expressionCutoff,"\n",
+                 "Simple self-similarity:\t",doSimpleSelfSimilarity,"\n",
+                 "Extended self-similarity:\t",doExtendedSelfSimilarity,"\n\n",
                  "Affinity predictor:\t\t",predictorPaths$netMHCpan,"\n",
                  "Processing predictor:\t",predictorPaths$netChop,"\n"),
       file = paste0(dirPath,"/output/",paste(runStart,fileName,hlaType,peptideLength,sep="_"),"mer_runInfo.txt"),
       append = FALSE)
 
 
-# check whether or not we want single seq predictions or paired normal-tumor predictions
+# check if we want single seq predictions or paired normal-tumor predictions
 switch(EXPR = as.character(doSingleSequencePrediction),
        # --single == TRUE (single seq input)
        "TRUE" = performSingleSequencePredictions(file = filePath,
