@@ -76,42 +76,55 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                            # ,"rna_expression_fpkm"
               ))
   
+  # write filtered and unfiltered predictions to disk
+  writePredictionsToDisk(table = epitopePredictionsAll,
+                         excludecols = c("c_term_pos","sequence_id"),
+                         dirpath = dirPath,
+                         filename = fileName,
+                         allele = hlaType,
+                         peptidelength= peptideLength,
+                         suffix = "_unfiltered")
+  
+  writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                         excludecols = c("c_term_pos","sequence_id"),
+                         dirpath = dirPath,
+                         filename = fileName,
+                         allele = hlaType,
+                         peptidelength= peptideLength,
+                         suffix = "_no_selfsim")
+  
   # determine self-sim
   if (doExtendedSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
                                                                                                   selfepitopes = selfEpitopes$peptide,
                                                                                                   scorematrix = scoreMatrix)]
+    
+    # filter for epitopes passing self-sim
+    epitopePredictionsWithFiltersAppliedPassedSelfSim=subset(x = epitopePredictionsWithFiltersApplied,
+                                                             subset = different_from_self == TRUE)
+    
+    # write different_from_self epitopes to disk
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
+                           excludecols = c("c_term_pos","sequence_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = hlaType,
+                           peptidelength= peptideLength)
   } else if (doSimpleSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
                                                                                                 selfepitopes = selfEpitopes$peptide)]
-  }
-  
-  # calculate percentile rank
-  # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
-  
-  # write predictions to disk
-  if(nrow(epitopePredictionsWithFiltersApplied)>0){
-    write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
-                         by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","sequence_id"),
-                                                                                 table = names(epitopePredictionsWithFiltersApplied))]),
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),fileName,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
-              row.names = FALSE)  
-  } else {
-    write.csv(x = "No epitopes predicted",
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),fileName,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
-              row.names = FALSE)  
-  }
-  
-  if(nrow(epitopePredictionsAll)>0){
-    write.csv(x = unique(x = epitopePredictionsAll,
-                         by = names(epitopePredictionsAll)[-match(x = c("c_term_pos","sequence_id"),
-                                                                  table = names(epitopePredictionsAll))]),
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),fileName,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
-              row.names = FALSE)  
-  } else {
-    write.csv(x = "No epitopes predicted",
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),fileName,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
-              row.names = FALSE)  
+    
+    # filter for epitopes passing self-sim
+    epitopePredictionsWithFiltersAppliedPassedSelfSim=subset(x = epitopePredictionsWithFiltersApplied,
+                                                             subset = different_from_self == TRUE)
+    
+    # write different_from_self epitopes to disk
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
+                           excludecols = c("c_term_pos","sequence_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = hlaType,
+                           peptidelength= peptideLength)
   }
 }
 
@@ -227,43 +240,56 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
                            "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","rna_expression_fpkm"))
   
+  # write predictions to disk
+  writePredictionsToDisk(table = epitopePredictionsAll,
+                         excludecols = c("c_term_pos","variant_id"),
+                         dirpath = dirPath,
+                         filename = fileName,
+                         allele = hlaType,
+                         peptidelength= peptideLength,
+                         suffix = "_unfiltered")
+  
+  writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                         excludecols = c("c_term_pos","variant_id"),
+                         dirpath = dirPath,
+                         filename = fileName,
+                         allele = hlaType,
+                         peptidelength= peptideLength,
+                         suffix = "_no_selfsim")
+  
   # determine self-sim
   if (doExtendedSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                   selfepitopes = selfEpitopes$peptide,
                                                                                                   scorematrix = scoreMatrix,
                                                                                                   normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
+    
+    # filter for epitopes passing self-sim
+    epitopePredictionsWithFiltersAppliedPassedSelfSim=subset(x = epitopePredictionsWithFiltersApplied,
+                                                             subset = different_from_self == TRUE)
+    
+    # write different_from_self epitopes to disk
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
+                           excludecols = c("c_term_pos","variant_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = hlaType,
+                           peptidelength= peptideLength)
   } else if (doSimpleSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                 selfepitopes = selfEpitopes$peptide,
                                                                                                 normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
-  }
-  
-  # calculate percentile rank
-  # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
-  
-  # write predictions to disk
-  if(nrow(epitopePredictionsWithFiltersApplied)>0){
-    write.csv(x = unique(x = epitopePredictionsWithFiltersApplied,
-                         by = names(epitopePredictionsWithFiltersApplied)[-match(x = c("c_term_pos","variant_id"),
-                                                                                 table = names(epitopePredictionsWithFiltersApplied))]),
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
-              row.names = FALSE)  
-  } else {
-    write.csv(x = "No epitopes predicted",
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes.csv"),
-              row.names = FALSE)  
-  }
-  
-  if(nrow(epitopePredictionsAll)>0){
-    write.csv(x = unique(x = epitopePredictionsAll,
-                         by = names(epitopePredictionsAll)[-match(x = c("c_term_pos","variant_id"),
-                                                               table = names(epitopePredictionsAll))]),
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
-              row.names = FALSE)  
-  } else {
-    write.csv(x = "No epitopes predicted",
-              file = paste0(dirPath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),sampleId,allele,peptidelength,sep="_"),"mer_epitopes_unfiltered.csv"),
-              row.names = FALSE)  
+    
+    # filter for epitopes passing self-sim
+    epitopePredictionsWithFiltersAppliedPassedSelfSim=subset(x = epitopePredictionsWithFiltersApplied,
+                                                             subset = different_from_self == TRUE)
+    
+    # write different_from_self epitopes to disk
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
+                           excludecols = c("c_term_pos","variant_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = hlaType,
+                           peptidelength= peptideLength)
   }
 }
