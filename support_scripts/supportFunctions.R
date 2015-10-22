@@ -31,7 +31,22 @@ thisDirectory=function() {
   }
 }
 
-# allow natural sorting on multiple columns
+# wrapper for writing predictions to disk
+writePredictionsToDisk=function(table,excludecols="c_term_pos",dirpath,filename,allele,peptidelength,suffix=NULL){
+  if(nrow(table)>0){
+    write.csv(x = unique(x = table,
+                         by = names(table)[-match(x = excludecols,
+                                                  table = names(table))]),
+              file = paste0(dirpath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),filename,allele,peptidelength,sep="_"),"mer_epitopes",suffix,".csv"),
+              row.names = FALSE)  
+  } else {
+    write.csv(x = "No epitopes predicted",
+              file = paste0(dirpath,"/output/",paste(format(Sys.time(),"%Y%m%d-%H%M"),filename,allele,peptidelength,sep="_"),"mer_epitopes",suffix,".csv"),
+              row.names = FALSE)  
+  }
+}
+
+# natural sorting on multiple columns
 multiMixedOrder=function(..., na.last = TRUE, decreasing = FALSE){
   do.call(order, c(
     lapply(list(...), function(l){
@@ -45,7 +60,7 @@ multiMixedOrder=function(..., na.last = TRUE, decreasing = FALSE){
   ))
 }
 
-# check for presence of necessary tools
+# check presence of necessary tools
 checkPredictorPaths=function(paths){
   if (!all(sapply(paths,file.exists))){
     stop(paste0("One or more predictors not found, please check runConfig.R. Expected paths are:\n",
