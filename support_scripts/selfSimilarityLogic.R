@@ -1,28 +1,21 @@
 # load self-epitope lists
-#message("********** Loading self-epitope lists")
-if(all(sapply(paste0(selfPeptideListPath,"/",selfPeptideListBaseName,"_",
-                     hlaTypes,"_",
-                     peptideLength,
-                     "mer_epitopes.csv"),
-              file.exists,
-              USE.NAMES = FALSE))){
-  selfEpitopes=vector("list", length(hlaTypes))
-  for(i in 1:length(hlaTypes)){
-    selfEpitopes[[i]]=fread(paste0(selfPeptideListPath,"/",selfPeptideListBaseName,"_",
-                                   hlaTypes[i],"_",
-                                   peptideLength,
-                                   "mer_epitopes.csv"),
-                            header=TRUE,
-                            stringsAsFactors=FALSE,
-                            drop = "V1")
+loadSelfEpitopeList=function(path,allele){
+  availableSelfLists=dir(path = path,
+                         pattern = allele,
+                         include.dirs = FALSE,
+                         full.names = TRUE)
+  
+  if(length(availableSelfLists)==1){
+    selfEpitopes=fread(availableSelfLists,
+                       header=TRUE,
+                       stringsAsFactors=FALSE,
+                       drop = "V1")
+    return(selfEpitopes)
   }
-}else{
-  stop(paste0("One or more self-peptide lists not found, please check runConfig.R. Expected paths are:\n",
-              paste0(selfPeptideListPath,"/",selfPeptideListBaseName,"_",
-                     hlaTypes,"_",
-                     peptideLength,
-                     "mer_epitopes.csv",
-                     collapse = "\n")))
+  else {
+    stop(paste0("Zero or more than one self-epitope lists found, 
+                please make sure only 1 list per HLA allele is present in ",path))
+  }
 }
 
 # prepare matrix used in self-similarity function
