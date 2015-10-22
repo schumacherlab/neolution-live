@@ -79,7 +79,8 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   # determine self-sim
   if (doExtendedSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
-                                                                                                  selfepitopes = selfEpitopes$peptide)]
+                                                                                                  selfepitopes = selfEpitopes$peptide,
+                                                                                                  scorematrix = scoreMatrix)]
   } else if (doSimpleSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
                                                                                                 selfepitopes = selfEpitopes$peptide)]
@@ -230,6 +231,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   if (doExtendedSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                   selfepitopes = selfEpitopes$peptide,
+                                                                                                  scorematrix = scoreMatrix,
                                                                                                   normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
   } else if (doSimpleSelfSimilarity){
     epitopePredictionsWithFiltersApplied[,different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
