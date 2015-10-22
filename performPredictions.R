@@ -4,6 +4,7 @@ source("./support_scripts/runConfig.R")
 source("./support_scripts/parseLogic.R")
 source("./support_scripts/workflowLogic.R")
 source("./support_scripts/predictionLogic.R")
+source("./support_scripts/selfSimilarityLogic.R")
 source("./support_scripts/peptideConstructionLogic.R")
 
 # register parallel back-end
@@ -26,7 +27,7 @@ message(paste0("Input file:\t\t",filePath,"\n",
                "Affinity cutoff:\t",affinityCutoff," nM\n",
                "Processsing cutoff:\t",processingCutoff,"\n",
                "Expression cutoff:\t",expressionCutoff,"\n",
-               "Simple self-similarity:\t",doSimpleSelfSimilarity,"\n",
+               "Simple self-similarity:\t\t",doSimpleSelfSimilarity,"\n",
                "Extended self-similarity:\t",doExtendedSelfSimilarity,"\n"))
 
 # write run info to log
