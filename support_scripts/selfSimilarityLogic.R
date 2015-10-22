@@ -64,16 +64,21 @@ performExtendedSelfSimilarityCheck=function(epitopes,selfepitopes,normalepitopes
 }
 
 # extended self-similarity check
-matchManySequences=function(single.seq, seq.list, scoreMatrix) {
-  all(sapply(seq.list, function(seq) matchSequences(single.seq, seq, scoreMatrix)$keep.in.list))
+matchManySequences=function(single.seq, seq.list, scorematrix) {
+  all(sapply(seq.list, function(seq) matchSequences(seq1 = single.seq,
+                                                    seq2 = seq,
+                                                    scorematrix = scorematrix)$keep.in.list))
 }
 
-matchSequences=function(seq1, seq2, scoreMatrix, threshold=Inf) {
+matchSequences=function(seq1, seq2, scorematrix, threshold=Inf) {
   # Split the sequences into vectors of amino acids
-  peptide.list <- strsplit(c(seq1, seq2), '')
+  peptide.list <- strsplit(x = c(seq1, seq2),
+                           split = '')
   
   # Lookup the score in 'm' function position (p1, p2, ...) 
-  score.vec <- mapply(peptide.list[[1]], peptide.list[[2]], FUN=function(aa1, aa2) scoreMatrix[aa1, aa2], USE.NAMES=FALSE)
+  score.vec <- mapply(peptide.list[[1]], peptide.list[[2]],
+                      FUN=function(aa1, aa2) scorematrix[aa1, aa2],
+                      USE.NAMES=FALSE)
   
   # Vector of matches by position
   p.matches <- peptide.list[[1]] == peptide.list[[2]]
