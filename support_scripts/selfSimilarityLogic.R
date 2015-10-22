@@ -10,6 +10,9 @@ loadSelfEpitopeList=function(path,allele){
                        header=TRUE,
                        stringsAsFactors=FALSE,
                        drop = "V1")
+    setnames(x = selfEpitopes,
+             old = names(selfEpitopes),
+             new = tolower(names(selfEpitopes)))
     return(selfEpitopes)
   }
   else {
