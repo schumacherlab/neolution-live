@@ -19,11 +19,13 @@ performParallelPredictions=function(peptides,peptidestretch,allele,peptidelength
     predictions=merge(x = predictions,
                       y = processingPredictions,
                       by = "c_term_pos")
+    
+    predictions[,xmer:=peptidelength]
   } else {
-    predictions=as.data.table(setNames(replicate(n = 8,
+    predictions=as.data.table(setNames(replicate(n = 10,
                                                  expr = numeric(0),
                                                  simplify = FALSE),
-                                       c("c_term_pos","peptide","variant_id","gene_symbol","rna_expression_fpkm",
+                                       c("c_term_pos","allele","xmer","peptide","variant_id","gene_symbol","rna_expression_fpkm",
                                          paste0(allele,"affinity"),"c_term_aa","processing_score")))
   }
   
@@ -90,7 +92,7 @@ performAffinityPredictions=function(peptides,allele,peptidelength){
             colnames(data),
             c("position","allele","peptide","variant_id","pept_score",paste0(allele,"affinity")))
   data=subset(x = data,
-              select=colnames(data[,-match(c("position","allele","variant_id","pept_score"),colnames(data)),with=FALSE]))
+              select=colnames(data[,-match(c("position","variant_id","pept_score"),colnames(data)),with=FALSE]))
   return(data)
 }
 
