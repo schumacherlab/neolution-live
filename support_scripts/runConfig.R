@@ -122,4 +122,12 @@ if (is.numeric(commandlineArguments$expression)){
   q(status=1)
 }
 
+if (commandlineArguments$selfsim & commandlineArguments$extselfsim){
+  message("Please choose one type of self-similarity check, use -h for help")
+  q(status=1)
+} else {
+  doSimpleSelfSimilarity=commandlineArguments$selfsim
+  doExtendedSelfSimilarity=commandlineArguments$extselfsim
+}
+
 doSingleSequencePrediction=commandlineArguments$single
