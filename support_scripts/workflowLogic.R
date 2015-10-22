@@ -22,15 +22,13 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   }
   
   epitopePredictions=foreach(i=1:nrow(sequenceInfo)) %dopar% {
-    # for each sequence line, make list of peptides
-    # and make vector containing sequence peptide stretches
+    # for each sequence line, make list of peptides and make vector containing sequence peptide stretches
     peptideList=buildPeptideList(sequences = sequenceInfo[i,],
                                  peptidelength = peptidelength)
     peptideStretchVector=sequenceInfo[i,]$sequence
     
     # if peptides found, move to next line
     if(nrow(peptideList)<1){
-      # setTxtProgressBar(progressBar, i)
       mergedPredictions=data.table()
       
       return(mergedPredictions)
@@ -50,10 +48,7 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     )
     
     return(list(affinityAndProcessingPredictionsWithFiltersApplied,affinityAndProcessingPredictions))
-    
-    # setTxtProgressBar(progressBar, i)
   }
-  # close(progressBar)
 
   # bind all relevant predictions into one table
   epitopePredictionsAll=rbindlist(lapply(seq(1,length(epitopePredictions),1), function(x) epitopePredictions[[x]][[2]]))
