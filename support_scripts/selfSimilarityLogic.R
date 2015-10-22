@@ -80,9 +80,9 @@ matchSequences=function(seq1, seq2, scoreMatrix, threshold=Inf) {
   
   # Return many stats
   r <- list(
-    #seq1                             = seq1,
-    #seq2                             = seq2,
-    #change                           = paste(peptide.list[[1]], '->', peptide.list[[2]]),
+    # seq1                             = seq1,
+    # seq2                             = seq2,
+    # change                           = paste(peptide.list[[1]], '->', peptide.list[[2]]),
     p.matches                       = p.matches,
     score.per.p                     = score.vec,
     total.score                     = sum(score.vec[c(3,4,5,6,7,8)]),
@@ -93,15 +93,11 @@ matchSequences=function(seq1, seq2, scoreMatrix, threshold=Inf) {
   )
   r$keep.in.list <-
     (
-      r$n.mutations >= 3                    # the total number of mutations within p3-p8 equals 2
-      |
-        r$total.score <= 5                    # the total PMBEC score equals 5 or less on p3-p8 
-      |
-        !r$p5.match                       # p5 is a mismatch
-      |
-        r$n.mutations >= 2 & r$n.mutations.p3.and.p4 == 2     # the total # of mutations equals 2 and are both located on the left side of p5
-      |
-        r$n.mutations >= 2 & r$n.mutations.p6.p7.and.p8 >= 2  # the total # of mutations equals 2 and are both located on the right side of p5
+      r$n.mutations >= 3     # the total number of mutations within p3-p8 equals 2
+      | r$total.score <= 5   # the total PMBEC score equals 5 or less on p3-p8 
+      | !r$p5.match          # p5 is a mismatch
+      | r$n.mutations >= 2 & r$n.mutations.p3.and.p4 == 2     # the total # of mutations equals 2 and are both located on the left side of p5
+      | r$n.mutations >= 2 & r$n.mutations.p6.p7.and.p8 >= 2  # the total # of mutations equals 2 and are both located on the right side of p5
     )
   return(r)
 }
