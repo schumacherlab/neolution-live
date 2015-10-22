@@ -59,7 +59,7 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
             cols = paste0(allele,"affinity"))
   setcolorder(x=epitopePredictionsAll,
               neworder = c("sequence_id",
-                           "peptide","c_term_aa",paste0(allele,"affinity"),"processing_score","c_term_pos"
+                           "peptide","c_term_aa","c_term_pos",paste0(allele,"affinity"),"processing_score"
                            # ,"rna_expression_fpkm"
               ))
   
@@ -67,7 +67,7 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
             cols = paste0(allele,"affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
               neworder = c("sequence_id",
-                           "peptide","c_term_aa",paste0(allele,"affinity"),"processing_score","c_term_pos"
+                           "peptide","c_term_aa","c_term_pos",paste0(allele,"affinity"),"processing_score"
                            # ,"rna_expression_fpkm"
               ))
   
