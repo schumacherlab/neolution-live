@@ -53,7 +53,7 @@ performExtendedSelfSimilarityCheck=function(epitopes,selfepitopes,scorematrix,no
                  as.character(normalepitopes))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
-  not_similar_to_self=mclapply(x = epitopes,
+  not_similar_to_self=mclapply(X = epitopes,
                                FUN = matchManySequences,
                                seq.list = selfepitopes,
                                scorematrix = scorematrix,
