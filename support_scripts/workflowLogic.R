@@ -12,6 +12,15 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   # import data & clean up
   sequenceInfo=readFastaFile(file=file)
   
+  # if extended self-similarity check is required, load list & matrix
+  if (doExtendedSelfSimilarity){
+    selfEpitopes=loadSelfEpitopeList(path = selfEpitopeListPath,
+                                     allele = hlaType)
+    scoreMatrix=loadSelfSimilarityMatrix()
+  } else if (doSimpleSelfSimilarity){
+    ##### do we need to load stuff for simple self-sim?  
+  }
+  
   epitopePredictions=foreach(i=1:nrow(sequenceInfo)) %dopar% {
     # for each sequence line, make list of peptides
     # and make vector containing sequence peptide stretches
@@ -67,6 +76,15 @@ performSingleSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
                            # ,"rna_expression_fpkm"
               ))
   
+  # determine self-sim
+  if (doExtendedSelfSimilarity){
+    epitopePredictionsWithFiltersApplied[,different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
+                                                                                                  selfepitopes = selfEpitopes$peptide)]
+  } else if (doSimpleSelfSimilarity){
+    epitopePredictionsWithFiltersApplied[,different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
+                                                                                                selfepitopes = selfEpitopes$peptide)]
+  }
+  
   # calculate percentile rank
   # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
   
@@ -116,6 +134,14 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
   variantInfo=returnProcessedVariants(id = sampleId,
                                       variants = kitchensink)
   
+  # if extended self-similarity check is required, load list & matrix
+  if (doExtendedSelfSimilarity){
+    selfEpitopes=loadSelfEpitopeList(path = selfEpitopeListPath,
+                                     allele = hlaType)
+    scoreMatrix=loadSelfSimilarityMatrix()
+  } else if (doSimpleSelfSimilarity){
+    ##### do we need to load stuff for simple self-sim?  
+  }
   
   epitopePredictions=foreach(i=1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
@@ -199,6 +225,17 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
               neworder = c("variant_id","gene_symbol","c_term_pos",
                            "tumor_peptide","tumor_c_term_aa",paste0("tumor_",allele,"affinity"),"tumor_processing_score",
                            "normal_peptide","normal_c_term_aa",paste0("normal_",allele,"affinity"),"normal_processing_score","rna_expression_fpkm"))
+  
+  # determine self-sim
+  if (doExtendedSelfSimilarity){
+    epitopePredictionsWithFiltersApplied[,different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
+                                                                                                  selfepitopes = selfEpitopes$peptide,
+                                                                                                  normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
+  } else if (doSimpleSelfSimilarity){
+    epitopePredictionsWithFiltersApplied[,different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
+                                                                                                selfepitopes = selfEpitopes$peptide,
+                                                                                                normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
+  }
   
   # calculate percentile rank
   # epitopePredictionsWithFiltersApplied[,percentile_rank:=returnPercentileRank(epitopePredictionsWithFiltersApplied[[paste0("tumor_",allele,"affinity")]])]
