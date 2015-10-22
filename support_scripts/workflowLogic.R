@@ -168,7 +168,7 @@ performPairedSequencePredictions=function(file,allele,peptidelength,affcutoff,pr
     }
     
     # perform normal and tumor affinity & processing predictions
-    normalAndTumorPredictions=foreach(k=1:2) %dopar% {
+    normalAndTumorPredictions=foreach(k=1:2) %do% {
       performParallelPredictions(peptides = peptideList[[k]],
                                  peptidestretch = peptideStretchVector[k],
                                  allele = allele,
