@@ -123,7 +123,10 @@ if (is.numeric(commandlineArguments$expression)) {
 }
 
 if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
-  message("Please choose one type of self-similarity check, use -h for help")
+  message("Please choose ONE type of self-similarity check, use -h for help")
+  q(status = 1)
+} else if (commandlineArguments$extselfsim & peptideLength != 9) {
+  message("Extended selfsim can only be used for 9-mers, use -h for help")
   q(status = 1)
 } else {
   doSimpleSelfSimilarity = commandlineArguments$selfsim
