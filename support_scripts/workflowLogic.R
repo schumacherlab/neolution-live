@@ -12,13 +12,12 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
   # import data & clean up
   sequenceInfo = readFastaFile(file = file)
   
-  # if extended self-similarity check is required, load list & matrix
-  if (doExtendedSelfSimilarity) {
+  # load required data for self-similarity check
+  if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
     selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
-                                       allele = hlaType)
+                                       allele = allele,
+                                       peptidelength = peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
-  } else if (doSimpleSelfSimilarity) {
-    ##### do we need to load stuff for simple self-sim?  
   }
   
   epitopePredictions = foreach(i = 1:nrow(sequenceInfo)) %dopar% {
@@ -76,16 +75,16 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                          excludecols = c("c_term_pos", "sequence_id"),
                          dirpath = dirPath,
                          filename = fileName,
-                         allele = hlaType,
-                         peptidelength= peptideLength,
+                         allele = allele,
+                         peptidelength = peptidelength,
                          suffix = "_unfiltered")
   
   writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                          excludecols = c("c_term_pos", "sequence_id"),
                          dirpath = dirPath,
                          filename = fileName,
-                         allele = hlaType,
-                         peptidelength= peptideLength,
+                         allele = allele,
+                         peptidelength = peptidelength,
                          suffix = "_no_selfsim")
   
   # determine self-sim
@@ -103,11 +102,12 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            excludecols = c("c_term_pos", "sequence_id"),
                            dirpath = dirPath,
                            filename = fileName,
-                           allele = hlaType,
-                           peptidelength= peptideLength)
+                           allele = allele,
+                           peptidelength = peptidelength)
   } else if (doSimpleSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
-                                                                                                 selfepitopes = selfEpitopes$peptide)]
+                                                                                                 selfepitopes = selfEpitopes$peptide,
+                                                                                                 scorematrix = scoreMatrix)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
@@ -118,8 +118,8 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            excludecols = c("c_term_pos", "sequence_id"),
                            dirpath = dirPath,
                            filename = fileName,
-                           allele = hlaType,
-                           peptidelength= peptideLength)
+                           allele = allele,
+                           peptidelength = peptidelength)
   }
 }
 
@@ -144,12 +144,11 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                                         variants = kitchensink)
   
   # if extended self-similarity check is required, load list & matrix
-  if (doExtendedSelfSimilarity) {
+  if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
     selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
-                                       allele = hlaType)
+                                       allele = allele,
+                                       peptidelength = peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
-  } else if (doSimpleSelfSimilarity) {
-    ##### do we need to load stuff for simple self-sim?  
   }
   
   epitopePredictions = foreach(i=1:nrow(variantInfo)) %dopar% {
@@ -240,16 +239,16 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                          excludecols = c("c_term_pos", "variant_id"),
                          dirpath = dirPath,
                          filename = fileName,
-                         allele = hlaType,
-                         peptidelength= peptideLength,
+                         allele = allele,
+                         peptidelength = peptidelength,
                          suffix = "_unfiltered")
   
   writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                          excludecols = c("c_term_pos", "variant_id"),
                          dirpath = dirPath,
                          filename = fileName,
-                         allele = hlaType,
-                         peptidelength= peptideLength,
+                         allele = allele,
+                         peptidelength = peptidelength,
                          suffix = "_no_selfsim")
   
   # determine self-sim
@@ -268,11 +267,12 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                            excludecols = c("c_term_pos", "variant_id"),
                            dirpath = dirPath,
                            filename = fileName,
-                           allele = hlaType,
-                           peptidelength= peptideLength)
+                           allele = allele,
+                           peptidelength = peptidelength)
   } else if (doSimpleSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                  selfepitopes = selfEpitopes$peptide,
+                                                                                                 scorematrix = scoreMatrix,
                                                                                                  normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
     
     # filter for epitopes passing self-sim
@@ -284,7 +284,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                            excludecols = c("c_term_pos", "variant_id"),
                            dirpath = dirPath,
                            filename = fileName,
-                           allele = hlaType,
-                           peptidelength= peptideLength)
+                           allele = allele,
+                           peptidelength = peptidelength)
   }
 }
