@@ -43,7 +43,19 @@ loadSelfSimilarityMatrix = function() {
 
 # simple self-similarity check
 performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = NULL) {
-  # insert code for simple selfsim check
+  selfepitopes = c(as.character(selfepitopes), # add complete human proteome epitopes
+                   as.character(normalepitopes))  # add normal epitopes from predictions list, when available
+  
+  ## test whether peptide is similar to self
+  not_similar_to_self = mclapply(X = epitopes,
+                                 FUN = matchManySequencesSimple,
+                                 seq.list = selfepitopes,
+                                 scorematrix = scorematrix,
+                                 mc.cores = 15)
+  
+  not_similar_to_self = unlist(not_similar_to_self)
+  
+  return(not_similar_to_self)
 }
 
 # extended self-similarity check using predicted human proteome epitopes (and normal epitopes)
@@ -61,6 +73,45 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
   not_similar_to_self = unlist(not_similar_to_self)
   
   return(not_similar_to_self)
+}
+
+# simple self-similarity check
+matchManySequencesSimple = function(single.seq, seq.list, scorematrix) {
+  all(sapply(seq.list, function(seq) matchSequencesSimple(seq1 = single.seq,
+                                                          seq2 = seq,
+                                                          scorematrix = scorematrix)$keep.in.list))
+}
+
+matchSequencesSimple = function(seq1, seq2, scorematrix, threshold = Inf) {
+  # Split the sequences into vectors of amino acids
+  peptide.list <- strsplit(x = c(seq1, seq2),
+                           split = '')
+  
+  # Lookup the score in 'm' function position (p1, p2, ...) 
+  score.vec <- mapply(peptide.list[[1]], peptide.list[[2]],
+                      FUN = function(aa1, aa2) scorematrix[aa1, aa2],
+                      USE.NAMES = FALSE)
+  
+  # Vector of matches by position
+  p.matches <- peptide.list[[1]] == peptide.list[[2]]
+  
+  # Return many stats.
+  r <- list(
+    # seq1          = seq1,
+    # seq2          = seq2,
+    # change        = paste(peptide.list[[1]], '->', peptide.list[[2]]),
+    p.matches     = p.matches,
+    score.per.p   = score.vec,
+    n.mutations   = sum(!p.matches[c(3:(peptideLength - 1))]),
+    total.score   = sum(score.vec[c(3:(peptideLength - 1))])
+  )
+  
+  r$keep.in.list <-
+    (
+      r$n.mutations >= 2		# the total number of mutations within the core peptide = 2 or more
+      | r$total.score <= (peptideLength - 4)  # the total PMBEC score equals 7 or less on p3-p10
+    )
+  return(r)
 }
 
 # extended self-similarity check
