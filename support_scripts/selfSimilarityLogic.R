@@ -1,7 +1,7 @@
 # load self-epitope lists
-loadSelfEpitopeList = function(path, allele) {
+loadSelfEpitopeList = function(path, allele, peptidelength) {
   availableSelfLists = dir(path = path,
-                           pattern = allele,
+                           pattern = paste(allele, paste0(peptidelength,"mer"), sep = "_"),
                            include.dirs = FALSE,
                            full.names = TRUE)
   
@@ -16,7 +16,7 @@ loadSelfEpitopeList = function(path, allele) {
     return(selfEpitopes)
   } else {
     stop(paste0("Zero or more than one self-epitope lists found, 
-                please make sure only 1 list per HLA allele is present in ", path))
+                please make sure only 1 list per HLA & peptide length is present in ", path))
   }
 }
 
