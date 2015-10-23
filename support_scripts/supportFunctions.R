@@ -8,50 +8,50 @@ suppressPackageStartupMessages(library(doMC))
 suppressPackageStartupMessages(library(optparse))
 
 # define negation of %in% operator, returns logical vector for 'NOT IN'
-'%ni%'=Negate('%in%')
+'%ni%' = Negate('%in%')
 
 # function to make percentile rank
-returnPercentileRank = function(x) trunc(rank(x))/length(x)*100
+returnPercentileRank = function(x) trunc(rank(x)) / length(x) * 100
 
 # return directory where script is executed
-thisDirectory=function() {
+thisDirectory = function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
   needle <- "--file="
   match <- grep(needle, cmdArgs)
   if (length(match) > 0) {
     # Rscript
-    abspath=normalizePath(sub(needle, "", cmdArgs[match]))
-    absdir=dirname(abspath)
+    abspath = normalizePath(sub(needle, "", cmdArgs[match]))
+    absdir = dirname(abspath)
     return(absdir)
   } else {
     # 'source'd via R console
-    abspath=normalizePath(sys.frames()[[1]]$ofile)
-    absdir=dirname(abspath)
+    abspath = normalizePath(sys.frames()[[1]]$ofile)
+    absdir = dirname(abspath)
     return(absdir)
   }
 }
 
 # wrapper for writing predictions to disk
-writePredictionsToDisk=function(table,excludecols="c_term_pos",dirpath,filename,allele,peptidelength,suffix=NULL){
-  if(nrow(table)>0){
+writePredictionsToDisk = function(table, excludecols = "c_term_pos", dirpath, filename, allele, peptidelength, suffix = NULL) {
+  if(nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = names(table)[-match(x = excludecols,
                                                   table = names(table))]),
-              file = paste0(dirpath,"/output/",paste(runStart,filename,allele,peptidelength,sep="_"),"mer_epitopes",suffix,".csv"),
+              file = paste0(dirpath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
               row.names = FALSE)  
   } else {
     write.csv(x = "No epitopes predicted",
-              file = paste0(dirpath,"/output/",paste(runStart,filename,allele,peptidelength,sep="_"),"mer_epitopes",suffix,".csv"),
+              file = paste0(dirpath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
               row.names = FALSE)  
   }
 }
 
 # natural sorting on multiple columns
-multiMixedOrder=function(..., na.last = TRUE, decreasing = FALSE){
+multiMixedOrder = function(..., na.last = TRUE, decreasing = FALSE) {
   do.call(order, c(
     lapply(list(...), function(l){
-      if(is.character(l)){
-        factor(l, levels=mixedsort(unique(l)))
+      if(is.character(l)) {
+        factor(l, levels = mixedsort(unique(l)))
       } else {
         l
       }
@@ -61,8 +61,8 @@ multiMixedOrder=function(..., na.last = TRUE, decreasing = FALSE){
 }
 
 # check presence of necessary tools
-checkPredictorPaths=function(paths){
-  if (!all(sapply(paths,file.exists))){
+checkPredictorPaths = function(paths) {
+  if (!all(sapply(paths, file.exists))) {
     stop(paste0("One or more predictors not found, please check runConfig.R. Expected paths are:\n",
                 paste0(paths,
                        collapse = "\n")))
@@ -70,12 +70,11 @@ checkPredictorPaths=function(paths){
 }
 
 # check if rna expression data is available for input tissue type
-checkTissueTypeInput=function(inputtissue,availabletissues){
-  if (!any(inputtissue==availabletissues)){
+checkTissueTypeInput = function(inputtissue, availabletissues) {
+  if (!any(inputtissue == availabletissues)) {
     stop(paste("Input tissue type",
                 inputtissue,
                 "not supported.\nAvailable tissues:",
-                paste(availabletissues,
-                      collapse=",")))
+                paste(availabletissues, collapse = ",")))
   }
 }
