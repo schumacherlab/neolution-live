@@ -53,7 +53,7 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
   
   ## test whether peptide is similar to self
   not_similar_to_self = mclapply(X = epitopes,
-                                 FUN = matchManySequences,
+                                 FUN = matchManySequencesExtended,
                                  seq.list = selfepitopes,
                                  scorematrix = scorematrix,
                                  mc.cores = 15)
@@ -64,13 +64,13 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
 }
 
 # extended self-similarity check
-matchManySequences = function(single.seq, seq.list, scorematrix) {
-  all(sapply(seq.list, function(seq) matchSequences(seq1 = single.seq,
-                                                    seq2 = seq,
-                                                    scorematrix = scorematrix)$keep.in.list))
+matchManySequencesExtended = function(single.seq, seq.list, scorematrix) {
+  all(sapply(seq.list, function(seq) matchSequencesExtended(seq1 = single.seq,
+                                                            seq2 = seq,
+                                                            scorematrix = scorematrix)$keep.in.list))
 }
 
-matchSequences = function(seq1, seq2, scorematrix, threshold = Inf) {
+matchSequencesExtended = function(seq1, seq2, scorematrix, threshold = Inf) {
   # Split the sequences into vectors of amino acids
   peptide.list <- strsplit(x = c(seq1, seq2),
                            split = '')
@@ -98,7 +98,7 @@ matchSequences = function(seq1, seq2, scorematrix, threshold = Inf) {
   )
   r$keep.in.list <-
     (
-      r$n.mutations >= 3     # the total number of mutations within p3-p8 equals 2
+      r$n.mutations >= 3     # the total number of mutations within p3-p8 equals 3 or more
       | r$total.score <= 5   # the total PMBEC score equals 5 or less on p3-p8 
       | !r$p5.match          # p5 is a mismatch
       | r$n.mutations >= 2 & r$n.mutations.p3.and.p4 == 2     # the total # of mutations equals 2 and are both located on the left side of p5
