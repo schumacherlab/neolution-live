@@ -36,35 +36,35 @@ The call should be run from the script directory from the Terminal and will star
 
 `Rscript performPredictions.R --help`  
 
-	Usage: performPredictions.R [options]
-	
-	Options:
-		-f FILE, --file=FILE
-			Full path to file containing variant calls (required)
-	
-		-m MHC, --mhc=MHC
-			MHC/HLA allele, formatted as follows: A0201 (required)
-	
-		-l LENGTH, --length=LENGTH
-			Peptide length (required)
-	
-		-a AFFINITY, --affinity=AFFINITY
-			netMHCpan affinity cutoff (optional, default: <= 500 nM)
-	
-		-p PROCESSING, --processing=PROCESSING
-			netChop processing score cutoff (optional, default: >= 0.5)
-	
-		-e EXPRESSION, --expression=EXPRESSION
-			RNA expression cutoff (optional, default: > 0)
-	
-		-s, --single
-			Single sequence predictions (not paired normal-tumor) (optional, default: FALSE)
-	
-		--selfsim
-			Perform simple self-similarity check; compatible with 9-, 10-, 11-mers (optional, default: FALSE)
-	
-		--extselfsim
-			Perform extended self-similarity check; only compatible with 9-mers, requires HLA-matched self-epitope list (optional, default: FALSE)
-	
-		-h, --help
-			Show this help message and exit
+**Usage: performPredictions.R [options]**
+
+**Options:**  
+`-f FILE, --file=FILE`  
+*Full path to file containing variant calls (required)*
+
+`-m MHC, --mhc=MHC`  
+*MHC/HLA allele, formatted as follows: A0201 (required)*
+
+`-l LENGTH, --length=LENGTH`  
+*Peptide length (required)*
+
+`-a AFFINITY, --affinity=AFFINITY`  
+*netMHCpan affinity cutoff (optional, default: <= 500 nM)*
+
+`-p PROCESSING, --processing=PROCESSING`  
+*netChop processing score cutoff (optional, default: >= 0.5)*
+
+`-e EXPRESSION, --expression=EXPRESSION`  
+*RNA expression cutoff (optional, default: > 0)*
+
+`-s, --single`  
+*Single sequence predictions (not paired normal-tumor) (optional, default: FALSE)*
+
+`--selfsim`  
+*Perform simple self-similarity check; compatible with 9-, 10-, 11-mers (optional, default: FALSE)*
+
+`--extselfsim`  
+*Perform extended self-similarity check; only compatible with 9-mers, requires HLA-matched self-epitope list (optional, default: FALSE)*
+
+`-h, --help`  
+*Show this help message and exit*
