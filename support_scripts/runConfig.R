@@ -1,14 +1,14 @@
 #### Lookup parameters and other configuration options can be set here ####
 
 # set number of cores available for parallel processing
-numberOfWorkers=20
+numberOfWorkers = 20
 
 # set predictor paths
-predictorPaths=data.table(netMHCpan="/home/NFS/users/l.fanchi/netMHCpan-2.4/netMHCpan",
-                          netChop="/home/NFS/users/l.fanchi/netchop-3.1/bin/netChop")
+predictorPaths = data.table(netMHCpan = "/home/NFS/users/l.fanchi/netMHCpan-2.4/netMHCpan",
+                            netChop = "/home/NFS/users/l.fanchi/netchop-3.1/bin/netChop")
 
 # set path of self-epitope lists
-selfEpitopeListPath="./selflists_v2.4"
+selfEpitopeListPath = "./selflists_v2.4"
 
 # commandline option specification, do not change
 optionList = list(make_option(opt_str = c("-f", "--file"),
@@ -64,12 +64,12 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
 )
 
 # parse commandline arguments
-commandlineArguments=parse_args(OptionParser(option_list=optionList))
+commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
 # parse other arguments
 if (is.null(commandlineArguments$file)) {
   message("File input (-f or --file) is required argument, use -h for help")
-  q(status=1)
+  q(status = 1)
 } else if (file.exists(commandlineArguments$file)) {
   filePath = commandlineArguments$file
   fileName = gsub(pattern = "\\..+$",
@@ -78,56 +78,56 @@ if (is.null(commandlineArguments$file)) {
   dirPath = dirname(filePath)
 } else {
   message("Can't find file, make sure to provide full path to file")
-  q(status=1)
+  q(status = 1)
 }
 
 if (is.null(commandlineArguments$mhc)) {
   message("MHC/HLA input (-m or --mhc) is required argument, use -h for help")
-  q(status=1)
-} else if (nchar(commandlineArguments$mhc)!=5) {
+  q(status = 1)
+} else if (nchar(commandlineArguments$mhc) != 5) {
   message("MHC/HLA input should be formatted as follows: A0201")
-  q(status=1)
+  q(status = 1)
 } else {
   hlaType = toupper(commandlineArguments$mhc)
 }
 
 if (is.null(commandlineArguments$length)) {
   message("Peptide length input (-l or --length) is required argument, use -h for help")
-  q(status=1)
-} else if (commandlineArguments$length >=8 & commandlineArguments$length <=11) {
+  q(status = 1)
+} else if (commandlineArguments$length >=8 & commandlineArguments$length <= 11) {
   peptideLength = commandlineArguments$length
 } else {
   message("Peptide length input (-l or --length) should be >=8 and <= 11, use -h for help")
-  q(status=1)
+  q(status = 1)
 }
 
-if (is.numeric(commandlineArguments$affinity)){
+if (is.numeric(commandlineArguments$affinity)) {
   affinityCutoff = commandlineArguments$affinity
 } else {
   message("Affinity cutoff input (-a or --affinity) should be numeric, use -h for help")
-  q(status=1)
+  q(status = 1)
 }
 
-if (is.numeric(commandlineArguments$processing)){
+if (is.numeric(commandlineArguments$processing)) {
   processingCutoff = commandlineArguments$processing
 } else {
   message("Processing cutoff input (-p or --processing) should be numeric, use -h for help")
-  q(status=1)
+  q(status = 1)
 }
 
-if (is.numeric(commandlineArguments$expression)){
+if (is.numeric(commandlineArguments$expression)) {
   expressionCutoff = commandlineArguments$expression
 } else {
   message("Expression cutoff input (-e or --expression) should be numeric, use -h for help")
-  q(status=1)
+  q(status = 1)
 }
 
-if (commandlineArguments$selfsim & commandlineArguments$extselfsim){
+if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
   message("Please choose one type of self-similarity check, use -h for help")
-  q(status=1)
+  q(status = 1)
 } else {
-  doSimpleSelfSimilarity=commandlineArguments$selfsim
-  doExtendedSelfSimilarity=commandlineArguments$extselfsim
+  doSimpleSelfSimilarity = commandlineArguments$selfsim
+  doExtendedSelfSimilarity = commandlineArguments$extselfsim
 }
 
-doSingleSequencePrediction=commandlineArguments$single
+doSingleSequencePrediction = commandlineArguments$single
