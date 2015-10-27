@@ -51,7 +51,7 @@ performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix,
                                  FUN = matchManySequencesSimple,
                                  seq.list = selfepitopes,
                                  scorematrix = scorematrix,
-                                 mc.cores = 15)
+                                 mc.cores = 20)
   
   not_similar_to_self = unlist(not_similar_to_self)
   
@@ -68,7 +68,7 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
                                  FUN = matchManySequencesExtended,
                                  seq.list = selfepitopes,
                                  scorematrix = scorematrix,
-                                 mc.cores = 15)
+                                 mc.cores = 20)
   
   not_similar_to_self = unlist(not_similar_to_self)
   
