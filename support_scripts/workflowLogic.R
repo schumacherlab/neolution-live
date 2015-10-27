@@ -198,7 +198,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     if (nrow(tumorPredictionsWithFiltersApplied) > 0) {
       mergedTumorPredictionsWithFiltersApplied = merge(x = tumorPredictionsWithFiltersApplied,
                                                        y = normalAndTumorPredictions[[1]],
-                                                       by = c("variant_id", "gene_symbol", "rna_expression_fpkm", "c_term_pos"),
+                                                       by = c("variant_id", "gene_symbol", "rna_expression_fpkm", "c_term_pos", "xmer", "hla_allele"),
                                                        all.x = TRUE)
     } else {
       mergedTumorPredictionsWithFiltersApplied = data.table()
@@ -207,7 +207,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     if (nrow(normalAndTumorPredictions[[2]]) > 0) {
       mergedPredictions = merge(x = normalAndTumorPredictions[[2]],
                                 y = normalAndTumorPredictions[[1]],
-                                by = c("variant_id", "gene_symbol", "rna_expression_fpkm", "c_term_pos"),
+                                by = c("variant_id", "gene_symbol", "rna_expression_fpkm", "c_term_pos", "xmer", "hla_allele"),
                                 all.x = TRUE)
     } else {
       mergedPredictions = data.table()
