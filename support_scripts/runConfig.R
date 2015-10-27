@@ -60,7 +60,12 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               action = "store_true",
                               type = "logical",
                               default = FALSE,
-                              help = "Perform extended self-similarity check; only compatible with 9-mers, requires HLA-matched self-epitope list (optional, default: %default)")
+                              help = "Perform extended self-similarity check; only compatible with 9-mers (optional, default: %default)"),
+                  make_option(opt_str = c("--selflist"),
+                              action = "store_true",
+                              type = "logical",
+                              default = FALSE,
+                              help = "Self-similarity check against predicted self-epitopes, requires length- & HLA-matched list (optional, default: %default)")
 )
 
 # parse commandline arguments
