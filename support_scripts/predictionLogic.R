@@ -25,7 +25,7 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     predictions = as.data.table(setNames(replicate(n = 10,
                                                    expr = numeric(0),
                                                    simplify = FALSE),
-                                         c("c_term_pos", "allele", "xmer", "peptide", "variant_id", "gene_symbol", "rna_expression_fpkm",
+                                         c("c_term_pos", "hla_allele", "xmer", "peptide", "variant_id", "gene_symbol", "rna_expression_fpkm",
                                            paste0(allele, "affinity"), "c_term_aa", "processing_score")))
   }
   
@@ -85,12 +85,12 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
     data = as.data.table(setNames(replicate(n = 6,
                                             expr = numeric(0),
                                             simplify = FALSE),
-                                  c("position", "allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity"))))
+                                  c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity"))))
   }
   
   setnames(data,
            colnames(data),
-           c("position", "allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")))
+           c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")))
   data = subset(x = data,
                 select = colnames(data[,-match(c("position", "variant_id", "pept_score"), colnames(data)), with = FALSE]))
   return(data)
