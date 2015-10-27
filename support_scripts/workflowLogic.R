@@ -13,10 +13,16 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
   sequenceInfo = readFastaFile(file = file)
   
   # load required data for self-similarity check
-  if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
+  if ((doExtendedSelfSimilarity | doSimpleSelfSimilarity) & addSelfEpitopes) {
     selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
                                        allele = allele,
                                        peptidelength = peptidelength)
+    scoreMatrix = loadSelfSimilarityMatrix()
+  } else if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
+    selfEpitopes = as.data.table(setNames(replicate(n = 8,
+                                                    expr = numeric(0),
+                                                    simplify = FALSE),
+                                          c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score")))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
@@ -143,11 +149,17 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   variantInfo = returnProcessedVariants(id = sampleId,
                                         variants = kitchensink)
   
-  # if extended self-similarity check is required, load list & matrix
-  if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
+  # load required data for self-similarity check
+  if ((doExtendedSelfSimilarity | doSimpleSelfSimilarity) & addSelfEpitopes) {
     selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
                                        allele = allele,
                                        peptidelength = peptidelength)
+    scoreMatrix = loadSelfSimilarityMatrix()
+  } else if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
+    selfEpitopes = as.data.table(setNames(replicate(n = 8,
+                                                    expr = numeric(0),
+                                                    simplify = FALSE),
+                                          c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score")))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
