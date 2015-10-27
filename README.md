@@ -29,6 +29,7 @@ The call should be run from the script directory from the Terminal and will star
 4. simple self-similarity check (9-, 10-, 11-mers)
 5. extended self-similarity check (9-mers only)
 6. single sequence input (not paired tumor-normal)
+7. use self-epitope list
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
 
@@ -64,7 +65,10 @@ The call should be run from the script directory from the Terminal and will star
 *Perform simple self-similarity check; compatible with 9-, 10-, 11-mers (optional, default: FALSE)*
 
 `--extselfsim`  
-*Perform extended self-similarity check; only compatible with 9-mers, requires HLA-matched self-epitope list (optional, default: FALSE)*
+*Perform extended self-similarity check; only compatible with 9-mers (optional, default: FALSE)*
+
+`--selflist`  
+*Add predicted self-epitopes to self-similarity check, requires length- & HLA-matched selflist (optional, default: FALSE)*
 
 `-h, --help`  
 *Show this help message and exit*
