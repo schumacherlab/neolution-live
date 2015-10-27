@@ -57,7 +57,7 @@ The call should be run from the script directory from the Terminal and will star
 `-e EXPRESSION, --expression=EXPRESSION`  
 *RNA expression cutoff (optional, default: > 0)*
 
-`-s, --single`  
+`--single`  
 *Single sequence predictions (not paired normal-tumor) (optional, default: FALSE)*
 
 `--selfsim`  
