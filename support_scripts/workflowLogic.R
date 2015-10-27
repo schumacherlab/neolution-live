@@ -27,7 +27,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
     peptideStretchVector = sequenceInfo[i, ]$sequence
     
     # if peptides found, move to next line
-    if(nrow(peptideList) < 1) {
+    if (nrow(peptideList) < 1) {
       mergedPredictions = data.table()
       
       return(mergedPredictions)
@@ -159,7 +159,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
     
     # if no tumor peptides found, move to next line
-    if(nrow(peptideList[[2]]) < 1) {
+    if (nrow(peptideList[[2]]) < 1) {
       mergedTumorPredictionsWithFiltersApplied = data.table()
       mergedPredictions = data.table()
       
