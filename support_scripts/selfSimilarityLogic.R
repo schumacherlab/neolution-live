@@ -109,7 +109,7 @@ matchSequencesSimple = function(seq1, seq2, scorematrix, threshold = Inf) {
   r$keep.in.list <-
     (
       r$n.mutations >= 2		# the total number of mutations within the core peptide = 2 or more
-      | r$total.score <= (peptideLength - 4)  # the total PMBEC score equals 7 or less on p3-p10
+      | r$total.score <= (peptideLength - 4)  # the total PMBEC score equals 5, 6 or 7 for 9-, 10- or 11-mers, repectively
     )
   return(r)
 }
