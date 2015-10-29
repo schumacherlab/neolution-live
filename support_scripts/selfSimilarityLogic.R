@@ -43,7 +43,7 @@ loadSelfSimilarityMatrix = function() {
 
 # simple self-similarity check
 performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = NULL) {
-  selfepitopes = c(as.character(selfepitopes), # add complete human proteome epitopes
+  selfepitopes = c(as.character(unique(selfepitopes)), # add complete human proteome epitopes
                    as.character(normalepitopes))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
@@ -60,7 +60,7 @@ performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix,
 
 # extended self-similarity check using predicted human proteome epitopes (and normal epitopes)
 performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = NULL) {
-  selfepitopes = c(as.character(selfepitopes), # add complete human proteome epitopes
+  selfepitopes = c(as.character(unique(selfepitopes)), # add complete human proteome epitopes
                    as.character(normalepitopes))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self

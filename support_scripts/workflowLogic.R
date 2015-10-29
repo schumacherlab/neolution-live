@@ -88,7 +88,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (doExtendedSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
-                                                                                                   selfepitopes = unique(selfEpitopes$peptide),
+                                                                                                   selfepitopes = selfEpitopes$peptide,
                                                                                                    scorematrix = scoreMatrix)]
     
     # filter for epitopes passing self-sim
@@ -113,7 +113,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            peptidelength = peptidelength)
   } else if (doSimpleSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
-                                                                                                 selfepitopes = unique(selfEpitopes$peptide),
+                                                                                                 selfepitopes = selfEpitopes$peptide,
                                                                                                  scorematrix = scoreMatrix)]
     
     # filter for epitopes passing self-sim
@@ -277,7 +277,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (doExtendedSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
-                                                                                                   selfepitopes = unique(selfEpitopes$peptide),
+                                                                                                   selfepitopes = selfEpitopes$peptide,
                                                                                                    scorematrix = scoreMatrix,
                                                                                                    normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
     
@@ -303,7 +303,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                            peptidelength = peptidelength)
   } else if (doSimpleSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
-                                                                                                 selfepitopes = unique(selfEpitopes$peptide),
+                                                                                                 selfepitopes = selfEpitopes$peptide,
                                                                                                  scorematrix = scoreMatrix,
                                                                                                  normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
     
