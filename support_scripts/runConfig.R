@@ -1,7 +1,7 @@
 #### Lookup parameters and other configuration options can be set here ####
 
 # set number of cores available for parallel processing
-numberOfWorkers = 20
+numberOfWorkers = 32
 
 # set predictor paths
 predictorPaths = data.table(netMHCpan = "/home/NFS/users/l.fanchi/netMHCpan-2.4/netMHCpan",
