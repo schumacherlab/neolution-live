@@ -76,7 +76,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            # , "rna_expression_fpkm"
               ))
   
-  # write filtered and unfiltered predictions to disk
+  # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
                          excludecols = c("c_term_pos", "sequence_id"),
                          dirpath = dirPath,
@@ -84,16 +84,8 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                          allele = allele,
                          peptidelength = peptidelength,
                          suffix = "_unfiltered")
-  
-  writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                         excludecols = c("c_term_pos", "sequence_id"),
-                         dirpath = dirPath,
-                         filename = fileName,
-                         allele = allele,
-                         peptidelength = peptidelength,
-                         suffix = "_no_selfsim")
-  
-  # determine self-sim
+
+  # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (doExtendedSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
                                                                                                    selfepitopes = selfEpitopes$peptide,
@@ -102,6 +94,15 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
+    
+    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                           excludecols = c("c_term_pos", "sequence_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = allele,
+                           peptidelength = peptidelength,
+                           suffix = "_no_selfsim")
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
@@ -119,6 +120,15 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
     
+    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                           excludecols = c("c_term_pos", "sequence_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = allele,
+                           peptidelength = peptidelength,
+                           suffix = "_no_selfsim")
+    
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
                            excludecols = c("c_term_pos", "sequence_id"),
@@ -126,6 +136,15 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            filename = fileName,
                            allele = allele,
                            peptidelength = peptidelength)
+  } else {
+    # write aff, chop, rna filtered epitopes to disk
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                           excludecols = c("c_term_pos", "sequence_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = allele,
+                           peptidelength = peptidelength,
+                           suffix = "_no_selfsim")
   }
 }
 
@@ -246,7 +265,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score", "rna_expression_fpkm"))
   
-  # write predictions to disk
+  # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
                          excludecols = c("c_term_pos", "variant_id"),
                          dirpath = dirPath,
@@ -255,15 +274,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                          peptidelength = peptidelength,
                          suffix = "_unfiltered")
   
-  writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                         excludecols = c("c_term_pos", "variant_id"),
-                         dirpath = dirPath,
-                         filename = fileName,
-                         allele = allele,
-                         peptidelength = peptidelength,
-                         suffix = "_no_selfsim")
-  
-  # determine self-sim
+  # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (doExtendedSelfSimilarity) {
     epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                    selfepitopes = selfEpitopes$peptide,
@@ -273,6 +284,15 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
+    
+    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                           excludecols = c("c_term_pos", "variant_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = allele,
+                           peptidelength = peptidelength,
+                           suffix = "_no_selfsim")
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
@@ -291,6 +311,15 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
     
+    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                           excludecols = c("c_term_pos", "variant_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = allele,
+                           peptidelength = peptidelength,
+                           suffix = "_no_selfsim")
+    
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
                            excludecols = c("c_term_pos", "variant_id"),
@@ -298,5 +327,14 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                            filename = fileName,
                            allele = allele,
                            peptidelength = peptidelength)
+  } else {
+    # write aff, chop, rna filtered epitopes to disk
+    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
+                           excludecols = c("c_term_pos", "variant_id"),
+                           dirpath = dirPath,
+                           filename = fileName,
+                           allele = allele,
+                           peptidelength = peptidelength,
+                           suffix = "_no_selfsim")
   }
 }
