@@ -34,7 +34,8 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
 
 performAffinityPredictions = function(peptides, allele, peptidelength) {
   # write peptides to disk temporarily
-  randomNumber = sample(x = 1:10000000,
+  randomNumber = sample(x = 1:1000000000,
+                        replace = FALSE,
                         size = 1)
   
   invisible(sapply(seq(1, length(peptides), 1), function(x)
@@ -98,7 +99,8 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 
 performProcessingPredictions = function(peptidestretch) {
   # write peptidestretch to disk temporarily
-  randomNumber = sample(x = 1:10000000,
+  randomNumber = sample(x = 1:1000000000,
+                        replace = FALSE,
                         size = 1)
   
   write(x = sprintf(">1\n%s", peptidestretch),
