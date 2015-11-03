@@ -31,7 +31,7 @@ readFastaFile = function(file) {
 returnProcessedVariants = function(id, variants) {
   variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
   
-  # rename column headers in case their differ from NKI GCF columns
+  # rename column headers in case of Sanger data
   if(all(c("Gene", "transcriptid", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
     setnames(x = variants,
              old = c("Gene", "transcriptid", "Cufflinks FPKM value (expression level)"),
@@ -58,6 +58,10 @@ returnProcessedVariants = function(id, variants) {
                           by = c("peptidecontextnormal", "peptidecontexttumor"))
   
   # if alpha characters are found in cufflinks data, set to 0 (means failed or low data)
+  ############ we want to change this into something more elegant
+  ################## this way these genes will be discarded if user sets expression cutoff to > 0
+  ################## also, we want a way to handle complete absence of RNAseq data, right now would crash script (column not found when subsetting)
+  ################## we could set gene_FPKM column to 'NA', or better 'no data', in case it's not present, but would have to support this later on when filtering
   variantssubset$gene_FPKM[grepl(pattern = "[A-Za-z]",
                                  x = variantssubset$gene_FPKM)] = 0
   
