@@ -6,7 +6,7 @@
 Two branches are currently under development: 
 
 1. fasdb-based - performs initial affinity lookups in the fasdb (any missing data is generated on-the-fly)  
-2. live (this one)- performs all predictions live (to be used e.g. for patient predictions)  
+2. live (this one) - performs all predictions live (to be used e.g. for patient predictions)  
 
 **Usage example:**  
 `Rscript performPredictions.R -f /home/NFS/users/l.fanchi/neolution-live/rte_kitchensink.txt -m A0201 -l 9`
@@ -26,9 +26,9 @@ The call should be run from the script directory from the Terminal and will star
 1. netMHCpan affinity cutoff
 2. netChop processing cutoff
 3. rna expression cutoff
-4. simple self-similarity check (9-, 10-, 11-mers)
-5. extended self-similarity check (9-mers only)
-6. single sequence input (not paired tumor-normal)
+4. single sequence input (fasta input: not paired tumor-normal, no rna expression)
+5. simple self-similarity check (9-, 10-, 11-mers)
+6. extended self-similarity check (9-mers only)
 7. use self-epitope list
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
@@ -56,7 +56,7 @@ The call should be run from the script directory from the Terminal and will star
 *netChop processing score cutoff (optional, default: >= 0.5)*
 
 `-e EXPRESSION, --expression=EXPRESSION`  
-*RNA expression cutoff (optional, default: > 0)*
+*RNA expression cutoff (optional, default: > 0; use -1 for no filtering)*
 
 `--single`  
 *Single sequence predictions (not paired normal-tumor) (optional, default: FALSE)*
