@@ -33,14 +33,17 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
 }
 
 performAffinityPredictions = function(peptides, allele, peptidelength) {
-  # write peptides to disk temporarily
+  # generate random number to give to temp dir and temp file
   randomNumber = sample(x = 1:1000000000,
                         replace = FALSE,
                         size = 1)
   
+  dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
+  
+  # write peptides to disk in temp dir
   invisible(sapply(seq(1, length(peptides), 1), function(x)
     write(x = sprintf(">%i\n%s", x, peptides[x]),
-          file = paste0("./tmp/", randomNumber, "_peps.fas"),
+          file = paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
           append = TRUE,
           sep = "\n")))
   
@@ -63,10 +66,12 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                      replacement = '\\1:\\2',
                      x = allele),
     ' -l ', peptidelength,
-    ' -f ', paste0("./tmp/", randomNumber, "_peps.fas")),
+    ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
+    ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber)),
     intern = TRUE)
   
-  file.remove(paste0("./tmp/", randomNumber, "_peps.fas"))
+  file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
+  file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
   
   # perform regex on netMHC output
   if (length(output) > 57) {
@@ -98,13 +103,16 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 }
 
 performProcessingPredictions = function(peptidestretch) {
-  # write peptidestretch to disk temporarily
+  # generate random number to give to temp dir and temp file
   randomNumber = sample(x = 1:1000000000,
                         replace = FALSE,
                         size = 1)
   
+  dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
+  
+  # write peptidestretch to disk in temp dir
   write(x = sprintf(">1\n%s", peptidestretch),
-        file = paste0("./tmp/", randomNumber, "_peptidestretch.fas"),
+        file = paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
         append = TRUE,
         sep = "\n")
   
@@ -120,11 +128,13 @@ performProcessingPredictions = function(peptidestretch) {
   # perform predictions
   output = system(command = paste(# "nice -n 9",
     predictorPaths$netChop,
-    paste0("./tmp/", randomNumber, "_peptidestretch.fas"),
+    '-tdir', paste0(temporaryDirectoryPath, "/", randomNumber),
+    paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
     sep = " "),
     intern = TRUE)
   
-  file.remove(paste0("./tmp/", randomNumber, "_peptidestretch.fas"))
+  file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"))
+  file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
   
   # perform regex on netChop output
   if (length(output) > 17) {
