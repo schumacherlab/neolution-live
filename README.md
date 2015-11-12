@@ -50,10 +50,10 @@ The call should be run from the script directory from the Terminal and will star
 *Peptide length (required)*
 
 `-a AFFINITY, --affinity=AFFINITY`  
-*netMHCpan affinity cutoff (optional, default: <= 500 nM)*
+*netMHCpan affinity cutoff (optional, default: \<\= 500 nM)*
 
 `-p PROCESSING, --processing=PROCESSING`  
-*netChop processing score cutoff (optional, default: >= 0.5)*
+*netChop processing score cutoff (optional, default: \>\= 0.5)*
 
 `-e EXPRESSION, --expression=EXPRESSION`  
 *RNA expression cutoff (optional, default: > 0; use -1 for no filtering)*
