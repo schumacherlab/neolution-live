@@ -1,7 +1,7 @@
 performSingleSequencePredictions = function(file, allele, peptidelength, affcutoff, proccutoff, exprcutoff) {
   # create dir for temp files
-  dir.create(path = "./tmp",
-             showWarnings = FALSE)
+  # dir.create(path = "./tmp",
+  #            showWarnings = FALSE)
   
   # get some info on dataset
   fileName = gsub(pattern = "\\..+$",
@@ -150,8 +150,8 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
 
 performPairedSequencePredictions = function(file, allele, peptidelength, affcutoff, proccutoff, exprcutoff){
   # create dir for temp files
-  dir.create(path = "./tmp",
-             showWarnings = FALSE)
+  # dir.create(path = "./tmp",
+  #            showWarnings = FALSE)
   
   # get some info on dataset
   fileName = gsub(pattern = "\\..+$",
