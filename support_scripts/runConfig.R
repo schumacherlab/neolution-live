@@ -80,9 +80,12 @@ if (is.null(commandlineArguments$file)) {
   q(status = 1)
 } else if (file.exists(commandlineArguments$file)) {
   filePath = commandlineArguments$file
-  fileName = gsub(pattern = "\\..+$",
-                  replacement = "",
-                  x = basename(filePath))
+  fileName = substring(text = basename(filePath),
+                       first =  1, 
+                       last = max(unlist(gregexpr(pattern = ".", 
+                                                  text = basename(filePath),
+                                                  fixed = TRUE)))-1
+  )
   dirPath = dirname(filePath)
 } else {
   message("Can't find file, make sure to provide full path to file")
