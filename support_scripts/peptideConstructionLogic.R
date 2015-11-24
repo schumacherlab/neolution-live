@@ -35,9 +35,7 @@ buildPeptideList = function(sequences, peptidelength) {
                        by = 1)
       normal = unique(x = data.table(peptide, c_term_pos),
                       by = "peptide")
-      normal[, variant_id := sequences$variant_id]
-      normal[, gene_symbol := sequences$gene_symbol]
-      normal[, rna_expression := sequences$rna_expression]
+      normal = cbind(normal, subset(x = sequences, select = names(sequences) %ni% c("peptidecontextnormal", "peptidecontexttumor")))
     } else {
       normal = data.table()
     }
@@ -51,9 +49,7 @@ buildPeptideList = function(sequences, peptidelength) {
                        by = 1)
       tumor = unique(x = data.table(peptide, c_term_pos),
                      by = "peptide")
-      tumor[, variant_id := sequences$variant_id]
-      tumor[, gene_symbol := sequences$gene_symbol]
-      tumor[, rna_expression := sequences$rna_expression]
+      tumor = cbind(tumor, subset(x = sequences, select = names(sequences) %ni% c("peptidecontextnormal", "peptidecontexttumor")))
     } else {
       tumor = data.table()
     }
