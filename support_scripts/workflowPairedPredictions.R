@@ -68,12 +68,12 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
                                                  subset = normalAndTumorPredictions[[1]][[paste0("normal_", allele, "affinity")]] <= affcutoff &
                                                    normal_processing_score >= proccutoff &
-                                                   rna_expression > exprcutoff)
+                                                   (rna_expression > exprcutoff | is.na(rna_expression) == TRUE))
     
     tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
                                                 subset = normalAndTumorPredictions[[2]][[paste0("tumor_", allele, "affinity")]] <= affcutoff &
                                                   tumor_processing_score >= proccutoff &
-                                                  rna_expression > exprcutoff)
+                                                  (rna_expression > exprcutoff | is.na(rna_expression) == TRUE))
     
     # merge all info for both tumor only predictions and all predictions
     if (nrow(tumorPredictionsWithFiltersApplied) > 0) {
@@ -129,7 +129,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                    selfepitopes = selfEpitopes$peptide,
                                                                                                    scorematrix = scoreMatrix,
-                                                                                                   normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
+                                                                                                   normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
+                                                                                                                           subset = is.na(rna_expression) == FALSE)$normal_peptide)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
@@ -155,7 +156,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                  selfepitopes = selfEpitopes$peptide,
                                                                                                  scorematrix = scoreMatrix,
-                                                                                                 normalepitopes = epitopePredictionsWithFiltersApplied$normal_peptide)]
+                                                                                                 normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
+                                                                                                                         subset = is.na(rna_expression) == FALSE)$normal_peptide)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
