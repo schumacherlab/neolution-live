@@ -108,14 +108,14 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   setcolorder(x = epitopePredictionsAll,
               neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score", "rna_expression"))
+                           "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score"))
   
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = paste0("tumor_", allele, "affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
               neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score", "rna_expression"))
+                           "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score"))
   
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
