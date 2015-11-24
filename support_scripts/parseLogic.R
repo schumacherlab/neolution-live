@@ -31,19 +31,69 @@ readFastaFile = function(file) {
 returnProcessedVariants = function(id, variants) {
   variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
   
-  # rename column headers in case of Sanger data
-  if(all(c("Gene", "transcriptid", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
-    setnames(x = variants,
-             old = c("Gene", "transcriptid", "Cufflinks FPKM value (expression level)"),
-             new = c("symbol", "transcript", "gene_FPKM"))
+  # determine if there is any RNA expression data
+  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM") %in% names(variants))){
+    ###
+    # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
+    ###
+    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression") %in% names(variants))){
+      # dealing with antigenic space input, proceed with all columns
+      
+      variantssubset = variants
+    } else if (all(c("variant_id", "Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
+      # dealing with Sanger data: rename column headers, take subset
+      setnames(x = variants,
+               old = c("Gene", "transcriptid", "Cufflinks FPKM value (expression level)"),
+               new = c("gene_symbol", "transcript_id", "rna_expression"))
+      
+      variantssubset = unique(x = subset(x = variants,
+                                         select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else if (all(c("variant_id", "symbol", "transcript", "peptidecontextnormal", "peptidecontexttumor", "gene_FPKM") %in% names(variants))) {
+      # dealing with NKI data: rename column headers, take subset
+      setnames(x = variants,
+               old = c("symbol", "transcript", "gene_FPKM"),
+               new = c("gene_symbol", "transcript_id", "rna_expression"))
+      
+      variantssubset = unique(x = subset(x = variants,
+                                         select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    }  
+  } else {
+    ###
+    # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
+    ###
+    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))){
+      # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
+      variants[, rna_expression := NA]
+      
+      variantssubset = variants
+    } else if (all(c("variant_id", "Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+      # dealing with Sanger data: rename column headers, add "no data" for rna_expression & take subset
+      setnames(x = variants,
+               old = c("Gene", "transcriptid"),
+               new = c("gene_symbol", "transcript_id"))
+      
+      variants[, rna_expression := NA]
+      
+      variantssubset = unique(x = subset(x = variants,
+                                         select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else if (all(c("variant_id", "symbol", "transcript", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+      # dealing with NKI data: rename column headers, add "no data" for rna_expression & take subset
+      setnames(x = variants,
+               old = c("symbol", "transcript"),
+               new = c("gene_symbol", "transcript_id"))
+      
+      variants[, rna_expression := NA]
+      
+      variantssubset = unique(x = subset(x = variants,
+                                         select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    }  
   }
   
-  # take subset of columns
-  variantssubset = unique(x = subset(x = variants,
-                                     select = c("variant_id", "symbol", "transcript", "peptidecontextnormal", "peptidecontexttumor", "gene_FPKM")),
-                          by = c("peptidecontextnormal", "peptidecontexttumor"))
-  
-  # remove any amino acid sequence after stop codon(s)
+  # remove stop codon and any amino acid sequence after (if present)
   variantssubset$peptidecontextnormal = gsub(pattern = "\\*[A-Z*]*",
                                              replacement = "",
                                              x = variantssubset$peptidecontextnormal)
@@ -57,13 +107,18 @@ returnProcessedVariants = function(id, variants) {
                                      subset = !variantssubset$peptidecontextnormal == variantssubset$peptidecontexttumor),
                           by = c("peptidecontextnormal", "peptidecontexttumor"))
   
-  # if alpha characters are found in cufflinks data, set to 0 (means failed or low data)
-  ############ we want to change this into something more elegant
-  ################## this way these genes will be discarded if user sets expression cutoff to > 0
-  ################## also, we want a way to handle complete absence of RNAseq data, right now would crash script (column not found when subsetting)
-  ################## we could set gene_FPKM column to 'NA', or better 'no data', in case it's not present, but would have to support this later on when filtering
-  variantssubset$gene_FPKM[grepl(pattern = "[A-Za-z]",
-                                 x = variantssubset$gene_FPKM)] = 0
+  # clean (Sanger) expression data, set "Low confidence = 0" to 0 and set rest with alpha characters to NA (e.g. "Status: 'FAILED'|'LOW DATA'")
+  if ("rna_expression" %in% names(variantssubset)){
+    variantssubset$rna_expression[grepl(pattern = "Low confidence = 0",
+                                        fixed = TRUE,
+                                        x = variantssubset$rna_expression)] = 0
+    
+    variantssubset$rna_expression[grepl(pattern = "[A-Za-z]",
+                                        x = variantssubset$rna_expression)] = NA
+    
+    # convert rna_expression column to numeric, as otherwise filters won't work properly
+    variantssubset[, rna_expression := as.numeric(variantssubset$rna_expression)]
+  }
   
   return(variantssubset)
 }
