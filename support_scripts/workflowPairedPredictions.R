@@ -79,7 +79,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     if (nrow(tumorPredictionsWithFiltersApplied) > 0) {
       mergedTumorPredictionsWithFiltersApplied = merge(x = tumorPredictionsWithFiltersApplied,
                                                        y = normalAndTumorPredictions[[1]],
-                                                       by = c("variant_id", "gene_symbol", "rna_expression", "c_term_pos", "xmer", "hla_allele"),
+                                                       by = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                                                              "c_term_pos", "xmer", "hla_allele"),
                                                        all.x = TRUE)
     } else {
       mergedTumorPredictionsWithFiltersApplied = data.table()
@@ -88,7 +89,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     if (nrow(normalAndTumorPredictions[[2]]) > 0) {
       mergedPredictions = merge(x = normalAndTumorPredictions[[2]],
                                 y = normalAndTumorPredictions[[1]],
-                                by = c("variant_id", "gene_symbol", "rna_expression", "c_term_pos", "xmer", "hla_allele"),
+                                by = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                                       "c_term_pos", "xmer", "hla_allele"),
                                 all.x = TRUE)
     } else {
       mergedPredictions = data.table()
@@ -104,14 +106,14 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   setorderv(x = epitopePredictionsAll,
             cols = paste0("tumor_", allele, "affinity"))
   setcolorder(x = epitopePredictionsAll,
-              neworder = c("variant_id", "gene_symbol", "c_term_pos", "hla_allele", "xmer",
+              neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score", "rna_expression"))
   
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = paste0("tumor_", allele, "affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
-              neworder = c("variant_id", "gene_symbol", "c_term_pos", "hla_allele", "xmer",
+              neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score", "rna_expression"))
   
