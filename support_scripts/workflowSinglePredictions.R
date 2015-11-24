@@ -1,8 +1,11 @@
 performSingleSequencePredictions = function(file, allele, peptidelength, affcutoff, proccutoff, exprcutoff) {
   # get some info on dataset
-  fileName = gsub(pattern = "\\..+$",
-                  replacement = "",
-                  x = basename(file))
+  fileName = substring(text = basename(file),
+                       first =  1, 
+                       last = max(unlist(gregexpr(pattern = ".", 
+                                                  text = basename(file),
+                                                  fixed = TRUE)))-1
+  )
   dirPath = dirname(file)
   
   # import data & clean up
@@ -28,7 +31,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                                    peptidelength = peptidelength)
     peptideStretchVector = sequenceInfo[i, ]$sequence
     
-    # if peptides found, move to next line
+    # if no peptides found, move to next line
     if (nrow(peptideList) < 1) {
       mergedPredictions = data.table()
       
@@ -91,7 +94,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
     
-    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
+    # write aff, chop filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            excludecols = c("c_term_pos", "sequence_id"),
                            dirpath = dirPath,
@@ -116,7 +119,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
     
-    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
+    # write aff, chop filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            excludecols = c("c_term_pos", "sequence_id"),
                            dirpath = dirPath,
@@ -133,7 +136,7 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            allele = allele,
                            peptidelength = peptidelength)
   } else {
-    # write aff, chop, rna filtered epitopes to disk
+    # write aff, chop filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            excludecols = c("c_term_pos", "sequence_id"),
                            dirpath = dirPath,
