@@ -94,11 +94,11 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                                   c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity"))))
   }
   
-  setnames(data,
-           colnames(data),
-           c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")))
+  setnames(x = data,
+           old = names(data),
+           new = c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")))
   data = subset(x = data,
-                select = colnames(data[,-match(c("position", "variant_id", "pept_score"), colnames(data)), with = FALSE]))
+                select = colnames(data[, -match(x = c("position", "variant_id", "pept_score"), table = names(data)), with = FALSE]))
   return(data)
 }
 
@@ -158,9 +158,9 @@ performProcessingPredictions = function(peptidestretch) {
                                   c("c_term_pos", "c_term_aa", "processing_score")))
   }
   
-  setnames(data,
-           colnames(data),
-           c("c_term_pos", "c_term_aa", "processing_score"))
+  setnames(x = data,
+           old = names(data),
+           new = c("c_term_pos", "c_term_aa", "processing_score"))
   
   return(data)
 }
