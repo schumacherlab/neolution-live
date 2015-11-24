@@ -1,8 +1,11 @@
 performPairedSequencePredictions = function(file, allele, peptidelength, affcutoff, proccutoff, exprcutoff){
   # get some info on dataset
-  fileName = gsub(pattern = "\\..+$",
-                  replacement = "",
-                  x = basename(file))
+  fileName = substring(text = basename(file),
+                       first =  1, 
+                       last = max(unlist(gregexpr(pattern = ".", 
+                                                  text = basename(file),
+                                                  fixed = TRUE)))-1
+  )
   dirPath = dirname(file)
   
   # import kitchensink data & clean up
