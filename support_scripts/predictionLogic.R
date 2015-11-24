@@ -22,11 +22,12 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     
     predictions[, xmer := peptidelength]
   } else {
-    predictions = as.data.table(setNames(replicate(n = 10,
+    predictions = as.data.table(setNames(replicate(n = length(c(names(peptides),
+                                                                "xmer", "hla_allele", paste0(allele, "affinity"), "c_term_aa", "processing_score")),
                                                    expr = numeric(0),
                                                    simplify = FALSE),
-                                         c("c_term_pos", "hla_allele", "xmer", "peptide", "variant_id", "gene_symbol", "rna_expression_fpkm",
-                                           paste0(allele, "affinity"), "c_term_aa", "processing_score")))
+                                         c(names(peptides),
+                                           "xmer", "hla_allele", paste0(allele, "affinity"), "c_term_aa", "processing_score")))
   }
   
   return(predictions)
@@ -88,7 +89,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
     data = as.data.table(read.table(text = output,
                                     stringsAsFactors = FALSE));data$V7 = NULL
   } else {
-    data = as.data.table(setNames(replicate(n = 6,
+    data = as.data.table(setNames(replicate(n = length(c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity"))),
                                             expr = numeric(0),
                                             simplify = FALSE),
                                   c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity"))))
@@ -150,9 +151,9 @@ performProcessingPredictions = function(peptidestretch) {
     # read data into table
     data = as.data.table(read.table(text = output,
                                     stringsAsFactors = FALSE))
-    data = data[,-match(x = c("V3", "V5"),table = colnames(data)), with = FALSE]
+    data = data[, -match(x = c("V3", "V5"), table = names(data)), with = FALSE]
   } else {
-    data = as.data.table(setNames(replicate(n = 3,
+    data = as.data.table(setNames(replicate(n = length(c("c_term_pos", "c_term_aa", "processing_score")),
                                             expr = numeric(0),
                                             simplify = FALSE),
                                   c("c_term_pos", "c_term_aa", "processing_score")))
