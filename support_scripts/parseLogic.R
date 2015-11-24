@@ -32,11 +32,11 @@ returnProcessedVariants = function(id, variants) {
   variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
   
   # determine if there is any RNA expression data
-  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM") %in% names(variants))){
+  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM") %in% names(variants))) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression") %in% names(variants))){
+    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
       
       variantssubset = variants
@@ -63,7 +63,7 @@ returnProcessedVariants = function(id, variants) {
     ###
     # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
     ###
-    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))){
+    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
       variants[, rna_expression := NA]
       
@@ -108,7 +108,7 @@ returnProcessedVariants = function(id, variants) {
                           by = c("peptidecontextnormal", "peptidecontexttumor"))
   
   # clean (Sanger) expression data, set "Low confidence = 0" to 0 and set rest with alpha characters to NA (e.g. "Status: 'FAILED'|'LOW DATA'")
-  if ("rna_expression" %in% names(variantssubset)){
+  if ("rna_expression" %in% names(variantssubset)) {
     variantssubset$rna_expression[grepl(pattern = "Low confidence = 0",
                                         fixed = TRUE,
                                         x = variantssubset$rna_expression)] = 0
