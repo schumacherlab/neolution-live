@@ -49,16 +49,27 @@ returnProcessedVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "symbol", "transcript", "peptidecontextnormal", "peptidecontexttumor", "gene_FPKM") %in% names(variants))) {
-      # dealing with NKI data: rename column headers, take subset
+    } else if (all(c("variant_id", "symbol", "gene", "transcript", "peptidecontextnormal", "peptidecontexttumor", "gene_FPKM") %in% names(variants))) {
+      # dealing with NKI kitchensink data: rename column headers, take subset
       setnames(x = variants,
-               old = c("symbol", "transcript", "gene_FPKM"),
-               new = c("gene_symbol", "transcript_id", "rna_expression"))
+               old = c("symbol", "gene", "transcript", "gene_FPKM"),
+               new = c("gene_symbol", "gene_id","transcript_id", "rna_expression"))
       
       variantssubset = unique(x = subset(x = variants,
-                                         select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                                         select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    }  
+    } else if (all(c("variant_id", "externalname", "geneid", "transcriptid", "peptide_context_ref", "peptide_context_alt", "FPKM") %in% names(variants))) {
+      # dealing with NKI kitchensink v2 data: rename column headers, take subset
+      setnames(x = variants,
+               old = c("externalname", "geneid", "transcriptid", "peptide_context_ref", "peptide_context_alt", "FPKM"),
+               new = c("gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression"))
+      
+      variantssubset = unique(x = subset(x = variants,
+                                         select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else {
+      stop("Input format not recognized")
+    }
   } else {
     ###
     # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
@@ -79,18 +90,31 @@ returnProcessedVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "symbol", "transcript", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
-      # dealing with NKI data: rename column headers, add "no data" for rna_expression & take subset
+    } else if (all(c("variant_id", "symbol", "gene", "transcript", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+      # dealing with NKI kitchensink data: rename column headers, add "no data" for rna_expression & take subset
       setnames(x = variants,
-               old = c("symbol", "transcript"),
-               new = c("gene_symbol", "transcript_id"))
+               old = c("symbol", "gene", "transcript"),
+               new = c("gene_symbol", "gene_id", "transcript_id"))
       
       variants[, rna_expression := NA]
       
       variantssubset = unique(x = subset(x = variants,
-                                         select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                                         select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    }  
+    } else if (all(c("variant_id", "externalname", "geneid", "transcriptid", "peptide_context_ref", "peptide_context_alt", "FPKM") %in% names(variants))) {
+      # dealing with NKI kitchensink v2 data: rename column headers, take subset
+      setnames(x = variants,
+               old = c("externalname", "geneid", "transcriptid", "peptide_context_ref", "peptide_context_alt", "FPKM"),
+               new = c("gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression"))
+      
+      variants[, rna_expression := NA]
+      
+      variantssubset = unique(x = subset(x = variants,
+                                         select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else {
+      stop("Input format not recognized")
+    }
   }
   
   # remove stop codon and any amino acid sequence after (if present)
