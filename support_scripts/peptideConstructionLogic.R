@@ -33,8 +33,7 @@ buildPeptideList = function(sequences, peptidelength) {
       c_term_pos = seq(from = peptidelength,
                        to = nchar(sequences$peptidecontextnormal),
                        by = 1)
-      normal = unique(x = data.table(peptide, c_term_pos),
-                      by = "peptide")
+      normal = data.table(peptide, c_term_pos)
       normal = cbind(normal, subset(x = sequences, select = names(sequences) %ni% c("peptidecontextnormal", "peptidecontexttumor")))
     } else {
       normal = data.table()
