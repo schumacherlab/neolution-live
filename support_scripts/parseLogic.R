@@ -101,11 +101,11 @@ returnProcessedVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "externalname", "geneid", "transcriptid", "peptide_context_ref", "peptide_context_alt", "FPKM") %in% names(variants))) {
+    } else if (all(c("variant_id", "gene_short_name", "gene_id", "transcriptid", "peptide_seq_ref", "peptide_seq_alt", "FPKM") %in% names(variants))) {
       # dealing with NKI kitchensink v2 data: rename column headers, take subset
       setnames(x = variants,
-               old = c("externalname", "geneid", "transcriptid", "peptide_context_ref", "peptide_context_alt", "FPKM"),
-               new = c("gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression"))
+               old = c("gene_short_name", "transcriptid", "peptide_seq_ref", "peptide_seq_alt", "FPKM"),
+               new = c("gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression"))
       
       variants[, rna_expression := NA]
       
