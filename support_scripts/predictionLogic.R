@@ -13,7 +13,8 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     
     # merge prediction info
     predictions = merge(x = peptides,
-                        y = affinityPredictions,
+                        y = unique(x = affinityPredictions,
+                                   by = "peptide"),
                         by = "peptide")
     
     predictions = merge(x = predictions,
