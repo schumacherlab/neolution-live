@@ -48,10 +48,14 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n", 
                  "Use self-epitope list:\t\t", addSelfEpitopes, "\n\n",
                  "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
-                 "Processing predictor:\t", predictorPaths$netChop, "\n"),
+                 "Processing predictor:\t", predictorPaths$netChop, "\n\n",
+                 "Console output:\n"),
       file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
       append = FALSE)
 
+# re-direct output to log file
+sink(file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
+     append = TRUE)
 
 # check if we want single seq predictions or paired normal-tumor predictions
 switch(EXPR = as.character(doSingleSequencePrediction),
@@ -72,6 +76,8 @@ switch(EXPR = as.character(doSingleSequencePrediction),
 )
 
 #====================================================================================================================================#
+# return output to console
+sink()
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
