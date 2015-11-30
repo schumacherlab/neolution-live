@@ -54,7 +54,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
       append = FALSE)
 
 # re-direct output to log file
-open.connection(con = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"), open = "rw")
+open(con = file(paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt")), open = "rw")
 sink(file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
      type = "message",
      append = TRUE)
