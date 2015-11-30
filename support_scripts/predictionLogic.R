@@ -75,8 +75,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
   
   # perform regex on netMHC output
-  if (length(output) > 57) {
-    output = output[-c(1:57)]
+  if (length(output) > 51) {
     output = output[-grep(pattern = "^\\#.+|^\\-.+|^Protein.+|pos.+|^HLA.+|^$",
                           x = output)]
     output = gsub(pattern = "^[[:blank:]]+| <= WB| <= SB",
