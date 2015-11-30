@@ -48,8 +48,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n", 
                  "Use self-epitope list:\t\t", addSelfEpitopes, "\n\n",
                  "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
-                 "Processing predictor:\t", predictorPaths$netChop, "\n\n",
-                 "Console output:\n"),
+                 "Processing predictor:\t", predictorPaths$netChop, "\n"),
       file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
       append = FALSE)
 
