@@ -53,7 +53,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
       append = FALSE)
 
 # re-direct output to log file
-sink(file = file(description = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runErrors.txt"),
+sink(file = file(description = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runLog.txt"),
                  open = "wt"),
      type = "message",
      append = TRUE)
@@ -77,8 +77,6 @@ switch(EXPR = as.character(doSingleSequencePrediction),
 )
 
 #====================================================================================================================================#
-# return output to console
-sink()
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
