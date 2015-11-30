@@ -25,10 +25,12 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                                        peptidelength = peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
   } else if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
-    selfEpitopes = as.data.table(setNames(replicate(n = 8,
-                                                    expr = numeric(0),
-                                                    simplify = FALSE),
-                                          c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score")))
+    colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score")
+    colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric")
+    
+    selfEpitopes = as.data.table(read.table(file=textConnection(""),
+                                            col.names = colnames,
+                                            colClasses = colclasses))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
