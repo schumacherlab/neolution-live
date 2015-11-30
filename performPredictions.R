@@ -55,6 +55,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
 
 # re-direct output to log file
 sink(file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
+     type = "message",
      append = TRUE)
 
 # check if we want single seq predictions or paired normal-tumor predictions
