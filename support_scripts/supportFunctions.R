@@ -34,14 +34,14 @@ thisDirectory = function() {
 # function which returns empty table with defined column names & column classes
 emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
   require(data.table)
-  if (is.vector(colnames) & is.vector(colclasses) & length(colnames)==length(colclasses)){
-    table = as.data.table(read.table(file=textConnection(""),
+  if (is.vector(colnames) & is.vector(colclasses) & length(colnames) == length(colclasses)){
+    table = as.data.table(read.table(file = textConnection(""),
                                      col.names = colnames,
                                      colClasses = colclasses))
     
     return(table)  
   } else {
-    warning("Argument(s) are not vectors and/or not of equal length, returning generic empty table")
+    warning("Argument(s) are not vectors and/or not of equal length; returning generic empty table")
     return(data.table())
   }
 }
