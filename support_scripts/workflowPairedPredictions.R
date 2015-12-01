@@ -144,11 +144,11 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (doExtendedSelfSimilarity) {
-    epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
-                                                                                                   selfepitopes = selfEpitopes$peptide,
-                                                                                                   scorematrix = scoreMatrix,
-                                                                                                   normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
-                                                                                                                           subset = is.na(rna_expression) == FALSE)$normal_peptide)]
+    epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
+                                                                                                     selfepitopes = selfEpitopes$peptide,
+                                                                                                     scorematrix = scoreMatrix,
+                                                                                                     normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
+                                                                                                                             subset = is.na(rna_expression) == FALSE)$normal_peptide)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
@@ -171,11 +171,11 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                            allele = allele,
                            peptidelength = peptidelength)
   } else if (doSimpleSelfSimilarity) {
-    epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
-                                                                                                 selfepitopes = selfEpitopes$peptide,
-                                                                                                 scorematrix = scoreMatrix,
-                                                                                                 normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
-                                                                                                                         subset = is.na(rna_expression) == FALSE)$normal_peptide)]
+    epitopePredictionsWithFiltersApplied[, different_from_self := performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
+                                                                                                   selfepitopes = selfEpitopes$peptide,
+                                                                                                   scorematrix = scoreMatrix,
+                                                                                                   normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
+                                                                                                                           subset = is.na(rna_expression) == FALSE)$normal_peptide)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
