@@ -23,15 +23,11 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     
     predictions[, xmer := peptidelength]
   } else {
-    colnames = c(names(peptides),
-                 "xmer", "hla_allele", paste0(allele, "affinity"), "c_term_aa", "processing_score")
-    colclasses = c(unlist(lapply(peptides, class),
-                          use.names=FALSE),
-                   "numeric", "character", "numeric", "character", "numeric")
-    
-    predictions = as.data.table(read.table(file=textConnection(""),
-                                           col.names = colnames,
-                                           colClasses = colclasses))
+    predictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c(names(peptides),
+                                                                         "xmer", "hla_allele", paste0(allele, "affinity"), "c_term_aa", "processing_score"),
+                                                            colclasses = c(unlist(lapply(peptides, class),
+                                                                                  use.names=FALSE),
+                                                                           "numeric", "character", "numeric", "character", "numeric"))
   }
   
   return(predictions)
@@ -92,12 +88,8 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
     data = as.data.table(read.table(text = output,
                                     stringsAsFactors = FALSE));data$V7 = NULL
   } else {
-    colnames = c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity"))
-    colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric")
-    
-    data = as.data.table(read.table(file=textConnection(""),
-                                           col.names = colnames,
-                                           colClasses = colclasses))
+    data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")),
+                                                     colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric"))
   }
   
   setnames(x = data,
@@ -158,12 +150,8 @@ performProcessingPredictions = function(peptidestretch) {
                                     stringsAsFactors = FALSE))
     data = data[, -match(x = c("V3", "V5"), table = names(data)), with = FALSE]
   } else {
-    colnames = c("c_term_pos", "c_term_aa", "processing_score")
-    colclasses = c("numeric", "character", "numeric")
-    
-    data = as.data.table(read.table(file=textConnection(""),
-                                    col.names = colnames,
-                                    colClasses = colclasses))
+    data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("c_term_pos", "c_term_aa", "processing_score"),
+                                                     colclasses = c("numeric", "character", "numeric"))
   }
   
   setnames(x = data,
