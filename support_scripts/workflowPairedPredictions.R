@@ -25,12 +25,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                                        peptidelength = peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
   } else if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
-    colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score")
-    colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric")
-    
-    selfEpitopes = as.data.table(read.table(file=textConnection(""),
-                                            col.names = colnames,
-                                            colClasses = colclasses))
+    selfEpitopes = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score"),
+                                                             colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric"))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
@@ -41,10 +37,21 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                                    peptidelength = peptidelength)
     peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
     
+    columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                              "c_term_pos", "hla_allele", "xmer",
+                              "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
+                              "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score")
+    columnClassesEmptyTable = c(unlist(lapply(variantInfo, class)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                                       use.names=FALSE),
+                                "numeric", "character", "numeric",
+                                "character", "character", "numeric", "numeric",
+                                "character", "character", "numeric", "numeric")
     # if no tumor peptides found, move to next line
     if (nrow(peptideList[[2]]) < 1) {
-      mergedTumorPredictionsWithFiltersApplied = data.table()
-      mergedPredictions = data.table()
+      mergedTumorPredictionsWithFiltersApplied = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+                                                                                           colclasses = columnClassesEmptyTable)
+      mergedPredictions = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+                                                                    colclasses = columnClassesEmptyTable)
       
       return(list(mergedTumorPredictionsWithFiltersApplied, mergedPredictions))
     }
@@ -85,7 +92,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                                                               "c_term_pos", "xmer", "hla_allele"),
                                                        all.x = TRUE)
     } else {
-      mergedTumorPredictionsWithFiltersApplied = data.table()
+      mergedTumorPredictionsWithFiltersApplied = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+                                                                                           colclasses = columnClassesEmptyTable)
     }
     
     if (nrow(normalAndTumorPredictions[[2]]) > 0) {
@@ -95,7 +103,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                                        "c_term_pos", "xmer", "hla_allele"),
                                 all.x = TRUE)
     } else {
-      mergedPredictions = data.table()
+      mergedPredictions = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+                                                                    colclasses = columnClassesEmptyTable)
     }
     
     return(list(mergedTumorPredictionsWithFiltersApplied, mergedPredictions))
