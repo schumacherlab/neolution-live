@@ -18,12 +18,8 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                                        peptidelength = peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
   } else if (doExtendedSelfSimilarity | doSimpleSelfSimilarity) {
-    colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score")
-    colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric")
-    
-    selfEpitopes = as.data.table(read.table(file=textConnection(""),
-                                            col.names = colnames,
-                                            colClasses = colclasses))
+    selfEpitopes = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(allele,"affinity"), "processing_score"),
+                                                             colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric"))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
@@ -35,9 +31,13 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
     
     # if no peptides found, move to next line
     if (nrow(peptideList) < 1) {
-      mergedPredictions = data.table()
-      
-      return(mergedPredictions)
+      emptyPredictionsTable = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer",
+                                                                                     "peptide", "c_term_aa", "c_term_pos", paste0(allele, "affinity"), "processing_score"
+                                                                                     # , "rna_expression_fpkm"
+                                                                                     ),
+                                                                        colclasses = c("character", "character", "numeric",
+                                                                                       "character", "character", "numeric", "numeric", "numeric"))
+      return(list(emptyPredictionsTable, emptyPredictionsTable))
     }
     
     # perform affinity & processing predictions
