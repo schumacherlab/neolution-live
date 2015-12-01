@@ -42,9 +42,9 @@ loadSelfSimilarityMatrix = function() {
 }
 
 # simple self-similarity check
-performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = NULL) {
+performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = list()) {
   selfepitopes = c(as.character(unique(selfepitopes)), # add complete human proteome epitopes
-                   as.character(normalepitopes))  # add normal epitopes from predictions list, when available
+                   as.character(normalepitopes[!is.na(normalepitopes)]))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
   not_similar_to_self = mclapply(X = epitopes,
@@ -59,9 +59,9 @@ performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix,
 }
 
 # extended self-similarity check using predicted human proteome epitopes (and normal epitopes)
-performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = NULL) {
+performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = list()) {
   selfepitopes = c(as.character(unique(selfepitopes)), # add complete human proteome epitopes
-                   as.character(normalepitopes))  # add normal epitopes from predictions list, when available
+                   as.character(normalepitopes[!is.na(normalepitopes)]))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
   not_similar_to_self = mclapply(X = epitopes,
