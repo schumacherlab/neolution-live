@@ -29,7 +29,8 @@ message(paste0("Input file:\t\t", filePath, "\n",
                "Single seq predictions:\t\t", doSingleSequencePrediction, "\n",
                "Simple self-similarity:\t\t", doSimpleSelfSimilarity, "\n",
                "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n",
-               "Use self-epitope list:\t\t", addSelfEpitopes, "\n"))
+               "Use self-epitope list:\t\t", addSelfEpitopes, "\n",
+               "Use FASdb lookups:\t\t\t", useFasDb, "\n"))
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
@@ -43,8 +44,9 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Expression cutoff:\t", expressionCutoff, "\n\n",
                  "Single seq predictions:\t\t", doSingleSequencePrediction, "\n",
                  "Simple self-similarity:\t\t", doSimpleSelfSimilarity, "\n",
-                 "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n", 
-                 "Use self-epitope list:\t\t", addSelfEpitopes, "\n\n",
+                 "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n",
+                 "Use self-epitope list:\t\t", addSelfEpitopes, "\n",
+                 "Use FASdb lookups:\t\t\t", useFasDb, "\n\n",
                  "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
                  "Processing predictor:\t", predictorPaths$netChop, "\n"),
       file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
