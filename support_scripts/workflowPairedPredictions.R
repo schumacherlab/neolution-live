@@ -59,12 +59,23 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
       return(list(mergedTumorPredictionsWithFiltersApplied, mergedPredictions))
     }
     
-    # perform normal and tumor affinity & processing predictions
-    normalAndTumorPredictions = foreach(k = 1:2) %do% {
-      performParallelPredictions(peptides = peptideList[[k]],
-                                 peptidestretch = peptideStretchVector[k],
-                                 allele = allele,
-                                 peptidelength = peptidelength)
+    # perform normal and tumor affinity & processing predictions; check if FASdb should be used
+    if (useFasDb) {
+      # use FASdb for peptide affinity lookups; do live predictions for peptides not found in database
+      normalAndTumorPredictions = foreach(k = 1:2) %do% {
+        performFasDbPredictions(peptides = peptideList[[k]],
+                                peptidestretch = peptideStretchVector[k],
+                                allele = allele,
+                                peptidelength = peptidelength)
+      }
+    } else {
+      # do live predictions for all peptides
+      normalAndTumorPredictions = foreach(k = 1:2) %do% {
+        performParallelPredictions(peptides = peptideList[[k]],
+                                   peptidestretch = peptideStretchVector[k],
+                                   allele = allele,
+                                   peptidelength = peptidelength)
+      } 
     }
     
     # rename columns
