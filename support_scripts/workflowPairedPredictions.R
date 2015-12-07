@@ -8,7 +8,7 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   )
   dirPath = dirname(file)
   
-  # import kitchensink data & clean up
+  # import data & clean up
   variantInput = unique(fread(input = file))
   
   sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$",
