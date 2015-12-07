@@ -13,6 +13,8 @@ selfEpitopeListPath = "./selflists_v2.4"
 # set path of temporary directory (set chmod 1777 on tempdir)
 temporaryDirectoryPath = "~/scratch"
 
+### ============================================================================================================================================##
+
 # commandline option specification, do not change
 optionList = list(make_option(opt_str = c("-f", "--file"),
                               action = "store",
