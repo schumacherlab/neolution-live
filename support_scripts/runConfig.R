@@ -148,6 +148,8 @@ if (is.numeric(commandlineArguments$expression)) {
   q(status = 1)
 }
 
+doSingleSequencePrediction = commandlineArguments$single
+
 if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
   message("Please choose ONE type of self-similarity check, use -h for help")
   q(status = 1)
@@ -159,7 +161,7 @@ if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
   doExtendedSelfSimilarity = commandlineArguments$extselfsim
 }
 
-if (commandlineArguments$single & (commandlineArguments$selfsim | commandlineArguments$extselfsim) & commandlineArguments$selflist == FALSE) {
+if (doSingleSequencePrediction & (doSimpleSelfSimilarity | doExtendedSelfSimilarity) & commandlineArguments$selflist == FALSE) {
   message("Self-similarity check on single sequences can only be performed with a self-epitope list!")
   q(status = 1)
 } else {
@@ -174,5 +176,3 @@ if (commandlineArguments$fasdb & isFasDbVersion & peptideLength == 9) {
 } else {
   useFasDb = commandlineArguments$fasdb
 }
-
-doSingleSequencePrediction = commandlineArguments$single
