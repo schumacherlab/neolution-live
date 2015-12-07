@@ -71,6 +71,11 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               help = "Add predicted self-epitopes to self-similarity check, requires length- & HLA-matched selflist (optional, default: %default)")
 )
 
+# find out if netMHCpan version is 2.4 (bit hackish)
+isFasDbVersion = any(grepl(pattern = "netmhcpan 2\\.4",
+                           x = readLines(con = predictorPaths$netMHCpan),
+                           ignore.case = TRUE))
+
 # parse commandline arguments
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
