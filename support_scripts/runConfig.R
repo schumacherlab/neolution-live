@@ -144,7 +144,7 @@ if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
   doExtendedSelfSimilarity = commandlineArguments$extselfsim
 }
 
-if (commandlineArguments$single & (commandlineArguments$selfsim | commandlineArguments$extselfsim) & commandlineArguments$selflist==FALSE) {
+if (commandlineArguments$single & (commandlineArguments$selfsim | commandlineArguments$extselfsim) & commandlineArguments$selflist == FALSE) {
   message("Self-similarity check on single sequences can only be performed with a self-epitope list!")
   q(status = 1)
 } else {
