@@ -90,9 +90,9 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
 
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (doExtendedSelfSimilarity) {
-    epitopePredictionsWithFiltersApplied[, different_from_self:=performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
-                                                                                                   selfepitopes = selfEpitopes$peptide,
-                                                                                                   scorematrix = scoreMatrix)]
+    epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
+                                                                                                     selfepitopes = selfEpitopes$peptide,
+                                                                                                     scorematrix = scoreMatrix)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
@@ -115,9 +115,9 @@ performSingleSequencePredictions = function(file, allele, peptidelength, affcuto
                            allele = allele,
                            peptidelength = peptidelength)
   } else if (doSimpleSelfSimilarity) {
-    epitopePredictionsWithFiltersApplied[, different_from_self:=performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
-                                                                                                 selfepitopes = selfEpitopes$peptide,
-                                                                                                 scorematrix = scoreMatrix)]
+    epitopePredictionsWithFiltersApplied[, different_from_self := performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$peptide,
+                                                                                                   selfepitopes = selfEpitopes$peptide,
+                                                                                                   scorematrix = scoreMatrix)]
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
