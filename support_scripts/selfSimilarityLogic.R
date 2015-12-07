@@ -6,10 +6,11 @@ loadSelfEpitopeList = function(path, allele, peptidelength) {
                            full.names = TRUE)
   
   if(length(availableSelfLists) == 1) {
-    selfEpitopes = fread(availableSelfLists,
-                         header = TRUE,
-                         stringsAsFactors = FALSE,
-                         drop = "V1")
+    selfEpitopes = unique(x = fread(availableSelfLists,
+                                    header = TRUE,
+                                    stringsAsFactors = FALSE,
+                                    drop = "sequence_id"),
+                          by = "peptide")
     setnames(x = selfEpitopes,
              old = names(selfEpitopes),
              new = tolower(names(selfEpitopes)))
@@ -47,7 +48,7 @@ performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix,
     return(c(""))
   }
   
-  selfepitopes = c(as.character(unique(selfepitopes)), # add complete human proteome epitopes
+  selfepitopes = c(as.character(selfepitopes), # add complete human proteome epitopes
                    as.character(normalepitopes[!is.na(normalepitopes)]))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
@@ -68,7 +69,7 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
     return(c(""))
   }
   
-  selfepitopes = c(as.character(unique(selfepitopes)), # add complete human proteome epitopes
+  selfepitopes = c(as.character(selfepitopes), # add complete human proteome epitopes
                    as.character(normalepitopes[!is.na(normalepitopes)]))  # add normal epitopes from predictions list, when available
   
   ## test whether peptide is similar to self
