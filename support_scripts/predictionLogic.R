@@ -1,5 +1,4 @@
-## this support script allows live predictions through netMHCpan v2.4 for peptides that have proximal mutations (and there not likely to be in the FASdb) or are not in the FASdb for some other reason
-## it will also allow us to, in the future, either (1) switch completely to 'live' predictions or (2) perform 'live' predictions for in-dels
+## this support script contains functions for peptide affinity and processing score predictions
 
 performParallelPredictions = function(peptides, peptidestretch, allele, peptidelength) {
   if(nrow(peptides) > 0) {
