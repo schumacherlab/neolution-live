@@ -17,6 +17,18 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
   
   variantInfo = returnProcessedVariants(id = sampleId,
                                         variants = variantInput)
+
+  # prepare vectors with colnames and colclasses for making empty tables, in case needed
+  columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                            "c_term_pos", "hla_allele", "xmer",
+                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
+                            "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score")
+  
+  columnClassesEmptyTable = c(unlist(lapply(variantInfo, class)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                                     use.names=FALSE),
+                              "numeric", "character", "numeric",
+                              "character", "character", "numeric", "numeric",
+                              "character", "character", "numeric", "numeric")
   
   # load required data for self-similarity check
   if ((doExtendedSelfSimilarity | doSimpleSelfSimilarity) & addSelfEpitopes) {
@@ -36,18 +48,6 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
     peptideList = buildPeptideList(sequences = variantInfo[i, ],
                                    peptidelength = peptidelength)
     peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
-    
-    # vectors with colnames and colclasses for making empty tables when needed
-    columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
-                              "c_term_pos", "hla_allele", "xmer",
-                              "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", allele, "affinity"), "tumor_processing_score",
-                              "normal_peptide", "normal_c_term_aa", paste0("normal_", allele, "affinity"), "normal_processing_score")
-    
-    columnClassesEmptyTable = c(unlist(lapply(variantInfo, class)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
-                                       use.names=FALSE),
-                                "numeric", "character", "numeric",
-                                "character", "character", "numeric", "numeric",
-                                "character", "character", "numeric", "numeric")
     
     # if no tumor peptides found, move to next line
     if (nrow(peptideList[[2]]) < 1) {
