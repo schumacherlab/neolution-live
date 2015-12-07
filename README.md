@@ -3,10 +3,7 @@
 
 ---
 
-Two branches are currently under development: 
-
-1. fasdb-based - performs initial affinity lookups in the fasdb (any missing data is generated on-the-fly)  
-2. live (this one) - performs all predictions live (to be used e.g. for patient predictions)  
+This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the accuracy of the predictions.
 
 **Usage example:**  
 `Rscript performPredictions.R -f /home/NFS/users/l.fanchi/neolution-live/rte_kitchensink.txt -m A0201 -l 9`
@@ -30,6 +27,7 @@ The call should be run from the script directory from the Terminal and will star
 5. simple self-similarity check (9-, 10-, 11-mers)
 6. extended self-similarity check (9-mers only)
 7. use self-epitope list
+8. use database for peptide affinity lookups (9-mers, netMHCpan-2.4 only)
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
 
@@ -69,6 +67,9 @@ The call should be run from the script directory from the Terminal and will star
 
 `--selflist`  
 *Add predicted self-epitopes to self-similarity check, requires length- & HLA-matched selflist (optional, default: FALSE)*
+
+`--fasdb`  
+*Look up peptide affinity in FASdb, predict if not found; only compatible with 9-mers & netMHCpan-2.4 (optional, default: FALSE)*
 
 `-h, --help`  
 *Show this help message and exit*
