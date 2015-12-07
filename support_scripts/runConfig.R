@@ -68,7 +68,12 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               action = "store_true",
                               type = "logical",
                               default = FALSE,
-                              help = "Add predicted self-epitopes to self-similarity check, requires length- & HLA-matched selflist (optional, default: %default)")
+                              help = "Add predicted self-epitopes to self-similarity check, requires length- & HLA-matched selflist (optional, default: %default)"),
+                  make_option(opt_str = c("--fasdb"),
+                              action = "store_true",
+                              type = "logical",
+                              default = FALSE,
+                              help = "Look up peptide affinity in FASdb, predict if not found; only compatible with 9-mers & netMHCpan-2.4 (optional, default: %default)")
 )
 
 # find out if netMHCpan version is 2.4 (bit hackish)
