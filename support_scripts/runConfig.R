@@ -8,7 +8,7 @@ predictorPaths = data.table(netMHCpan = "/home/NFS/users/l.fanchi/netMHCpan-2.4/
                             netChop = "/home/NFS/users/l.fanchi/netchop-3.1/bin/netChop")
 
 # set path of self-epitope lists
-selfEpitopeListPath = "./selflists_v2.4"
+selfEpitopeListPath = "./selflists"
 
 # set path of temporary directory (set chmod 1777 on tempdir)
 temporaryDirectoryPath = "~/scratch"
