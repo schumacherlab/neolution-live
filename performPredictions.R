@@ -7,6 +7,7 @@ source("./support_scripts/selfSimilarityLogic.R")
 source("./support_scripts/peptideConstructionLogic.R")
 source("./support_scripts/workflowSinglePredictions.R")
 source("./support_scripts/workflowPairedPredictions.R")
+source("./support_scripts/fasDatabaseLogic.R")
 
 # register parallel back-end
 registerDoMC(cores = numberOfWorkers)
