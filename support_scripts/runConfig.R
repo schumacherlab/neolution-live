@@ -166,4 +166,13 @@ if (commandlineArguments$single & (commandlineArguments$selfsim | commandlineArg
   addSelfEpitopes = commandlineArguments$selflist
 }
 
+if (commandlineArguments$fasdb & isFasDbVersion & peptideLength == 9) {
+  useFasDb = commandlineArguments$fasdb
+} else if (commandlineArguments$fasdb & (isFasDbVersion == FALSE | peptideLength != 9)) {
+  message("FASdb peptide affinity lookups are only supported for 9-mers & when using netMHCpan-2.4, use -h for help")
+  q(status = 1)
+} else {
+  useFasDb = commandlineArguments$fasdb
+}
+
 doSingleSequencePrediction = commandlineArguments$single
