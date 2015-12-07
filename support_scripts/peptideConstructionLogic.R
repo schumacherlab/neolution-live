@@ -53,7 +53,7 @@ buildPeptideList = function(sequences, peptidelength) {
       tumor = data.table()
     }
     
-    # select tumor peptides != normal peptides; select corresponding normal peptides
+    # select tumor peptides != normal peptides; select corresponding normal peptides (NOTE: in case of ins or dels corresponding normal peptide will likely be wrong)
     tumor = tumor[tumor$peptide %ni% normal$peptide]
     normal = normal[match(x = tumor$c_term_pos, table = normal$c_term_pos, nomatch = FALSE)]
     
