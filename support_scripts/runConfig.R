@@ -76,6 +76,9 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               help = "Look up peptide affinity in FASdb, predict if not found; only compatible with 9-mers & netMHCpan-2.4 (optional, default: %default)")
 )
 
+# check availability of predictors
+checkPredictorPaths(predictorPaths)
+
 # find out if netMHCpan version is 2.4 (bit hackish)
 isFasDbVersion = any(grepl(pattern = "netmhcpan 2\\.4",
                            x = readLines(con = predictorPaths$netMHCpan),
