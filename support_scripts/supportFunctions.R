@@ -6,6 +6,7 @@ suppressPackageStartupMessages(library(parallel))
 suppressPackageStartupMessages(library(foreach))
 suppressPackageStartupMessages(library(doMC))
 suppressPackageStartupMessages(library(optparse))
+suppressPackageStartupMessages(library(RMySQL))
 
 # define negation of %in% operator, returns logical vector for 'NOT IN'
 '%ni%' = Negate('%in%')
