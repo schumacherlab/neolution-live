@@ -41,7 +41,7 @@ performFasDbPredictions = function(peptides, peptidestretch, allele, peptideleng
     predictions = merge(x = predictions,
                         y = unique(x = affinityPredictions,
                                    by = "peptide"),
-                        by = "peptide",
+                        by = c("peptide", paste0(allele,"affinity")),
                         all.x = TRUE)
     
     predictions = merge(x = predictions,
