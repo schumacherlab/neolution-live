@@ -41,7 +41,9 @@ performFasDbPredictions = function(peptides, peptidestretch, allele, peptideleng
     predictions[[paste0(allele,"affinity")]][match(x = unique(x = affinityPredictions,
                                                               by = "peptide")$peptide,
                                                    table = predictions$peptide)] = unique(x = affinityPredictions,
-                                                                                          by = "peptide")[[paste0(allele,"affinity")]]
+                                                                                          by = "peptide")[[paste0(allele,"affinity")]][match(x = predictions$peptide,
+                                                                                                                                             table = unique(x = affinityPredictions,
+                                                                                                                                                            by = "peptide")$peptide)]
     
     predictions = merge(x = predictions,
                         y = processingPredictions,
