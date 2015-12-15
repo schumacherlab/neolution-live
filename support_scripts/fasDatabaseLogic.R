@@ -29,10 +29,15 @@ performFasDbPredictions = function(peptides, peptidestretch, allele, peptideleng
                         all.x = TRUE)
     
     # perform affinity predictions on peptides missing affinity data
-    affinityPredictions = performAffinityPredictions(peptides = subset(x = predictions,
-                                                                       subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
-                                                     allele = allele,
-                                                     peptidelength = peptidelength)
+    if (any(is.na(predictions[[paste0(allele, "affinity")]]))){
+      affinityPredictions = performAffinityPredictions(peptides = subset(x = predictions,
+                                                                         subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
+                                                       allele = allele,
+                                                       peptidelength = peptidelength)  
+    } else {
+      affinityPredictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c("hla_allele", "peptide", paste0(allele, "affinity")),
+                                                                      colclasses = c("character", "character", "numeric"))
+    }
     
     # perform processing predictions
     processingPredictions = performProcessingPredictions(peptidestretch = peptidestretch)
