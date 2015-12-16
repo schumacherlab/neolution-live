@@ -12,7 +12,7 @@ logQueryErrorToDisk = function(querytype, file, index, error) {
                    " | file: ", file,
                    " | index: ", index,
                    " | error: ", error),
-        file = paste0(config$filepath, "/output/", file, "_query_errors.log"),
+        file = paste0(runParameters$filepath, "/output/", file, "_query_errors.log"),
         append = TRUE)
 }
 
@@ -100,7 +100,7 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
       ,
       error = function(err) {
         logQueryErrorToDisk(querytype = "affinityScore",
-                            file = config$filename,
+                            file = runParameters$filename,
                             index = index,
                             error = err)
         

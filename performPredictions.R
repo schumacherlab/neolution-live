@@ -76,9 +76,9 @@ sink(file = file(description = paste0(runParameters$filepath,
 # check if we want single seq predictions or paired normal-tumor predictions
 switch(EXPR = as.character(runParameters$single_sequence),
        # --single == TRUE (single seq input)
-       "TRUE" = performSingleSequencePredictions(config = runParameters), 
+       "TRUE" = performSingleSequencePredictions(),
        # --single == FALSE (normal-tumor input)
-       "FALSE" = performPairedSequencePredictions(config = runParameters)
+       "FALSE" = performPairedSequencePredictions()
 )
 
 #====================================================================================================================================#

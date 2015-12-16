@@ -1,10 +1,10 @@
-performPairedSequencePredictions = function(config) {
+performPairedSequencePredictions = function() {
   # import data & clean up
-  variantInput = unique(fread(input = paste(config$filepath, config$filename, sep = "/")))
+  variantInput = unique(fread(input = paste(runParameters$filepath, runParameters$filename, sep = "/")))
   
   sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$",
                           replacement = "",
-                          x = config$filename))
+                          x = runParameters$filename))
   
   variantInfo = processVariants(id = sampleId,
                                 variants = variantInput)
@@ -12,8 +12,8 @@ performPairedSequencePredictions = function(config) {
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
                             "c_term_pos", "hla_allele", "xmer",
-                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", config$allele, "affinity"), "tumor_processing_score",
-                            "normal_peptide", "normal_c_term_aa", paste0("normal_", config$allele, "affinity"), "normal_processing_score")
+                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score",
+                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score")
   
   columnClassesEmptyTable = c(unlist(lapply(variantInfo, class)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
                                      use.names=FALSE),
@@ -22,22 +22,22 @@ performPairedSequencePredictions = function(config) {
                               "character", "character", "numeric", "numeric")
   
   # load required data for self-similarity check
-  if ((config$simple_selfsim | config$extended_selfsim) & config$use_selflist) {
+  if ((runParameters$simple_selfsim | runParameters$extended_selfsim) & runParameters$use_selflist) {
     selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
-                                       allele = config$allele,
-                                       peptidelength = config$peptidelength)
+                                       allele = runParameters$allele,
+                                       peptidelength = runParameters$peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
-  } else if (config$simple_selfsim | config$extended_selfsim) {
-    selfEpitopes = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(config$allele,"affinity"), "processing_score"),
+  } else if (runParameters$simple_selfsim | runParameters$extended_selfsim) {
+    selfEpitopes = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele,"affinity"), "processing_score"),
                                                              colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric"))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
-  epitopePredictions = foreach(i = 1:nrow(variantInfo), .export = "config") %dopar% {
+  epitopePredictions = foreach(i = 1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
     # and make vector containing normal and tumor peptide stretches
     peptideList = buildPeptideList(sequences = variantInfo[i, ],
-                                   peptidelength = config$peptidelength)
+                                   peptidelength = runParameters$peptidelength)
     peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
     
     # if no tumor peptides found, move to next line
@@ -51,44 +51,44 @@ performPairedSequencePredictions = function(config) {
     }
     
     # perform normal and tumor affinity & processing predictions; check if FASdb should be used
-    if (config$use_fasdb) {
+    if (runParameters$use_fasdb) {
       # use FASdb for peptide affinity lookups; do live predictions for peptides not found in database
       normalAndTumorPredictions = foreach(k = 1:2) %do% {
         performFasDbPredictions(index = i,
                                 peptides = peptideList[[k]],
                                 peptidestretch = peptideStretchVector[k],
-                                allele = config$allele,
-                                peptidelength = config$peptidelength)
+                                allele = runParameters$allele,
+                                peptidelength = runParameters$peptidelength)
       }
     } else {
       # do live predictions for all peptides
       normalAndTumorPredictions = foreach(k = 1:2) %do% {
         performParallelPredictions(peptides = peptideList[[k]],
                                    peptidestretch = peptideStretchVector[k],
-                                   allele = config$allele,
-                                   peptidelength = config$peptidelength)
+                                   allele = runParameters$allele,
+                                   peptidelength = runParameters$peptidelength)
       } 
     }
     
     # rename columns
     setnames(x = normalAndTumorPredictions[[1]],
-             old = c("peptide", paste0(config$allele, "affinity"), "c_term_aa", "processing_score"),
-             new = c("normal_peptide", paste0("normal_", config$allele, "affinity"), "normal_c_term_aa", "normal_processing_score"))
+             old = c("peptide", paste0(runParameters$allele, "affinity"), "c_term_aa", "processing_score"),
+             new = c("normal_peptide", paste0("normal_", runParameters$allele, "affinity"), "normal_c_term_aa", "normal_processing_score"))
     
     setnames(x = normalAndTumorPredictions[[2]],
-             old = c("peptide", paste0(config$allele, "affinity"), "c_term_aa", "processing_score"),
-             new = c("tumor_peptide", paste0("tumor_", config$allele, "affinity"), "tumor_c_term_aa", "tumor_processing_score"))
+             old = c("peptide", paste0(runParameters$allele, "affinity"), "c_term_aa", "processing_score"),
+             new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_c_term_aa", "tumor_processing_score"))
     
     # apply various cutoffs
     normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
-                                                 subset = normalAndTumorPredictions[[1]][[paste0("normal_", config$allele, "affinity")]] <= config$affinity &
-                                                   normal_processing_score >= config$processing &
-                                                   (rna_expression > config$expression | is.na(rna_expression) == TRUE))
+                                                 subset = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity &
+                                                   normal_processing_score >= runParameters$processing &
+                                                   (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
     
     tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
-                                                subset = normalAndTumorPredictions[[2]][[paste0("tumor_", config$allele, "affinity")]] <= config$affinity &
-                                                  tumor_processing_score >= config$processing &
-                                                  (rna_expression > config$expression | is.na(rna_expression) == TRUE))
+                                                subset = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity &
+                                                  tumor_processing_score >= runParameters$processing &
+                                                  (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
     
     # merge all info for both tumor only predictions and all predictions
     if (nrow(tumorPredictionsWithFiltersApplied) > 0) {
@@ -123,30 +123,30 @@ performPairedSequencePredictions = function(config) {
   
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
-            cols = paste0("tumor_", config$allele, "affinity"))
+            cols = paste0("tumor_", runParameters$allele, "affinity"))
   setcolorder(x = epitopePredictionsAll,
               neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
-                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", config$allele, "affinity"), "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", config$allele, "affinity"), "normal_processing_score"))
+                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score",
+                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score"))
   
   setorderv(x = epitopePredictionsWithFiltersApplied,
-            cols = paste0("tumor_", config$allele, "affinity"))
+            cols = paste0("tumor_", runParameters$allele, "affinity"))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
               neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
-                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", config$allele, "affinity"), "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", config$allele, "affinity"), "normal_processing_score"))
+                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score",
+                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score"))
   
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
                          excludecols = c("c_term_pos", "variant_id"),
-                         filepath = config$filepath,
-                         filename = config$filename_no_ext,
-                         allele = config$allele,
-                         peptidelength = config$peptidelength,
+                         filepath = runParameters$filepath,
+                         filename = runParameters$filename_no_ext,
+                         allele = runParameters$allele,
+                         peptidelength = runParameters$peptidelength,
                          suffix = "_unfiltered")
   
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
-  if (config$extended_selfsim) {
+  if (runParameters$extended_selfsim) {
     epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                      selfepitopes = selfEpitopes$peptide,
                                                                                                      scorematrix = scoreMatrix,
@@ -160,20 +160,20 @@ performPairedSequencePredictions = function(config) {
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            excludecols = c("c_term_pos", "variant_id"),
-                           filepath = config$filepath,
-                           filename = config$filename_no_ext,
-                           allele = config$allele,
-                           peptidelength = config$peptidelength,
+                           filepath = runParameters$filepath,
+                           filename = runParameters$filename_no_ext,
+                           allele = runParameters$allele,
+                           peptidelength = runParameters$peptidelength,
                            suffix = "_no_selfsim")
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
                            excludecols = c("c_term_pos", "variant_id"),
-                           filepath = config$filepath,
-                           filename = config$filename_no_ext,
-                           allele = config$allele,
-                           peptidelength = config$peptidelength)
-  } else if (config$simple_selfsim) {
+                           filepath = runParameters$filepath,
+                           filename = runParameters$filename_no_ext,
+                           allele = runParameters$allele,
+                           peptidelength = runParameters$peptidelength)
+  } else if (runParameters$simple_selfsim) {
     epitopePredictionsWithFiltersApplied[, different_from_self := performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                    selfepitopes = selfEpitopes$peptide,
                                                                                                    scorematrix = scoreMatrix,
@@ -187,27 +187,27 @@ performPairedSequencePredictions = function(config) {
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            excludecols = c("c_term_pos", "variant_id"),
-                           filepath = config$filepath,
-                           filename = config$filename_no_ext,
-                           allele = config$allele,
-                           peptidelength = config$peptidelength,
+                           filepath = runParameters$filepath,
+                           filename = runParameters$filename_no_ext,
+                           allele = runParameters$allele,
+                           peptidelength = runParameters$peptidelength,
                            suffix = "_no_selfsim")
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
                            excludecols = c("c_term_pos", "variant_id"),
-                           filepath = config$filepath,
-                           filename = config$filename_no_ext,
-                           allele = config$allele,
-                           peptidelength = config$peptidelength)
+                           filepath = runParameters$filepath,
+                           filename = runParameters$filename_no_ext,
+                           allele = runParameters$allele,
+                           peptidelength = runParameters$peptidelength)
   } else {
     # write aff, chop, rna filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            excludecols = c("c_term_pos", "variant_id"),
-                           filepath = config$filepath,
-                           filename = config$filename_no_ext,
-                           allele = config$allele,
-                           peptidelength = config$peptidelength,
+                           filepath = runParameters$filepath,
+                           filename = runParameters$filename_no_ext,
+                           allele = runParameters$allele,
+                           peptidelength = runParameters$peptidelength,
                            suffix = "_no_selfsim")
   }
 }
