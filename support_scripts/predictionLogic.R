@@ -34,7 +34,7 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
 
 performAffinityPredictions = function(peptides, allele, peptidelength) {
   # generate random number to give to temp dir and temp file
-  randomNumber = sample(x = 1:1000000000,
+  randomNumber = sample(x = 1:10000000000,
                         replace = FALSE,
                         size = 1)
   
@@ -101,7 +101,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 
 performProcessingPredictions = function(peptidestretch) {
   # generate random number to give to temp dir and temp file
-  randomNumber = sample(x = 1:1000000000,
+  randomNumber = sample(x = 1:10000000000,
                         replace = FALSE,
                         size = 1)
   
