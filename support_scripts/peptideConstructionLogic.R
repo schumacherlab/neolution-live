@@ -1,5 +1,5 @@
 buildPeptideList = function(sequences, peptidelength) {
-  if (runParamters$single_sequence) {
+  if (runParameters$single_sequence) {
     # determine how many peptides can be made
     n_seq = nchar(sequences$sequence) - (peptidelength - 1)
     
