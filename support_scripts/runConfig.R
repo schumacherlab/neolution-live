@@ -90,19 +90,10 @@ isFasDbVersion = any(grepl(pattern = "netmhcpan 2\\.4",
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
 # prepare table for holding run configuration
-runParameters = data.table(filename = character(),
-                           filename_no_ext = character(),
-                           filepath = character(),
-                           allele = character(),
-                           peptidelength = numeric(),
-                           affinity = numeric(),
-                           processing = numeric(),
-                           expression = numeric(),
-                           single_sequence = logical(),
-                           simple_selfsim = logical(),
-                           extended_selfsim = logical(),
-                           use_selflist = logical(),
-                           use_fasdb = logical())
+runParameters = vector(mode = "list", length = 13)
+runParameters = setNames(object = runParameters, nm = c("filename", "filename_no_ext", "filepath",
+                                                        "allele", "peptidelength", "affinity", "processing", "expression",
+                                                        "single_sequence", "simple_selfsim", "extended_selfsim", "use_selflist", "use_fasdb"))
 
 # parse other arguments
 if (is.null(commandlineArguments$file)) {
@@ -111,7 +102,7 @@ if (is.null(commandlineArguments$file)) {
 } else if (file.exists(commandlineArguments$file)) {
   runParameters$filename = basename(commandlineArguments$file)
   runParameters$filename_no_ext = substring(text = runParameters$filename,
-                                            first =  1, 
+                                            first = 1, 
                                             last = max(unlist(gregexpr(pattern = ".", 
                                                                        text = runParameters$filename,
                                                                        fixed = TRUE)))-1)
