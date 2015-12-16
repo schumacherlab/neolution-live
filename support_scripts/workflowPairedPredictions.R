@@ -15,8 +15,8 @@ performPairedSequencePredictions = function(file, allele, peptidelength, affcuto
                           replacement = "",
                           x = fileName))
   
-  variantInfo = returnProcessedVariants(id = sampleId,
-                                        variants = variantInput)
+  variantInfo = processVariants(id = sampleId,
+                                variants = variantInput)
 
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],

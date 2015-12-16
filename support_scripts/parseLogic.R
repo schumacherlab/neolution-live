@@ -28,7 +28,7 @@ readFastaFile = function(file) {
   return(table)
 }
 
-returnProcessedVariants = function(id, variants) {
+processVariants = function(id, variants) {
   variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
   
   # determine if there is any RNA expression data
