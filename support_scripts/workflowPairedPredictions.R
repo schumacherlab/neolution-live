@@ -33,7 +33,7 @@ performPairedSequencePredictions = function(config) {
     scoreMatrix = loadSelfSimilarityMatrix()
   }
   
-  epitopePredictions = foreach(i = 1:nrow(variantInfo)) %dopar% {
+  epitopePredictions = foreach(i = 1:nrow(variantInfo), .export = config) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
     # and make vector containing normal and tumor peptide stretches
     peptideList = buildPeptideList(sequences = variantInfo[i, ],
