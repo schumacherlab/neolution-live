@@ -14,6 +14,15 @@ loadSelfEpitopeList = function(path, allele, peptidelength) {
     setnames(x = selfEpitopes,
              old = names(selfEpitopes),
              new = tolower(names(selfEpitopes)))
+    write(x = paste0("Self-epitope list:\t\t\t", basename(availableSelfLists[1]),"\n"),
+          file = paste0(config$filepath,
+                        "/output/",
+                        paste(runStart,
+                              config$filename_no_ext,
+                              config$allele,
+                              config$peptidelength, sep = "_"),
+                        "mer_runInfo.txt"),
+          append = TRUE)
     return(selfEpitopes)
   } else {
     stop(paste0("Zero or more than one self-epitope lists found, 
