@@ -29,19 +29,22 @@ readFastaFile = function(file) {
 }
 
 processVariants = function(id, variants) {
-  variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
-  
   # determine if there is any RNA expression data
-  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM") %in% names(variants))) {
+  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM", "entrez_expression") %in% names(variants))) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression") %in% names(variants))) {
+    if (all(c("donor_id", "variant_classification", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "mut_id") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
+      setnames(x = variants,
+               old = c("mut_id", "entrez_expression"),
+               new = c("variant_id", "rna_expression"))
       
-      variantssubset = variants
-    } else if (all(c("variant_id", "Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
+      variantssubset = unique(x = variants,
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, take subset
+      variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
       setnames(x = variants,
                old = c("Gene", "transcriptid", "Cufflinks FPKM value (expression level)"),
                new = c("gene_symbol", "transcript_id", "rna_expression"))
@@ -49,8 +52,9 @@ processVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "symbol", "gene", "transcript", "peptidecontextnormal", "peptidecontexttumor", "gene_FPKM") %in% names(variants))) {
+    } else if (all(c("symbol", "gene", "transcript", "peptidecontextnormal", "peptidecontexttumor", "gene_FPKM") %in% names(variants))) {
       # dealing with NKI kitchensink data: rename column headers, take subset
+      variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
       setnames(x = variants,
                old = c("symbol", "gene", "transcript", "gene_FPKM"),
                new = c("gene_symbol", "gene_id","transcript_id", "rna_expression"))
@@ -58,8 +62,9 @@ processVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "externalname", "geneid", "transcriptid", "peptide_seq_ref", "peptide_seq_alt", "FPKM") %in% names(variants))) {
+    } else if (all(c("externalname", "geneid", "transcriptid", "peptide_seq_ref", "peptide_seq_alt", "FPKM") %in% names(variants))) {
       # dealing with NKI varcontext data: rename column headers, take subset
+      variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
       variants[, gene_id := NULL]
       
       setnames(x = variants,
@@ -76,13 +81,17 @@ processVariants = function(id, variants) {
     ###
     # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
     ###
-    if (all(c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+    if (all(c("donor_id", "variant_classification", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "mut_id") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
-      variants[, rna_expression := NA]
+      setnames(x = variants,
+               old = c("mut_id", "entrez_expression"),
+               new = c("variant_id", "rna_expression"))
       
-      variantssubset = variants
-    } else if (all(c("variant_id", "Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+      variantssubset = unique(x = variants,
+                              by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, add "no data" for rna_expression & take subset
+      variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
       setnames(x = variants,
                old = c("Gene", "transcriptid"),
                new = c("gene_symbol", "transcript_id"))
@@ -92,8 +101,9 @@ processVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "symbol", "gene", "transcript", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+    } else if (all(c("symbol", "gene", "transcript", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
       # dealing with NKI kitchensink data: rename column headers, add "no data" for rna_expression & take subset
+      variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
       setnames(x = variants,
                old = c("symbol", "gene", "transcript"),
                new = c("gene_symbol", "gene_id", "transcript_id"))
@@ -103,8 +113,9 @@ processVariants = function(id, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "externalname", "geneid", "transcriptid", "peptide_seq_ref", "peptide_seq_alt") %in% names(variants))) {
+    } else if (all(c("externalname", "geneid", "transcriptid", "peptide_seq_ref", "peptide_seq_alt") %in% names(variants))) {
       # dealing with NKI varcontext data: rename column headers, take subset
+      variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
       setnames(x = variants,
                old = c("externalname", "geneid", "transcriptid", "peptide_seq_ref", "peptide_seq_alt"),
                new = c("gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor"))
