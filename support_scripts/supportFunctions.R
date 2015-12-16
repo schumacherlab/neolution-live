@@ -48,16 +48,16 @@ emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
 }
 
 # wrapper for writing predictions to disk
-writePredictionsToDisk = function(table, excludecols = "c_term_pos", dirpath, filename, allele, peptidelength, suffix = NULL) {
+writePredictionsToDisk = function(table, excludecols = "c_term_pos", filepath, filename, allele, peptidelength, suffix = NULL) {
   if(nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = names(table)[-match(x = excludecols,
                                                   table = names(table))]),
-              file = paste0(dirpath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
+              file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
               row.names = FALSE)  
   } else {
     write.csv(x = "No epitopes predicted",
-              file = paste0(dirpath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
+              file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
               row.names = FALSE)  
   }
 }

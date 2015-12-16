@@ -15,65 +15,70 @@ registerDoMC(cores = numberOfWorkers)
 #scriptPath = thisDirectory()
 
 # create directory to hold logs/output, if necessary
-dir.create(path = paste0(dirPath, "/output"),
+dir.create(path = paste0(runParameters$filepath, "/output"),
            showWarnings = FALSE)
 
 # collect information on run; print to console and write to log
 runStart = format(Sys.time(),"%Y%m%d-%H%M")
-message(paste0("Input file:\t\t", filePath, "\n",
-               "MHC/HLA allele:\t\t", hlaType, "\n",
-               "Peptide length:\t\t", peptideLength, "\n",
-               "Affinity cutoff:\t", affinityCutoff, " nM\n",
-               "Processsing cutoff:\t", processingCutoff, "\n",
-               "Expression cutoff:\t", expressionCutoff, "\n",
-               "Single seq predictions:\t\t", doSingleSequencePrediction, "\n",
-               "Simple self-similarity:\t\t", doSimpleSelfSimilarity, "\n",
-               "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n",
-               "Use self-epitope list:\t\t", addSelfEpitopes, "\n",
-               "Use FASdb lookups:\t\t", useFasDb, "\n"))
+message(paste0("Input file:\t\t", paste(runParameters$filepath, runParameters$filename, sep = "/"), "\n",
+               "MHC/HLA allele:\t\t", runParameters$allele, "\n",
+               "Peptide length:\t\t", runParameters$peptidelength, "\n",
+               "Affinity cutoff:\t", runParameters$affinity, " nM\n",
+               "Processsing cutoff:\t", runParameters$processing, "\n",
+               "Expression cutoff:\t", runParameters$expression, "\n",
+               "Single seq predictions:\t\t", runParameters$single_sequence, "\n",
+               "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
+               "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
+               "Use self-epitope list:\t\t", runParameters$use_selflist, "\n",
+               "Use FASdb lookups:\t\t", runParameters$use_fasdb, "\n"))
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "branch:\t\t\t\t\t", system("git symbolic-ref --short -q HEAD", intern = TRUE),"\n",
                  "commit hash:\t\t", system("git rev-parse HEAD", intern = TRUE),"\n\n",
-                 "Input file:\t\t\t\t\t", filePath, "\n",
-                 "MHC/HLA allele:\t\t\t", hlaType, "\n",
-                 "Peptide length:\t\t\t", peptideLength, "\n",
-                 "Affinity cutoff:\t\t", affinityCutoff, " nM\n",
-                 "Processing cutoff:\t", processingCutoff, "\n",
-                 "Expression cutoff:\t", expressionCutoff, "\n\n",
-                 "Single seq predictions:\t\t", doSingleSequencePrediction, "\n",
-                 "Simple self-similarity:\t\t", doSimpleSelfSimilarity, "\n",
-                 "Extended self-similarity:\t", doExtendedSelfSimilarity, "\n",
-                 "Use self-epitope list:\t\t", addSelfEpitopes, "\n",
-                 "Use FASdb lookups:\t\t\t\t", useFasDb, "\n\n",
+                 "Input file:\t\t\t\t\t", paste(runParameters$filepath, runParameters$filename, sep = "/"), "\n",
+                 "MHC/HLA allele:\t\t\t", runParameters$allele, "\n",
+                 "Peptide length:\t\t\t", runParameters$peptidelength, "\n",
+                 "Affinity cutoff:\t\t", runParameters$affinity, " nM\n",
+                 "Processing cutoff:\t", runParameters$processing, "\n",
+                 "Expression cutoff:\t", runParameters$expression, "\n\n",
+                 "Single seq predictions:\t\t", runParameters$single_sequence, "\n",
+                 "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
+                 "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
+                 "Use self-epitope list:\t\t", runParameters$use_selflist, "\n",
+                 "Use FASdb lookups:\t\t\t\t", runParameters$use_fasdb, "\n\n",
                  "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
                  "Processing predictor:\t", predictorPaths$netChop, "\n"),
-      file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
+      file = paste0(runParameters$filepath,
+                    "/output/",
+                    paste(runStart,
+                          runParameters$filename_no_ext,
+                          runParameters$allele, 
+                          runParameters$peptidelength,
+                          sep = "_"),
+                    "mer_runInfo.txt"),
       append = FALSE)
 
+
+
 # re-direct output to log file
-sink(file = file(description = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runLog.txt"),
+sink(file = file(description = paste0(runParameters$filepath,
+                                      "/output/",
+                                      paste(runStart,
+                                            runParameters$filename_no_ext,
+                                            runParameters$allele,
+                                            runParameters$peptidelength, sep = "_"),
+                                      "mer_runLog.txt"),
                  open = "wt"),
      type = "message",
      append = TRUE)
 
 # check if we want single seq predictions or paired normal-tumor predictions
-switch(EXPR = as.character(doSingleSequencePrediction),
+switch(EXPR = as.character(runParameters$single_sequence),
        # --single == TRUE (single seq input)
-       "TRUE" = performSingleSequencePredictions(file = filePath,
-                                                 allele = hlaType,
-                                                 peptidelength = peptideLength,
-                                                 affcutoff = affinityCutoff,
-                                                 proccutoff = processingCutoff,
-                                                 exprcutoff = expressionCutoff), 
+       "TRUE" = performSingleSequencePredictions(config = runParameters), 
        # --single == FALSE (normal-tumor input)
-       "FALSE" = performPairedSequencePredictions(file = filePath,
-                                                  allele = hlaType,
-                                                  peptidelength = peptideLength,
-                                                  affcutoff = affinityCutoff,
-                                                  proccutoff = processingCutoff,
-                                                  exprcutoff = expressionCutoff)
+       "FALSE" = performPairedSequencePredictions(config = runParameters)
 )
 
 #====================================================================================================================================#
@@ -81,5 +86,11 @@ switch(EXPR = as.character(doSingleSequencePrediction),
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
                  "comments:"),
-      file = paste0(dirPath, "/output/", paste(runStart, fileName, hlaType, peptideLength, sep = "_"), "mer_runInfo.txt"),
+      file = paste0(runParameters$filepath,
+                    "/output/",
+                    paste(runStart,
+                          runParameters$filename_no_ext,
+                          runParameters$allele,
+                          runParameters$peptidelength, sep = "_"),
+                    "mer_runInfo.txt"),
       append = TRUE)

@@ -12,14 +12,15 @@ logQueryErrorToDisk = function(querytype, file, index, error) {
                    " | file: ", file,
                    " | index: ", index,
                    " | error: ", error),
-        file = paste0(dirPath, "/output/", file, "_query_errors.log"),
+        file = paste0(config$filepath, "/output/", file, "_query_errors.log"),
         append = TRUE)
 }
 
-performFasDbPredictions = function(peptides, peptidestretch, allele, peptidelength) {
+performFasDbPredictions = function(index, peptides, peptidestretch, allele, peptidelength) {
   if(nrow(peptides) > 0) {
     # do affinity lookups in FASdb
-    affinityLookups = queryDatabaseWithPeptideForAffinityScore(peptides = peptides$peptide,
+    affinityLookups = queryDatabaseWithPeptideForAffinityScore(index = i,
+                                                               peptides = peptides$peptide,
                                                                allele = allele)
     
     predictions = merge(x = peptides,
@@ -70,7 +71,7 @@ performFasDbPredictions = function(peptides, peptidestretch, allele, peptideleng
 }
 
 # function for querying FASdb for peptide affinity
-queryDatabaseWithPeptideForAffinityScore = function(peptides, allele) {
+queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
   res = NULL
   attempt = 1
   while(is.null(res) && attempt <= 10) {
@@ -99,8 +100,8 @@ queryDatabaseWithPeptideForAffinityScore = function(peptides, allele) {
       ,
       error = function(err) {
         logQueryErrorToDisk(querytype = "affinityScore",
-                            file = fileName,
-                            index = i,
+                            file = config$filename,
+                            index = index,
                             error = err)
         
         if (!is.null(res)) {

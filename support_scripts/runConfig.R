@@ -89,19 +89,33 @@ isFasDbVersion = any(grepl(pattern = "netmhcpan 2\\.4",
 # parse commandline arguments
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
+# prepare table for holding run configuration
+runParameters = data.table(filename = character(),
+                           filename_no_ext = character(),
+                           filepath = character(),
+                           allele = character(),
+                           peptidelength = numeric(),
+                           affinity = numeric(),
+                           processing = numeric(),
+                           expression = numeric(),
+                           single_sequence = logical(),
+                           simple_selfsim = logical(),
+                           extended_selfsim = logical(),
+                           use_selflist = logical(),
+                           use_fasdb = logical())
+
 # parse other arguments
 if (is.null(commandlineArguments$file)) {
   message("File input (-f or --file) is required argument, use -h for help")
   q(status = 1)
 } else if (file.exists(commandlineArguments$file)) {
-  filePath = commandlineArguments$file
-  fileName = substring(text = basename(filePath),
-                       first =  1, 
-                       last = max(unlist(gregexpr(pattern = ".", 
-                                                  text = basename(filePath),
-                                                  fixed = TRUE)))-1
-  )
-  dirPath = dirname(filePath)
+  runParameters$filename = basename(commandlineArguments$file)
+  runParameters$filename_no_ext = substring(text = runParameters$filename,
+                                            first =  1, 
+                                            last = max(unlist(gregexpr(pattern = ".", 
+                                                                       text = runParameters$filename,
+                                                                       fixed = TRUE)))-1)
+  runParameters$filepath = dirname(commandlineArguments$file)
 } else {
   message("Can't find file, make sure to provide full path to file")
   q(status = 1)
@@ -114,65 +128,65 @@ if (is.null(commandlineArguments$mhc)) {
   message("MHC/HLA input should be formatted as follows: A0201")
   q(status = 1)
 } else {
-  hlaType = toupper(commandlineArguments$mhc)
+  runParameters$allele = toupper(commandlineArguments$mhc)
 }
 
 if (is.null(commandlineArguments$length)) {
   message("Peptide length input (-l or --length) is required argument, use -h for help")
   q(status = 1)
 } else if (commandlineArguments$length >=8 & commandlineArguments$length <= 11) {
-  peptideLength = commandlineArguments$length
+  runParameters$peptidelength = commandlineArguments$length
 } else {
   message("Peptide length input (-l or --length) should be >=8 and <= 11, use -h for help")
   q(status = 1)
 }
 
 if (is.numeric(commandlineArguments$affinity)) {
-  affinityCutoff = commandlineArguments$affinity
+  runParameters$affinity = commandlineArguments$affinity
 } else {
   message("Affinity cutoff input (-a or --affinity) should be numeric, use -h for help")
   q(status = 1)
 }
 
 if (is.numeric(commandlineArguments$processing)) {
-  processingCutoff = commandlineArguments$processing
+  runParameters$processing = commandlineArguments$processing
 } else {
   message("Processing cutoff input (-p or --processing) should be numeric, use -h for help")
   q(status = 1)
 }
 
 if (is.numeric(commandlineArguments$expression)) {
-  expressionCutoff = commandlineArguments$expression
+  runParameters$expression = commandlineArguments$expression
 } else {
   message("Expression cutoff input (-e or --expression) should be numeric, use -h for help")
   q(status = 1)
 }
 
-doSingleSequencePrediction = commandlineArguments$single
+runParameters$single_sequence = commandlineArguments$single
 
 if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
   message("Please choose ONE type of self-similarity check, use -h for help")
   q(status = 1)
-} else if (commandlineArguments$extselfsim & peptideLength != 9) {
+} else if (commandlineArguments$extselfsim & runParameters$peptidelength != 9) {
   message("Extended selfsim can only be used for 9-mers, use -h for help")
   q(status = 1)
 } else {
-  doSimpleSelfSimilarity = commandlineArguments$selfsim
-  doExtendedSelfSimilarity = commandlineArguments$extselfsim
+  runParameters$simple_selfsim = commandlineArguments$selfsim
+  runParameters$extended_selfsim = commandlineArguments$extselfsim
 }
 
-if (doSingleSequencePrediction & (doSimpleSelfSimilarity | doExtendedSelfSimilarity) & commandlineArguments$selflist == FALSE) {
+if (runParameters$single_sequence & (runParameters$simple_selfsim | runParameters$extended_selfsim) & commandlineArguments$selflist == FALSE) {
   message("Self-similarity check on single sequences can only be performed with a self-epitope list!")
   q(status = 1)
 } else {
-  addSelfEpitopes = commandlineArguments$selflist
+  runParameters$use_selflist = commandlineArguments$selflist
 }
 
-if (commandlineArguments$fasdb & isFasDbVersion & peptideLength == 9) {
-  useFasDb = commandlineArguments$fasdb
-} else if (commandlineArguments$fasdb & (isFasDbVersion == FALSE | peptideLength != 9)) {
+if (commandlineArguments$fasdb & isFasDbVersion & runParameters$peptidelength == 9) {
+  runParameters$use_fasdb = commandlineArguments$fasdb
+} else if (commandlineArguments$fasdb & (isFasDbVersion == FALSE | runParameters$peptidelength != 9)) {
   message("FASdb peptide affinity lookups are only supported for 9-mers & when using netMHCpan-2.4, use -h for help")
   q(status = 1)
 } else {
-  useFasDb = commandlineArguments$fasdb
+  runParameters$use_fasdb = commandlineArguments$fasdb
 }
