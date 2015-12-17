@@ -95,9 +95,9 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
 
 # simple self-similarity check
 matchManySequencesSimple = function(single.seq, seq.list, scorematrix) {
-  all(sapply(seq.list, function(seq) matchSequencesSimple(seq1 = single.seq,
-                                                          seq2 = seq,
-                                                          scorematrix = scorematrix)$keep.in.list))
+  all(sapply(seq.list, function(seq) matchSequencesSimpleCompiled(seq1 = single.seq,
+                                                                  seq2 = seq,
+                                                                  scorematrix = scorematrix)$keep.in.list))
 }
 
 matchSequencesSimple = function(seq1, seq2, scorematrix, threshold = Inf) {
@@ -134,9 +134,9 @@ matchSequencesSimple = function(seq1, seq2, scorematrix, threshold = Inf) {
 
 # extended self-similarity check
 matchManySequencesExtended = function(single.seq, seq.list, scorematrix) {
-  all(sapply(seq.list, function(seq) matchSequencesExtended(seq1 = single.seq,
-                                                            seq2 = seq,
-                                                            scorematrix = scorematrix)$keep.in.list))
+  all(sapply(seq.list, function(seq) matchSequencesExtendedCompiled(seq1 = single.seq,
+                                                                    seq2 = seq,
+                                                                    scorematrix = scorematrix)$keep.in.list))
 }
 
 matchSequencesExtended = function(seq1, seq2, scorematrix, threshold = Inf) {
@@ -175,3 +175,7 @@ matchSequencesExtended = function(seq1, seq2, scorematrix, threshold = Inf) {
     )
   return(r)
 }
+
+# compile self-sim functions
+matchSequenceSimpleCompiled = cmpfun(matchSequencesSimple)
+matchSequencesExtendedCompiled = cmpfun(matchSequencesExtended)
