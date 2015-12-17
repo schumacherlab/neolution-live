@@ -120,14 +120,14 @@ matchSequencesSimple = function(seq1, seq2, scorematrix, threshold = Inf) {
     # change        = paste(peptide.list[[1]], '->', peptide.list[[2]]),
     p.matches     = p.matches,
     score.per.p   = score.vec,
-    n.mutations   = sum(!p.matches[c(3:(peptideLength - 1))]),
-    total.score   = sum(score.vec[c(3:(peptideLength - 1))])
+    n.mutations   = sum(!p.matches[c(3:(runParameters$peptidelength - 1))]),
+    total.score   = sum(score.vec[c(3:(runParameters$peptidelength - 1))])
   )
   
   r$keep.in.list <-
     (
       r$n.mutations >= 2		# the total number of mutations within the core peptide = 2 or more
-      | r$total.score <= (peptideLength - 4)  # the total PMBEC score equals 5, 6 or 7 for 9-, 10- or 11-mers, repectively
+      | r$total.score <= (runParameters$peptidelength - 4)  # the total PMBEC score equals 5, 6 or 7 for 9-, 10- or 11-mers, repectively
     )
   return(r)
 }
