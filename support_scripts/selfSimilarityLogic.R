@@ -1,7 +1,7 @@
 # load self-epitope lists
 loadSelfEpitopeList = function(path, allele, peptidelength) {
   availableSelfLists = dir(path = path,
-                           pattern = paste(allele, paste0(peptidelength,"mer"), sep = "_"),
+                           pattern = paste0(allele, ".*", paste0(peptidelength,"mer")),
                            include.dirs = FALSE,
                            full.names = TRUE)
   
