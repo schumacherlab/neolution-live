@@ -135,7 +135,6 @@ performProcessingPredictions = function(peptidestretch) {
   
   # perform regex on netChop output
   if (length(output) > 17) {
-    output = output[-c(1:17)]
     output = output[-grep(pattern = "^\\#.+|^\\-.+|^Number.+|^NetChop.+|pos.+|^$",
                           x = output)]
     output = gsub(pattern = "^[[:blank:]]+",
