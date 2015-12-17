@@ -177,5 +177,5 @@ matchSequencesExtended = function(seq1, seq2, scorematrix, threshold = Inf) {
 }
 
 # compile self-sim functions
-matchSequenceSimpleCompiled = cmpfun(matchSequencesSimple)
+matchSequencesSimpleCompiled = cmpfun(matchSequencesSimple)
 matchSequencesExtendedCompiled = cmpfun(matchSequencesExtended)
