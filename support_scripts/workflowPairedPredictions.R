@@ -4,7 +4,7 @@ performPairedSequencePredictions = function() {
   
   sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$",
                           replacement = "",
-                          x = runParameters$filename))
+                          x = runParameters$filename_no_ext))
   
   variantInfo = processVariants(id = sampleId,
                                 variants = variantInput)
