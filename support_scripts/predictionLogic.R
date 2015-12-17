@@ -34,9 +34,9 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
 
 performAffinityPredictions = function(peptides, allele, peptidelength) {
   # generate random number to give to temp dir and temp file
-  randomNumber = runif(n = 1,
-                       min = 0,
-                       max = 10^10)
+  randomNumber = ceiling(runif(n = 1,
+                               min = 0,
+                               max = 10^10))
   
   dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
   
@@ -101,9 +101,9 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 
 performProcessingPredictions = function(peptidestretch) {
   # generate random number to give to temp dir and temp file
-  randomNumber = runif(n = 1,
-                       min = 0,
-                       max = 10^10)
+  randomNumber = ceiling(runif(n = 1,
+                               min = 0,
+                               max = 10^10))
   
   dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
   
