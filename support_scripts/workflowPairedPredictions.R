@@ -136,6 +136,17 @@ performPairedSequencePredictions = function() {
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score"))
   
+  # determine which variants contributed to the formation of predicted epitopes
+  if ("peptide_pos_alt" %in% names(variantInput)){
+    epitopePredictionsAll[, contributing_variants := sapply(seq(1, nrow(epitopePredictionsAll), 1), 
+                                                            function(x) findVariantsContributingToEpitope(variant = epitopePredictionsAll[x, ],
+                                                                                                          all_variants = variantInput))]
+    
+    epitopePredictionsWithFiltersApplied[, contributing_variants := sapply(seq(1, nrow(epitopePredictionsWithFiltersApplied), 1), 
+                                                                           function(x) findVariantsContributingToEpitope(variant = epitopePredictionsWithFiltersApplied[x, ],
+                                                                                                                         all_variants = variantInput))]
+  }
+  
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
                          excludecols = c("c_term_pos", "variant_id"),
