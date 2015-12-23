@@ -21,6 +21,18 @@ performPairedSequencePredictions = function() {
                               "character", "character", "numeric", "numeric",
                               "character", "character", "numeric", "numeric")
   
+  if(nrow(variantInfo) == 0){
+    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+                                                                             colclasses = columnClassesEmptyTable),
+                           excludecols = c("c_term_pos", "variant_id"),
+                           filepath = runParameters$filepath,
+                           filename = runParameters$filename_no_ext,
+                           allele = runParameters$allele,
+                           peptidelength = runParameters$peptidelength,
+                           suffix = "_no_epitopes")
+    return(NULL)
+  }
+  
   # load required data for self-similarity check
   if ((runParameters$simple_selfsim | runParameters$extended_selfsim) & runParameters$use_selflist) {
     selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
