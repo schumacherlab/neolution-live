@@ -63,12 +63,12 @@ buildPeptideList = function(sequences, peptidelength) {
 
 findVariantsContributingToEpitope = function(variant, all_variants) {
   transcript_variants = subset(x = all_variants,
-                               subset = transcriptid == variant$transcript_id)
+                               subset = transcript_id == variant$transcript_id)
   
   epitope_variants = subset(x = transcript_variants, 
                             subset = protein_pos_alt > (variant$c_term_pos - runParameters$peptidelength) & protein_pos_alt <= variant$c_term_pos)
   
-  contributing_variant_identifiers = paste(epitope_variants$id, epitope_variants$type, sep = " # ", collapse = "!")
+  contributing_variant_identifiers = paste(epitope_variants$variant_id, epitope_variants$variant_classification, sep = " @ ", collapse = "!")
   
   return(contributing_variant_identifiers)
 }
