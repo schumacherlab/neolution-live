@@ -28,8 +28,7 @@ performPairedSequencePredictions = function() {
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength,
-                           suffix = "_no_epitopes")
+                           peptidelength = runParameters$peptidelength)
     return(NULL)
   }
   
