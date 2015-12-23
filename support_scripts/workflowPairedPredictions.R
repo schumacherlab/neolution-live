@@ -2,13 +2,13 @@ performPairedSequencePredictions = function() {
   # import data & clean up
   variantInput = unique(fread(input = paste(runParameters$filepath, runParameters$filename, sep = "/")))
   
-  sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$",
+  sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$|_merged\\.tsv",
                           replacement = "",
                           x = runParameters$filename_no_ext))
   
   variantInfo = processVariants(id = sampleId,
                                 variants = variantInput)
-
+  
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
                             "c_term_pos", "hla_allele", "xmer",
