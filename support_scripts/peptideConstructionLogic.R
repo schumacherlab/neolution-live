@@ -61,14 +61,25 @@ buildPeptideList = function(sequences, peptidelength) {
   }
 }
 
-findVariantsContributingToEpitope = function(variant, all_variants) {
-  transcript_variants = subset(x = all_variants,
-                               subset = transcript_id == variant$transcript_id)
-  
-  epitope_variants = subset(x = transcript_variants, 
-                            subset = protein_pos_alt > (variant$c_term_pos - runParameters$peptidelength) & protein_pos_alt <= variant$c_term_pos)
-  
-  contributing_variant_identifiers = paste(epitope_variants$variant_id, epitope_variants$variant_classification, sep = " @ ", collapse = "!")
-  
-  return(contributing_variant_identifiers)
+findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
+  if (nrow(predicted_variants) > 0) {
+    contributing_variant_identifiers = sapply(seq(1, nrow(predicted_variants), 1), 
+                                              function(x) {
+                                                transcript_variants = subset(x = all_variants,
+                                                                             subset = transcript_id == predicted_variants[x, ]$transcript_id)
+                                                
+                                                epitope_variants = subset(x = transcript_variants, 
+                                                                          subset = protein_pos_alt > (predicted_variants[x ,]$c_term_pos - runParameters$peptidelength) 
+                                                                          & protein_pos_alt <= predicted_variants[x, ]$c_term_pos)
+                                                
+                                                contributing_variants = paste(epitope_variants$variant_id, 
+                                                                                         epitope_variants$variant_classification,
+                                                                                         sep = " @ ",
+                                                                                         collapse = "!")
+                                              },
+                                              USE.NAMES = FALSE)
+    return(contributing_variant_identifiers)
+  } else {
+    return("")  
+  }
 }
