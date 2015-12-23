@@ -195,11 +195,19 @@ performPairedSequencePredictions = function() {
   
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (runParameters$extended_selfsim) {
-    epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
-                                                                                                     selfepitopes = selfEpitopes$peptide,
-                                                                                                     scorematrix = scoreMatrix,
-                                                                                                     normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
-                                                                                                                             subset = is.na(rna_expression) == FALSE)$normal_peptide)]
+    if (all(c("hugo_expression", "entrez_expression") %in% names(variantInfo))) {
+      epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
+                                                                                                       selfepitopes = selfEpitopes$peptide,
+                                                                                                       scorematrix = scoreMatrix,
+                                                                                                       normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
+                                                                                                                               subset = is.numeric(hugo_expression) == TRUE | is.numeric(entrez_expression) == TRUE)$normal_peptide)]
+    } else {
+      epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
+                                                                                                       selfepitopes = selfEpitopes$peptide,
+                                                                                                       scorematrix = scoreMatrix,
+                                                                                                       normalepitopes = subset(x = epitopePredictionsWithFiltersApplied,
+                                                                                                                               subset = is.na(rna_expression) == FALSE)$normal_peptide)]  
+    }
     
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
