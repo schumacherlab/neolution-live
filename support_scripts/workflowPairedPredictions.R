@@ -179,13 +179,11 @@ performPairedSequencePredictions = function() {
   
   # determine which variants contributed to the formation of predicted epitopes
   if (all(c("protein_pos_alt", "variant_classification") %in% names(variantInput))) {
-    epitopePredictionsAll[, contributing_variants := sapply(seq(1, nrow(epitopePredictionsAll), 1), 
-                                                            function(x) findVariantsContributingToEpitope(variant = epitopePredictionsAll[x, ],
-                                                                                                          all_variants = variantInput))]
+    epitopePredictionsAll[, contributing_variants := findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
+                                                                                       all_variants = variantInput)]
     
-    epitopePredictionsWithFiltersApplied[, contributing_variants := sapply(seq(1, nrow(epitopePredictionsWithFiltersApplied), 1), 
-                                                                           function(x) findVariantsContributingToEpitope(variant = epitopePredictionsWithFiltersApplied[x, ],
-                                                                                                                         all_variants = variantInput))]
+    epitopePredictionsWithFiltersApplied[, contributing_variants := findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
+                                                                                                      all_variants = variantInput)]
   }
   
   # write all predictions to disk
