@@ -103,8 +103,7 @@ performPairedSequencePredictions = function() {
                                                          (hugo_expression > runParameters$expression & entrez_expression > runParameters$expression)
                                                        |
                                                          (is.na(hugo_expression) == TRUE & is.na(entrez_expression) == TRUE)
-                                                     )
-      )
+                                                     ))
       
       tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
                                                   subset = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity &
@@ -117,8 +116,7 @@ performPairedSequencePredictions = function() {
                                                         (hugo_expression > runParameters$expression & entrez_expression > runParameters$expression)
                                                       |
                                                         (is.na(hugo_expression) == TRUE & is.na(entrez_expression) == TRUE)
-                                                    )
-      )
+                                                    ))
     } else {
       normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
                                                    subset = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity &
