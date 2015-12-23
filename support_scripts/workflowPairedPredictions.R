@@ -178,7 +178,7 @@ performPairedSequencePredictions = function() {
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score"))
   
   # determine which variants contributed to the formation of predicted epitopes
-  if ("protein_pos_alt" %in% names(variantInput)){
+  if (c("protein_pos_alt", "variant_classification") %in% names(variantInput)){
     epitopePredictionsAll[, contributing_variants := sapply(seq(1, nrow(epitopePredictionsAll), 1), 
                                                             function(x) findVariantsContributingToEpitope(variant = epitopePredictionsAll[x, ],
                                                                                                           all_variants = variantInput))]
