@@ -57,7 +57,7 @@ writePredictionsToDisk = function(table, excludecols = "c_term_pos", filepath, f
               file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
               row.names = FALSE)  
   } else {
-    write.csv(x = "No epitopes predicted",
+    write.csv(x = table,
               file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
               row.names = FALSE)  
   }
