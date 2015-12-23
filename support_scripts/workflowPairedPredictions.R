@@ -91,7 +91,7 @@ performPairedSequencePredictions = function() {
              new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_c_term_aa", "tumor_processing_score"))
     
     # apply various cutoffs
-    if (runParameters$use_fasdb){
+    if (all(c("hugo_expression", "entrez_expression") %in% names(variantInfo))) {
       normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
                                                    subset = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity &
                                                      normal_processing_score >= runParameters$processing &
