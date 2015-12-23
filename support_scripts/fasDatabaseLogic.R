@@ -34,23 +34,25 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
       affinityPredictions = performAffinityPredictions(peptides = subset(x = predictions,
                                                                          subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
                                                        allele = allele,
-                                                       peptidelength = peptidelength)  
-    } else {
-      affinityPredictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c("hla_allele", "peptide", paste0(allele, "affinity")),
-                                                                      colclasses = c("character", "character", "numeric"))
+                                                       peptidelength = peptidelength)
+      
+      # find positions of NA's to replace
+      rowPositions = match(x = subset(x = predictions,
+                                      subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
+                           table = unique(x = affinityPredictions,
+                                          by = "peptide")$peptide)
+      
+      # merge missing affinity prediction info
+      predictions[[paste0(allele,"affinity")]][match(x = unique(x = affinityPredictions,
+                                                                by = "peptide")$peptide,
+                                                     table = predictions$peptide)] = unique(x = affinityPredictions,
+                                                                                            by = "peptide")[[paste0(allele,"affinity")]][rowPositions]
     }
     
     # perform processing predictions
     processingPredictions = performProcessingPredictions(peptidestretch = peptidestretch)
     
     # merge prediction info
-    predictions[[paste0(allele,"affinity")]][match(x = unique(x = affinityPredictions,
-                                                              by = "peptide")$peptide,
-                                                   table = predictions$peptide)] = unique(x = affinityPredictions,
-                                                                                          by = "peptide")[[paste0(allele,"affinity")]][match(x = predictions$peptide,
-                                                                                                                                             table = unique(x = affinityPredictions,
-                                                                                                                                                            by = "peptide")$peptide)]
-    
     predictions = merge(x = predictions,
                         y = processingPredictions,
                         by = "c_term_pos")
