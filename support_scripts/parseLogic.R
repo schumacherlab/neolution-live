@@ -30,18 +30,19 @@ readFastaFile = function(file) {
 
 processVariants = function(id, variants) {
   # determine if there is any RNA expression data
-  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM", "entrez_expression") %in% names(variants))) {
+  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM", "hugo_expression", "entrez_expression") %in% names(variants))) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("donor_id", "variant_classification", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "mut_id") %in% names(variants))) {
+    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
       setnames(x = variants,
-               old = c("mut_id", "entrez_expression"),
-               new = c("variant_id", "rna_expression"))
+               old = c("mut_id", "protein_seq_ref", "protein_seq_alt"),
+               new = c("variant_id", "peptidecontextnormal", "peptidecontexttumor"))
       
       variantssubset = unique(x = variants,
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
+      variantssubset[, chromosome := as.character(variantssubset$chromosome)]
     } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, take subset
       variants$variant_id = paste(id, 1:nrow(variants), sep = "-")
@@ -81,11 +82,11 @@ processVariants = function(id, variants) {
     ###
     # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
     ###
-    if (all(c("donor_id", "variant_classification", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "mut_id") %in% names(variants))) {
+    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
       setnames(x = variants,
-               old = c("mut_id", "entrez_expression"),
-               new = c("variant_id", "rna_expression"))
+               old = c("mut_id"),
+               new = c("variant_id"))
       
       variantssubset = unique(x = variants,
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
