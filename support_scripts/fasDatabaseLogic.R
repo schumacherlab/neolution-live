@@ -43,9 +43,7 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
                                                                by = "peptide")$peptide)
       rowPositionsInAllPredictions = match(x = unique(x = affinityPredictions,
                                                       by = "peptide")$peptide,
-                                           table = subset(x = predictions,
-                                                          subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide)
-      
+                                           table = predictions$peptide)
       
       # merge missing affinity prediction info
       predictions[[paste0(allele,"affinity")]][rowPositionsInAllPredictions] = unique(x = affinityPredictions,
