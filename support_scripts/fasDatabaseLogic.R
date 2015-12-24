@@ -37,16 +37,19 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
                                                        peptidelength = peptidelength)
       
       # find positions of NA's to replace
-      rowPositions = match(x = subset(x = predictions,
-                                      subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
-                           table = unique(x = affinityPredictions,
-                                          by = "peptide")$peptide)
+      rowPositionsInAffinityPredictions = match(x = subset(x = predictions,
+                                                           subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
+                                                table = unique(x = affinityPredictions,
+                                                               by = "peptide")$peptide)
+      rowPositionsInAllPredictions = match(x = unique(x = affinityPredictions,
+                                                      by = "peptide")$peptide,
+                                           table = subset(x = predictions,
+                                                          subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide)
+      
       
       # merge missing affinity prediction info
-      predictions[[paste0(allele,"affinity")]][match(x = unique(x = affinityPredictions,
-                                                                by = "peptide")$peptide,
-                                                     table = predictions$peptide)] = unique(x = affinityPredictions,
-                                                                                            by = "peptide")[[paste0(allele,"affinity")]][rowPositions]
+      predictions[[paste0(allele,"affinity")]][rowPositionsInAllPredictions] = unique(x = affinityPredictions,
+                                                                                            by = "peptide")[[paste0(allele,"affinity")]][rowPositionsInAffinityPredictions]
     }
     
     # perform processing predictions
