@@ -36,18 +36,18 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
                                                        allele = allele,
                                                        peptidelength = peptidelength)
       
-      # find positions of NA's to replace
-      rowPositionsInAffinityPredictions = match(x = subset(x = predictions,
-                                                           subset = is.na(predictions[[paste0(allele, "affinity")]]) == TRUE)$peptide,
-                                                table = unique(x = affinityPredictions,
-                                                               by = "peptide")$peptide)
-      rowPositionsInAllPredictions = match(x = unique(x = affinityPredictions,
-                                                      by = "peptide")$peptide,
-                                           table = predictions$peptide)
-      
       # merge missing affinity prediction info
-      predictions[[paste0(allele,"affinity")]][rowPositionsInAllPredictions] = unique(x = affinityPredictions,
-                                                                                            by = "peptide")[[paste0(allele,"affinity")]][rowPositionsInAffinityPredictions]
+      predictions = merge(x = predictions,
+                          y = unique(x = affinityPredictions,
+                                     by = "peptide"),
+                          by = "peptide",
+                          all.x = TRUE,
+                          suffixes = c(".lookups", ".predictions"))
+      
+      predictions[, paste0(allele, "affinity") := ifelse(test = is.na(predictions[[paste0(allele, "affinity.lookups")]]),
+                                                         yes = predictions[[paste0(allele, "affinity.predictions")]],
+                                                         no = predictions[[paste0(allele, "affinity.lookups")]])]
+      predictions[, c(paste0(allele, "affinity.lookups"), paste0(allele, "affinity.predictions")) := NULL]
     }
     
     # perform processing predictions
