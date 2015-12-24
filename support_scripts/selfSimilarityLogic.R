@@ -8,8 +8,7 @@ loadSelfEpitopeList = function(path, allele, peptidelength) {
   if(length(availableSelfLists) == 1) {
     selfEpitopes = unique(x = fread(availableSelfLists,
                                     header = TRUE,
-                                    stringsAsFactors = FALSE,
-                                    drop = "sequence_id"),
+                                    stringsAsFactors = FALSE),
                           by = "peptide")
     setnames(x = selfEpitopes,
              old = names(selfEpitopes),
