@@ -14,6 +14,9 @@ registerDoMC(cores = numberOfWorkers)
 
 #scriptPath = thisDirectory()
 
+# check availability of predictors
+checkPredictorPaths(paths = predictorPaths)
+
 # create directory to hold logs/output, if necessary
 dir.create(path = paste0(runParameters$filepath, "/output"),
            showWarnings = FALSE)
