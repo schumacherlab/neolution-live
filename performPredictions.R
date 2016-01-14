@@ -1,5 +1,6 @@
 # load external scripts
 source("./support_scripts/supportFunctions.R")
+source("./support_scripts/commandlineArgumentLogic.R")
 source("./support_scripts/runConfig.R")
 source("./support_scripts/parseLogic.R")
 source("./support_scripts/predictionLogic.R")
