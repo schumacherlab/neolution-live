@@ -67,7 +67,8 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                      x = allele),
     ' -l ', peptidelength,
     ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
-    ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber)),
+    ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber),
+    ' -ic50'),
     intern = TRUE)
   
   file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
