@@ -64,7 +64,7 @@ performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix,
                                  FUN = matchManySequencesSimple,
                                  seq.list = selfepitopes,
                                  scorematrix = scorematrix,
-                                 mc.cores = 32)
+                                 mc.cores = numberOfWorkers)
   
   different_from_self = unlist(different_from_self)
   
@@ -85,7 +85,7 @@ performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematri
                                  FUN = matchManySequencesExtended,
                                  seq.list = selfepitopes,
                                  scorematrix = scorematrix,
-                                 mc.cores = 32)
+                                 mc.cores = numberOfWorkers)
   
   different_from_self = unlist(different_from_self)
   
