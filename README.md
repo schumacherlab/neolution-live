@@ -8,7 +8,9 @@ This pipeline performs live predictions using netMHCpan and netChop to predict p
 **Usage example:**  
 `Rscript performPredictions.R -f /home/NFS/users/l.fanchi/neolution-live/rte_kitchensink.txt -m A0201 -l 9`
 
-The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **rte_kitchensink.txt**, __HLA-A*02:01__ and **9-mer** peptides.
+The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **rte_kitchensink.txt**, __HLA-A*02:01__ and **9-mer** peptides. 
+
+**By default, netMHCpan v2.8 will be used and 1/4th of the available cores are used per run for parallel computations; four parallel samples can be started at the same moment.**
 
 **IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
 
@@ -28,6 +30,7 @@ The call should be run from the script directory from the Terminal and will star
 6. extended self-similarity check (9-mers only)
 7. use self-epitope list
 8. use database for peptide affinity lookups (9-mers, netMHCpan-2.4 only)
+9. netMHCpan version
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
 
@@ -70,6 +73,9 @@ The call should be run from the script directory from the Terminal and will star
 
 `--fasdb`  
 *Look up peptide affinity in FASdb, predict if not found; only compatible with 9-mers & netMHCpan-2.4 (optional, default: FALSE)*
+
+`--panversion`  
+*Use different version of netMHCpan; must be installed in path specified in runConfig.R (optional, default: 2.8)*
 
 `-h, --help`  
 *Show this help message and exit*
