@@ -10,7 +10,7 @@ This pipeline performs live predictions using netMHCpan and netChop to predict p
 
 The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **rte_kitchensink.txt**, __HLA-A*02:01__ and **9-mer** peptides. 
 
-**By default, netMHCpan v2.8 will be used and 1/4th of the available cores are used per run for parallel computations; four parallel samples can be started at the same moment.**
+**By default, netMHCpan v2.8 will be used and 1/4th of the available cores are used per run for parallel computations; four samples can be processed in parallel on one cluster. Make sure you *nice* your runs!!**
 
 **IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
 
