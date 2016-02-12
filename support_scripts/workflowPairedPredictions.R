@@ -182,16 +182,16 @@ performPairedSequencePredictions = function() {
                                             use.names = TRUE)
     
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
-    epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[, protein_pos_ref]]
-    epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[, protein_pos_alt]]
+    epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[, contributing_protein_pos_ref]]
+    epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[, contributing_protein_pos_alt]]
     
     filteredContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
                                                                                    all_variants = variantInput),
                                                  use.names = TRUE)
     
     epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[, contributing_variants]]
-    epitopePredictionsWithFiltersApplied[, protein_pos_ref := filteredContributingVariantsInfo[, protein_pos_ref]]
-    epitopePredictionsWithFiltersApplied[, protein_pos_alt := filteredContributingVariantsInfo[, protein_pos_alt]]
+    epitopePredictionsWithFiltersApplied[, protein_pos_ref := filteredContributingVariantsInfo[, contributing_protein_pos_ref]]
+    epitopePredictionsWithFiltersApplied[, protein_pos_alt := filteredContributingVariantsInfo[, contributing_protein_pos_alt]]
 
     # if contributing variants are determined, remove variant_id column (not relevant anymore)
     epitopePredictionsAll[, variant_id := NULL]
