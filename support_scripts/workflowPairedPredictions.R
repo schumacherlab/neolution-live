@@ -205,7 +205,6 @@ performPairedSequencePredictions = function() {
   
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
-                         excludecols = c("c_term_pos", "variant_id"),
                          filepath = runParameters$filepath,
                          filename = runParameters$filename_no_ext,
                          allele = runParameters$allele,
@@ -234,7 +233,6 @@ performPairedSequencePredictions = function() {
     
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           excludecols = c("c_term_pos", "variant_id"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -243,7 +241,6 @@ performPairedSequencePredictions = function() {
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
-                           excludecols = c("c_term_pos", "variant_id"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -261,7 +258,6 @@ performPairedSequencePredictions = function() {
     
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           excludecols = c("c_term_pos", "variant_id"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -270,7 +266,6 @@ performPairedSequencePredictions = function() {
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
-                           excludecols = c("c_term_pos", "variant_id"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -278,7 +273,6 @@ performPairedSequencePredictions = function() {
   } else {
     # write aff, chop, rna filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           excludecols = c("c_term_pos", "variant_id"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
