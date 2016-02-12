@@ -182,6 +182,15 @@ performPairedSequencePredictions = function() {
     
     epitopePredictionsWithFiltersApplied[, contributing_variants := findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
                                                                                                       all_variants = variantInput)]
+
+    # if contributing variants are determined, remove variant_id column (not relevant anymore)
+    epitopePredictionsAll[, variant_id := NULL]
+    epitopePredictionsWithFiltersApplied[, variant_id := NULL]
+    
+    setcolorder(x = epitopePredictionsAll,
+                neworder = c("contributing_variants", names(variantInfo)[-match(x = c("contributing_variants"))]))
+    setcolorder(x = epitopePredictionsWithFiltersApplied,
+                neworder = c("contributing_variants", names(variantInfo)[-match(x = c("contributing_variants"))]))                                                                     
   }
   
   # write all predictions to disk
