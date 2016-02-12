@@ -177,8 +177,10 @@ performPairedSequencePredictions = function() {
   
   # determine which variants contributed to the formation of predicted epitopes
   if (all(c("protein_pos_alt", "variant_classification") %in% names(variantInput))) {
-    allContributingVariantsInfo = findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
-                                                                    all_variants = variantInput)
+    allContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
+                                                                              all_variants = variantInput),
+                                            use.names = TRUE)
+    
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[[1]]]
     epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[[2]]]
     epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[[3]]]
