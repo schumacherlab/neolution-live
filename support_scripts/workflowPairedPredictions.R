@@ -181,15 +181,17 @@ performPairedSequencePredictions = function() {
                                                                               all_variants = variantInput),
                                             use.names = TRUE)
     
-    epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[[1]]]
-    epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[[2]]]
-    epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[[3]]]
+    epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
+    epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[, protein_pos_ref]]
+    epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[, protein_pos_alt]]
     
-    filteredContributingVariantsInfo = findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
-                                                                    all_variants = variantInput)
-    epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[[1]]]
-    epitopePredictionsWithFiltersApplied[, protein_pos_ref := filteredContributingVariantsInfo[[2]]]
-    epitopePredictionsWithFiltersApplied[, protein_pos_alt := filteredContributingVariantsInfo[[3]]]
+    filteredContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
+                                                                                   all_variants = variantInput),
+                                                 use.names = TRUE)
+    
+    epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[, contributing_variants]]
+    epitopePredictionsWithFiltersApplied[, protein_pos_ref := filteredContributingVariantsInfo[, protein_pos_ref]]
+    epitopePredictionsWithFiltersApplied[, protein_pos_alt := filteredContributingVariantsInfo[, protein_pos_alt]]
 
     # if contributing variants are determined, remove variant_id column (not relevant anymore)
     epitopePredictionsAll[, variant_id := NULL]
