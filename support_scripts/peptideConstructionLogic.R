@@ -78,9 +78,9 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                               collapse = "!")
                                                 
                                                 contributing_protein_pos_ref = paste(epitope_variants$protein_pos_ref,
-                                                                                     sep = ";")
+                                                                                     collapse = ";")
                                                 contributing_protein_pos_alt = paste(epitope_variants$protein_pos_alt,
-                                                                                     sep = ";")
+                                                                                     collapse = ";")
                                                 
                                                 return(data.table(contributing_variants = contributing_variants, 
                                                                   contributing_protein_pos_ref = contributing_protein_pos_ref, 
