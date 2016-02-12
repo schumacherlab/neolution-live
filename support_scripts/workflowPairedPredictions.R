@@ -6,7 +6,7 @@ performPairedSequencePredictions = function() {
                           replacement = "",
                           x = runParameters$filename_no_ext))
   
-  variantInfo = processVariants(id = sampleId,
+  variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
   
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
