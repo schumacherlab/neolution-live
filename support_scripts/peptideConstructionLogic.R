@@ -63,7 +63,7 @@ buildPeptideList = function(sequences, peptidelength) {
 
 findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
   if (nrow(predicted_variants) > 0) {
-    contributing_variant_identifiers = sapply(seq(1, nrow(predicted_variants), 1), 
+    contributing_variant_info = sapply(seq(1, nrow(predicted_variants), 1), 
                                               function(x) {
                                                 transcript_variants = subset(x = all_variants,
                                                                              subset = transcript_id == predicted_variants[x, ]$transcript_id)
@@ -76,10 +76,17 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                               epitope_variants$variant_classification,
                                                                               sep = " @ ",
                                                                               collapse = "!")
+                                                
+                                                contributing_protein_pos_ref = paste(epitope_variants$protein_pos_ref,
+                                                                                     sep = ";")
+                                                contributing_protein_pos_alt = paste(epitope_variants$protein_pos_alt,
+                                                                                     sep = ";")
+                                                
+                                                return(list(contributing_variants, contributing_protein_pos_ref, contributing_protein_pos_alt))
                                               },
                                               USE.NAMES = FALSE)
-    return(contributing_variant_identifiers)
+    return(contributing_variant_info)
   } else {
-    return("")  
+    return("")
   }
 }

@@ -177,20 +177,26 @@ performPairedSequencePredictions = function() {
   
   # determine which variants contributed to the formation of predicted epitopes
   if (all(c("protein_pos_alt", "variant_classification") %in% names(variantInput))) {
-    epitopePredictionsAll[, contributing_variants := findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
-                                                                                       all_variants = variantInput)]
+    allContributingVariantsInfo = findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
+                                                                    all_variants = variantInput)
+    epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[[1]]]
+    epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[[2]]]
+    epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[[3]]]
     
-    epitopePredictionsWithFiltersApplied[, contributing_variants := findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
-                                                                                                      all_variants = variantInput)]
+    filteredContributingVariantsInfo = findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
+                                                                    all_variants = variantInput)
+    epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[[1]]]
+    epitopePredictionsWithFiltersApplied[, protein_pos_ref := filteredContributingVariantsInfo[[2]]]
+    epitopePredictionsWithFiltersApplied[, protein_pos_alt := filteredContributingVariantsInfo[[3]]]
 
     # if contributing variants are determined, remove variant_id column (not relevant anymore)
     epitopePredictionsAll[, variant_id := NULL]
     epitopePredictionsWithFiltersApplied[, variant_id := NULL]
     
-    setcolorder(x = epitopePredictionsAll,
-                neworder = c("contributing_variants", names(variantInfo)[-match(x = c("contributing_variants"))]))
-    setcolorder(x = epitopePredictionsWithFiltersApplied,
-                neworder = c("contributing_variants", names(variantInfo)[-match(x = c("contributing_variants"))]))                                                                     
+    # setcolorder(x = epitopePredictionsAll,
+    #             neworder = c("contributing_variants", names(variantInfo)[-match(x = c("contributing_variants"))]))
+    # setcolorder(x = epitopePredictionsWithFiltersApplied,
+    #             neworder = c("contributing_variants", names(variantInfo)[-match(x = c("contributing_variants"))]))                                                                     
   }
   
   # write all predictions to disk
