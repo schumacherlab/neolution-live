@@ -1,6 +1,8 @@
 performPairedSequencePredictions = function() {
   # import data & clean up
-  variantInput = unique(fread(input = paste(runParameters$filepath, runParameters$filename, sep = "/")))
+  variantInput = unique(fread(input = paste(runParameters$filepath, runParameters$filename, sep = "/"),
+                              na.strings = c("", "-")))
+  variantInput[, chr := as.character(chr)]
   
   sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$|_merged\\.tsv",
                           replacement = "",
