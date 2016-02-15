@@ -69,8 +69,8 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                              subset = transcript_id == predicted_variants[x, ]$transcript_id)
                                                 
                                                 epitope_variants = unique(subset(x = transcript_variants, 
-                                                                                 subset = (protein_pos_alt > (predicted_variants[x ,]$c_term_pos - runParameters$peptidelength) 
-                                                                                           & protein_pos_alt <= predicted_variants[x, ]$c_term_pos)))
+                                                                                 subset = protein_pos_alt > (predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) 
+                                                                                           & protein_pos_alt <= predicted_variants[x, ]$c_term_pos))
                                                 
                                                 contributing_variants = paste(epitope_variants$variant_id, 
                                                                               epitope_variants$variant_classification,
@@ -88,6 +88,6 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                               })
     return(contributing_variant_info)
   } else {
-    return("")
+    return(NA)
   }
 }
