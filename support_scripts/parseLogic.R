@@ -43,7 +43,6 @@ processVariants = function(sid, variants) {
       
       variantssubset = unique(x = variants,
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-      variantssubset[, chromosome := as.character(variantssubset$chromosome)]
     } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, take subset
       variants[, variant_id := paste(id, 1:nrow(variants), sep = "-")]
