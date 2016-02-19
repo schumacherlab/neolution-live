@@ -36,6 +36,7 @@ processVariants = function(sid, variants) {
     ###
     if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
+      variants[, chromosome := as.character(chromosome)]
       setnames(x = variants,
                old = c("mut_id", "protein_seq_ref", "protein_seq_alt"),
                new = c("variant_id", "peptidecontextnormal", "peptidecontexttumor"))
@@ -66,6 +67,7 @@ processVariants = function(sid, variants) {
     } else if (all(c("externalname", "geneid", "transcriptid", "type", "peptide_pos_ref", "peptide_pos_alt", "peptide_seq_ref", "peptide_seq_alt", "FPKM") %in% names(variants))) {
       # dealing with NKI varcontext data: rename column headers, take subset
       variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+      variants[, chr := as.character(chr)]
       variants[, gene_id := NULL]
       
       setnames(x = variants,
@@ -84,6 +86,7 @@ processVariants = function(sid, variants) {
     ###
     if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
+      variants[, chromosome := as.character(chromosome)]
       setnames(x = variants,
                old = c("mut_id"),
                new = c("variant_id"))
@@ -117,6 +120,7 @@ processVariants = function(sid, variants) {
     } else if (all(c("externalname", "geneid", "transcriptid", "type", "peptide_pos_ref", "peptide_pos_alt", "peptide_seq_ref", "peptide_seq_alt") %in% names(variants))) {
       # dealing with NKI varcontext data: rename column headers, take subset
       variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+      variants[, chr := as.character(chr)]
       variants[, gene_id := NULL]
       
       setnames(x = variants,
