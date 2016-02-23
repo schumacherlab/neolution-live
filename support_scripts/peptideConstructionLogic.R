@@ -88,6 +88,6 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                               })
     return(contributing_variant_info)
   } else {
-    return(NA)
+    return(list(NA))
   }
 }
