@@ -88,6 +88,8 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                               })
     return(contributing_variant_info)
   } else {
-    return(list(NA))
+    return(data.table(contributing_variants = NA,
+                      contributing_protein_pos_ref = NA,
+                      contributing_protein_pos_alt = NA))
   }
 }
