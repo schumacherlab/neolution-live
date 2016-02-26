@@ -74,7 +74,7 @@ performSingleSequencePredictions = function() {
   
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
-                         excludecols = c("c_term_pos", "sequence_id"),
+                         unique_by = c("peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
                          filepath = runParameters$filepath,
                          filename = runParameters$filename_no_ext,
                          allele = runParameters$allele,
@@ -93,7 +93,7 @@ performSingleSequencePredictions = function() {
     
     # write aff, chop filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           excludecols = c("c_term_pos", "sequence_id"),
+                           unique_by = c("peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -102,7 +102,7 @@ performSingleSequencePredictions = function() {
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
-                           excludecols = c("c_term_pos", "sequence_id"),
+                           unique_by = c("peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -118,7 +118,7 @@ performSingleSequencePredictions = function() {
     
     # write aff, chop filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           excludecols = c("c_term_pos", "sequence_id"),
+                           unique_by = c("peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -127,7 +127,7 @@ performSingleSequencePredictions = function() {
     
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
-                           excludecols = c("c_term_pos", "sequence_id"),
+                           unique_by = c("peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -135,7 +135,7 @@ performSingleSequencePredictions = function() {
   } else {
     # write aff, chop filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           excludecols = c("c_term_pos", "sequence_id"),
+                           unique_by = c("peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
