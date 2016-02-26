@@ -24,6 +24,9 @@ readFastaFile = function(file) {
   
   # put in a table
   table = data.table(sequence_id = seqnames, sequence = sequences)
+  table$sequence = gsub(pattern = "\\*[A-Z*]*",
+                        replacement = "",
+                        x = table$sequence)
   
   return(table)
 }
