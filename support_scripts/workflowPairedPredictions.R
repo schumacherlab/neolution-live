@@ -25,7 +25,6 @@ performPairedSequencePredictions = function() {
   if(nrow(variantInfo) == 0){
     writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
                                                                              colclasses = columnClassesEmptyTable),
-                           excludecols = c("c_term_pos", "variant_id"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
