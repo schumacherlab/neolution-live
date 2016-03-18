@@ -64,28 +64,33 @@ buildPeptideList = function(sequences, peptidelength) {
 findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
   if (nrow(predicted_variants) > 0) {
     contributing_variant_info = lapply(seq(1, nrow(predicted_variants), 1), 
-                                              function(x) {
-                                                transcript_variants = subset(x = all_variants,
-                                                                             subset = transcript_id == predicted_variants[x, ]$transcript_id)
-                                                
-                                                epitope_variants = unique(subset(x = transcript_variants, 
-                                                                                 subset = protein_pos_alt > (predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) 
-                                                                                           & protein_pos_alt <= predicted_variants[x, ]$c_term_pos))
-                                                
-                                                contributing_variants = paste(epitope_variants$variant_id, 
-                                                                              epitope_variants$variant_classification,
-                                                                              sep = " @ ",
-                                                                              collapse = "!")
-                                                
-                                                contributing_protein_pos_ref = paste(epitope_variants$protein_pos_ref,
-                                                                                     collapse = ";")
-                                                contributing_protein_pos_alt = paste(epitope_variants$protein_pos_alt,
-                                                                                     collapse = ";")
-                                                
-                                                return(data.table(contributing_variants = contributing_variants, 
-                                                                  contributing_protein_pos_ref = contributing_protein_pos_ref, 
-                                                                  contributing_protein_pos_alt = contributing_protein_pos_alt))
-                                              })
+                                       function(x) {
+                                         transcript_variants = subset(x = all_variants,
+                                                                      subset = transcript_id == predicted_variants[x, ]$transcript_id)
+                                         
+                                         epitope_variants = unique(subset(x = transcript_variants, 
+                                                                          subset = sapply(seq(1, nrow(transcript_variants), 1), 
+                                                                                          function(y) {
+                                                                                            any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] >= transcript_variants$protein_pos_alt_start[y]) &
+                                                                                              any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] <= transcript_variants$protein_pos_alt_stop[y])
+                                                                                          })
+                                         ))
+                                         
+                                         contributing_variants = paste(epitope_variants$variant_id, 
+                                                                       epitope_variants$variant_classification,
+                                                                       sep = " @ ",
+                                                                       collapse = "!")
+                                         
+                                         contributing_protein_pos_ref = paste(epitope_variants$protein_pos_ref,
+                                                                              collapse = ";")
+                                         contributing_protein_pos_alt = paste(epitope_variants$protein_pos_alt_start,epitope_variants$protein_pos_alt_stop,
+                                                                              sep = "-",
+                                                                              collapse = ";")
+                                         
+                                         return(data.table(contributing_variants = contributing_variants, 
+                                                           contributing_protein_pos_ref = contributing_protein_pos_ref, 
+                                                           contributing_protein_pos_alt = contributing_protein_pos_alt))
+                                       })
     return(contributing_variant_info)
   } else {
     return(list(data.table(contributing_variants = NA,
