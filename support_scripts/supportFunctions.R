@@ -36,7 +36,7 @@ thisDirectory = function() {
 # function which returns empty table with defined column names & column classes
 emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
   require(data.table)
-  if (is.vector(colnames) & is.vector(colclasses) & length(colnames) == length(colclasses)){
+  if (is.vector(colnames) & is.vector(colclasses) & length(colnames) == length(colclasses)) {
     table = as.data.table(read.table(file = textConnection(""),
                                      col.names = colnames,
                                      colClasses = colclasses))
@@ -50,7 +50,7 @@ emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
 
 # wrapper for writing predictions to disk
 writePredictionsToDisk = function(table, unique_by = c("gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"), filepath, filename, allele, peptidelength, suffix = NULL) {
-  if(nrow(table) > 0) {
+  if (nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = unique_by),
               file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
@@ -66,7 +66,7 @@ writePredictionsToDisk = function(table, unique_by = c("gene_id", "tumor_peptide
 multiMixedOrder = function(..., na.last = TRUE, decreasing = FALSE) {
   do.call(order, c(
     lapply(list(...), function(l){
-      if(is.character(l)) {
+      if (is.character(l)) {
         factor(l, levels = mixedsort(unique(l)))
       } else {
         l
