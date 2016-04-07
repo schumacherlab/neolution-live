@@ -85,28 +85,39 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
   
   # perform regex on netMHC output
-  if (length(output) > 51) {
-    output = output[-grep(pattern = "^\\#.+|^\\-.+|^Protein.+|pos.+|^HLA.+|^$",
-                          x = output)]
-    output = gsub(pattern = "^[[:blank:]]+| <= WB| <= SB",
-                  replacement = "",
-                  x = output)
-    output = gsub(pattern = "[[:blank:]]+",
-                  replacement = "\t",
-                  x = output)
-    # read data into table
-    data = as.data.table(read.table(text = output,
-                                    stringsAsFactors = FALSE));data$V7 = NULL
-  } else {
-    data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")),
-                                                     colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric"))
+  processPreditionOutput = function(raw_output) {
+    raw_output = raw_output[-grep(pattern = "^\\#.+|^\\-.+|^Protein.+|pos.+|^HLA.+|^$",
+                                  ignore.case = TRUE,
+                                  x = raw_output)]
+    raw_output = gsub(pattern = "^[[:blank:]]+| <= WB| <= SB",
+                      replacement = "",
+                      x = raw_output)
+    clean_output = gsub(pattern = "[[:blank:]]+",
+                        replacement = "\t",
+                        x = raw_output)
+    if (length(clean_output) > 0 & runParameters$panversion == "3.0") {
+      data = as.data.table(read.table(text = clean_output,
+                                      stringsAsFactors = FALSE))
+      setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore", "variant_id",
+                                                    "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"))
+    } else if (length(clean_output) > 0) {
+      data = as.data.table(read.table(text = clean_output,
+                                      stringsAsFactors = FALSE))
+      setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "variant_id",
+                                                    "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"))
+    } else {
+      data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "peptide_score_log50k", paste0(allele, "affinity")),
+                                                       colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric"))
+    }
+    return(data)
   }
   
-  setnames(x = data,
-           old = names(data),
-           new = c("position", "hla_allele", "peptide", "variant_id", "pept_score", paste0(allele, "affinity")))
+  data = processPreditionOutput(output)
+  
   data = subset(x = data,
-                select = colnames(data[, -match(x = c("position", "variant_id", "pept_score"), table = names(data)), with = FALSE]))
+                select = colnames(data[, -dropNa(match(x = c("position", "variant_id", "peptide_score_log50k", "percentile_rank", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore"),
+                                                        table = names(data))),
+                                       with = FALSE]))
   return(data)
 }
 
