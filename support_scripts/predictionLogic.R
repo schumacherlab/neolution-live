@@ -60,16 +60,27 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   
   ## use on HPC
   # perform predictions
-  output = system(command = paste0(# "nice -n 9 ",
-    predictorPaths$netMHCpan,
-    ' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
-                     replacement = '\\1:\\2',
-                     x = allele),
-    ' -l ', peptidelength,
-    ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
-    ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber),
-    ' -ic50'),
-    intern = TRUE)
+  command = ifelse(test = runParameters$panversion == "3.0",
+                   yes = paste0(# "nice -n 9 ",
+                     predictorPaths$netMHCpan,
+                     ' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
+                                      replacement = '\\1:\\2',
+                                      x = allele),
+                     ' -l ', peptidelength,
+                     ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
+                     ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber)),
+                   no = paste0(# "nice -n 9 ",
+                     predictorPaths$netMHCpan,
+                     ' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
+                                      replacement = '\\1:\\2',
+                                      x = allele),
+                     ' -l ', peptidelength,
+                     ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
+                     ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber),
+                     ' -ic50')
+  )
+  output = system(command = command,
+                  intern = TRUE)
   
   file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
   file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
