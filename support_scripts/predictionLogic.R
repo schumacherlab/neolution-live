@@ -114,7 +114,7 @@ performProcessingPredictions = function(peptidestretch) {
   # generate random number to give to temp dir and temp file
   randomNumber = ceiling(runif(n = 1,
                                min = 0,
-                               max = 10^10))
+                               max = 10 ^ 10))
   
   dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
   
