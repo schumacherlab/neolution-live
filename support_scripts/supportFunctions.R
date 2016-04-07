@@ -76,6 +76,9 @@ multiMixedOrder = function(..., na.last = TRUE, decreasing = FALSE) {
   ))
 }
 
+# drop NA from vector
+dropNa = function(vector) { vector[!is.na(vector)] }
+
 # check presence of necessary tools
 checkPredictorPaths = function(paths) {
   if (!all(sapply(paths, file.exists))) {
