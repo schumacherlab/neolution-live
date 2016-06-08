@@ -86,8 +86,8 @@ processVariants = function(sid, variants) {
     	variants[, chromosome := as.character(chromosome)]
     	
     	setnames(x = variants,
-    					 old = c("FPKM"),
-    					 new = c("rna_expression"))
+    					 old = c("peptide_pos_ref", "peptide_pos_alt_start", "peptide_pos_alt_stop", "peptide_seq_ref", "peptide_seq_alt", "FPKM"),
+    					 new = c("protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "peptidecontextnormal", "peptidecontexttumor", "rna_expression"))
     	
     	variantssubset = unique(x = subset(x = variants,
     																		 select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "protein_pos_ref", "protein_pos_alt", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
