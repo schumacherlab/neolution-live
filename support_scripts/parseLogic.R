@@ -79,6 +79,20 @@ processVariants = function(sid, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "protein_pos_ref", "protein_pos_alt", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else if (all(c("mut_id", "chromosome", "start_position", "end_position", "ref_allele", "alt_allele", "gene_id", "transcript_id", "gene_symbol", "variant_classification", "transcript_remark", "transcript_extension", "nmd_status",
+    								 "codon_ref", "codon_alt", "aa_ref", "aa_alt", "peptide_pos_ref", "peptide_pos_alt_start", "peptide_pos_alt_stop", "peptide_seq_ref", "peptide_seq_alt", "FPKM") %in% names(variants))) {
+    	# dealing with NKI new varcontext (adapted from foreign antigen space project) data: rename column headers, take subset
+    	variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+    	variants[, chr := as.character(chr)]
+    	variants[, gene_id := NULL]
+    	
+    	setnames(x = variants,
+    					 old = c("FPKM"),
+    					 new = c("rna_expression"))
+    	
+    	variantssubset = unique(x = subset(x = variants,
+    																		 select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "protein_pos_ref", "protein_pos_alt", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+    													by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
       stop("Input format not recognized")
     }
