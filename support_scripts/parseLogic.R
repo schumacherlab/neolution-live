@@ -90,7 +90,7 @@ processVariants = function(sid, variants) {
     					 new = c("protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "peptidecontextnormal", "peptidecontexttumor", "rna_expression"))
     	
     	variantssubset = unique(x = subset(x = variants,
-    																		 select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "protein_pos_ref", "protein_pos_alt", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+    																		 select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
     													by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
       stop("Input format not recognized")
