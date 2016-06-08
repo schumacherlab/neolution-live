@@ -83,8 +83,7 @@ processVariants = function(sid, variants) {
     								 "codon_ref", "codon_alt", "aa_ref", "aa_alt", "peptide_pos_ref", "peptide_pos_alt_start", "peptide_pos_alt_stop", "peptide_seq_ref", "peptide_seq_alt", "FPKM") %in% names(variants))) {
     	# dealing with NKI new varcontext (adapted from foreign antigen space project) data: rename column headers, take subset
     	variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
-    	variants[, chr := as.character(chr)]
-    	variants[, gene_id := NULL]
+    	variants[, chromosome := as.character(chromosome)]
     	
     	setnames(x = variants,
     					 old = c("FPKM"),
