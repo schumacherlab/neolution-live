@@ -83,9 +83,11 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
 
                                          contributing_aa_pos_ref = paste(epitope_variants$aa_pos_ref,
                                                                          collapse = ";")
-                                         contributing_aa_pos_tumor = paste(epitope_variants$aa_pos_tumor_start,
-                                                                           epitope_variants$aa_pos_tumor_stop,
-                                                                           sep = "-",
+                                         contributing_aa_pos_tumor = paste(ifelse(test = epitope_variants$aa_pos_tumor_start == epitope_variants$aa_pos_tumor_stop,
+                                                                                  yes = epitope_variants$aa_pos_tumor_start,
+                                                                                  no = paste(epitope_variants$aa_pos_tumor_start,
+                                                                                             epitope_variants$aa_pos_tumor_stop,
+                                                                                             sep = '-')),
                                                                            collapse = ";")
 
                                          return(data.table(contributing_variants = contributing_variants,
