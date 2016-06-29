@@ -71,8 +71,8 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                          epitope_variants = unique(subset(x = transcript_variants,
                                                                           subset = sapply(seq(1, nrow(transcript_variants), 1),
                                                                                           function(y) {
-                                                                                            any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] >= transcript_variants$aa_pos_alt_start[y]) &
-                                                                                              any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] <= transcript_variants$aa_pos_alt_stop[y])
+                                                                                            any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] >= transcript_variants$aa_pos_tumor_start[y]) &
+                                                                                              any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] <= transcript_variants$aa_pos_tumor_stop[y])
                                                                                           })
                                          ))
 
@@ -82,19 +82,20 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                        collapse = "!")
 
                                          contributing_aa_pos_ref = paste(epitope_variants$aa_pos_ref,
-                                                                              collapse = ";")
-                                         contributing_aa_pos_alt = paste(epitope_variants$aa_pos_alt_start,epitope_variants$aa_pos_alt_stop,
-                                                                              sep = "-",
-                                                                              collapse = ";")
+                                                                         collapse = ";")
+                                         contributing_aa_pos_tumor = paste(epitope_variants$aa_pos_tumor_start,
+                                                                           epitope_variants$aa_pos_tumor_stop,
+                                                                           sep = "-",
+                                                                           collapse = ";")
 
                                          return(data.table(contributing_variants = contributing_variants,
                                                            contributing_aa_pos_ref = contributing_aa_pos_ref,
-                                                           contributing_aa_pos_alt = contributing_aa_pos_alt))
+                                                           contributing_aa_pos_tumor = contributing_aa_pos_tumor))
                                        })
     return(contributing_variant_info)
   } else {
     return(list(data.table(contributing_variants = NA,
                            contributing_aa_pos_ref = NA,
-                           contributing_aa_pos_alt = NA)))
+                           contributing_aa_pos_tumor = NA)))
   }
 }
