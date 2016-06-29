@@ -3,7 +3,9 @@ performPairedSequencePredictions = function() {
   variantInput = unique(fread(input = paste(runParameters$filepath, runParameters$filename, sep = "/"),
                               na.strings = c("NA", "", "-")))
 
-  sampleId = toupper(gsub(pattern = "_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$|_merged\\.tsv",
+  sampleId = toupper(gsub(pattern = paste("_tumor-kitchensink.*$|-table\\.txt.*$|-complete-tab-edits.*$|_merged\\.tsv", # substitute various suffixes
+                                          "^[0-9]{8}_|^[0-9]{8}-[0-9]{4}_", # substitute various prefixes
+                                          sep = "|"),
                           replacement = "",
                           x = runParameters$filename_no_ext))
 
