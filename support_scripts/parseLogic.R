@@ -124,7 +124,9 @@ processVariants = function(sid, variants) {
     } else if (all(c("variant_id", "chromosome", "start_position", "end_position", "ref_allele", "alt_allele", "gene_id", "transcript_id", "gene_symbol", "variant_classification", "transcript_remark", "transcript_extension", "nmd_status",
                      "codon_ref", "codon_germline", "codon_tumor", "aa_ref", "aa_germline", "aa_tumor", "aa_pos_ref", "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "protein_seq_ref", "protein_seq_germline", "protein_seq_tumor") %in% names(variants))) {
       # dealing with NKI new varcontext (adapted from foreign antigen space project) data: rename column headers, take subset
-      variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+      if (any(is.na(variants[, variant_id])) | any(variants[, variant_id] == ".") | all(variants[, variant_id] == variants[, variant_id][1])) {
+        variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+      }
       variants[, chromosome := as.character(chromosome)]
 
       setnames(x = variants,
