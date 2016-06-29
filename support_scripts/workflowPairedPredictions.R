@@ -176,22 +176,22 @@ performPairedSequencePredictions = function() {
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score"))
 
   # determine which variants contributed to the formation of predicted epitopes
-  if (all(c("protein_pos_alt_start", "protein_pos_alt_stop", "variant_classification") %in% names(variantInput))) {
+  if (all(c("aa_pos_alt_start", "aa_pos_alt_stop", "variant_classification") %in% names(variantInput))) {
     allContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
                                                                               all_variants = variantInput),
                                             use.names = TRUE)
 
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
-    epitopePredictionsAll[, protein_pos_ref := allContributingVariantsInfo[, contributing_protein_pos_ref]]
-    epitopePredictionsAll[, protein_pos_alt := allContributingVariantsInfo[, contributing_protein_pos_alt]]
+    epitopePredictionsAll[, aa_pos_ref := allContributingVariantsInfo[, contributing_aa_pos_ref]]
+    epitopePredictionsAll[, aa_pos_alt := allContributingVariantsInfo[, contributing_aa_pos_alt]]
 
     filteredContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
                                                                                    all_variants = variantInput),
                                                  use.names = TRUE)
 
     epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[, contributing_variants]]
-    epitopePredictionsWithFiltersApplied[, protein_pos_ref := filteredContributingVariantsInfo[, contributing_protein_pos_ref]]
-    epitopePredictionsWithFiltersApplied[, protein_pos_alt := filteredContributingVariantsInfo[, contributing_protein_pos_alt]]
+    epitopePredictionsWithFiltersApplied[, aa_pos_ref := filteredContributingVariantsInfo[, contributing_aa_pos_ref]]
+    epitopePredictionsWithFiltersApplied[, aa_pos_alt := filteredContributingVariantsInfo[, contributing_aa_pos_alt]]
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
     epitopePredictionsAll[, variant_id := NULL]; epitopePredictionsAll[, variant_classification := NULL]
