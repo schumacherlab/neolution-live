@@ -178,13 +178,13 @@ performPairedSequencePredictions = function() {
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_processing_score"))
 
   # determine which variants contributed to the formation of predicted epitopes
-  if (all(c("aa_pos_tumor_start", "aa_pos_tumor_stop", "variant_classification") %in% names(variantInput))) {
+  if (all(c("aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "variant_classification") %in% names(variantInput))) {
     allContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
                                                                               all_variants = variantInput),
                                             use.names = TRUE)
 
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
-    epitopePredictionsAll[, aa_pos_ref := allContributingVariantsInfo[, contributing_aa_pos_ref]]
+    epitopePredictionsAll[, aa_pos_germline := allContributingVariantsInfo[, contributing_aa_pos_germline]]
     epitopePredictionsAll[, aa_pos_tumor := allContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     filteredContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
@@ -192,7 +192,7 @@ performPairedSequencePredictions = function() {
                                                  use.names = TRUE)
 
     epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[, contributing_variants]]
-    epitopePredictionsWithFiltersApplied[, aa_pos_ref := filteredContributingVariantsInfo[, contributing_aa_pos_ref]]
+    epitopePredictionsWithFiltersApplied[, aa_pos_germline := filteredContributingVariantsInfo[, contributing_aa_pos_germline]]
     epitopePredictionsWithFiltersApplied[, aa_pos_tumor := filteredContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
