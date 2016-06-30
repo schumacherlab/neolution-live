@@ -78,9 +78,10 @@ processVariants = function(sid, variants) {
     					 old = c('protein_seq_germline', 'protein_seq_tumor', 'FPKM'),
     					 new = c('peptidecontextnormal', 'peptidecontexttumor', 'rna_expression'))
 
-    	variantssubset = unique(x = subset(x = variants,
-    																		 select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
-    													by = c("peptidecontextnormal", "peptidecontexttumor"))
+    	variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
+
+    	variantssubset = unique(x = variants,
+    	                        by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
       stop("Input format not recognized")
     }
@@ -133,10 +134,10 @@ processVariants = function(sid, variants) {
                old = c('protein_seq_germline', 'protein_seq_tumor'),
                new = c('peptidecontextnormal', 'peptidecontexttumor'))
 
+      variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
       variants[, rna_expression := NA]
 
-      variantssubset = unique(x = subset(x = variants,
-                                         select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "variant_classification", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
+      variantssubset = unique(x = variants,
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
       stop("Input format not recognized")
