@@ -19,7 +19,7 @@ registerDoMC(cores = numberOfWorkers)
 checkPredictorPaths(paths = predictorPaths)
 
 # create directory to hold logs/output, if necessary
-dir.create(path = paste0(runParameters$filepath, "/output"),
+dir.create(path = paste0(runParameters$filepath, "/predictions_output"),
            showWarnings = FALSE)
 
 # collect information on run; print to console and write to log
@@ -54,10 +54,10 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
                  "Use self-epitope list:\t\t", runParameters$use_selflist, "\n"),
       file = paste0(runParameters$filepath,
-                    "/output/",
+                    "/predictions_output/",
                     paste(runStart,
                           runParameters$filename_no_ext,
-                          runParameters$allele, 
+                          runParameters$allele,
                           runParameters$peptidelength,
                           sep = "_"),
                     "mer_runInfo.txt"),
@@ -67,7 +67,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
 
 # re-direct output to log file
 sink(file = file(description = paste0(runParameters$filepath,
-                                      "/output/",
+                                      "/predictions_output/",
                                       paste(runStart,
                                             runParameters$filename_no_ext,
                                             runParameters$allele,
@@ -91,7 +91,7 @@ switch(EXPR = as.character(runParameters$single_sequence),
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
                  "comments:"),
       file = paste0(runParameters$filepath,
-                    "/output/",
+                    "/predictions_output/",
                     paste(runStart,
                           runParameters$filename_no_ext,
                           runParameters$allele,
