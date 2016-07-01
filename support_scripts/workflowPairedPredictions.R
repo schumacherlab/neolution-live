@@ -196,8 +196,13 @@ performPairedSequencePredictions = function() {
     epitopePredictionsWithFiltersApplied[, aa_pos_tumor := filteredContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
-    epitopePredictionsAll[, variant_id := NULL]; epitopePredictionsAll[, variant_classification := NULL]
-    epitopePredictionsWithFiltersApplied[, variant_id := NULL]; epitopePredictionsWithFiltersApplied[, variant_classification := NULL]
+    epitopePredictionsAll[, c('variant_id', 'variant_classification', 'aa_pos_tumor_start', 'aa_pos_tumor_stop') := NULL]
+    epitopePredictionsWithFiltersApplied[, c('variant_id', 'variant_classification', 'aa_pos_tumor_start', 'aa_pos_tumor_stop') := NULL]
+
+    setcolorder(x = epitopePredictionsAll,
+                neworder = c(names(epitopePredictionsAll)[-match(x = c('aa_pos_germline', 'aa_pos_tumor'), table = names(epitopePredictionsAll))], c('aa_pos_germline', 'aa_pos_tumor')))
+    setcolorder(x = epitopePredictionsWithFiltersApplied,
+                neworder = c(names(epitopePredictionsWithFiltersApplied)[-match(x = c('aa_pos_germline', 'aa_pos_tumor'), table = names(epitopePredictionsWithFiltersApplied))], c('aa_pos_germline', 'aa_pos_tumor')))
   }
 
   # write all predictions to disk
