@@ -19,7 +19,7 @@ logQueryErrorToDisk = function(querytype, file, index, error) {
 performFasDbPredictions = function(index, peptides, peptidestretch, allele, peptidelength) {
   if (nrow(peptides) > 0) {
     # do affinity lookups in FASdb
-    affinityLookups = queryDatabaseWithPeptideForAffinityScore(index = i,
+    affinityLookups = queryDatabaseWithPeptideForAffinityScore(index = index,
                                                                peptides = peptides$peptide,
                                                                allele = allele)
 
@@ -115,7 +115,6 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
         if (exists("dbConnection")) {
           dbDisconnect(dbConnection)
         }
-      }
-    )
+      })
   }
 }
