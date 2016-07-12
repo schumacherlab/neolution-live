@@ -83,8 +83,9 @@ processVariants = function(sid, variants) {
     					 new = c('peptidecontextnormal', 'peptidecontexttumor', 'rna_expression'))
 
     	variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
-
-    	variantssubset = unique(x = variants,
+      
+    	# don't take SNP lines along (even though they shouldn't result in peptides for prediction)
+    	variantssubset = unique(x = variants[!grepl(pattern = '^[gr]s\\d+$', x = variant_id, perl = TRUE)],
     	                        by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
       stop("Input format not recognized")
@@ -143,8 +144,9 @@ processVariants = function(sid, variants) {
 
       variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
       variants[, rna_expression := NA]
-
-      variantssubset = unique(x = variants,
+      
+      # don't take SNP lines along (even though they shouldn't result in peptides for prediction)
+      variantssubset = unique(x = variants[!grepl(pattern = '^[gr]s\\d+$', x = variant_id, perl = TRUE)],
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
       stop("Input format not recognized")
