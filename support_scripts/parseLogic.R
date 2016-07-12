@@ -37,7 +37,8 @@ processVariants = function(sid, variants) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp", "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "protein_seq_ref", "protein_seq_alt") %in% names(variants))) {
+    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp", 
+              "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "protein_seq_ref", "protein_seq_alt") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
       variants[, chromosome := as.character(chromosome)]
       setnames(x = variants,
@@ -66,11 +67,14 @@ processVariants = function(sid, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "chromosome", "start_position", "end_position", "ref_allele", "alt_allele", "gene_id", "transcript_id", "gene_symbol", "variant_classification", "transcript_remark", "transcript_extension", "nmd_status",
-    								 "codon_ref", "codon_germline", "codon_tumor", "aa_ref", "aa_germline", "aa_tumor", "aa_pos_ref", "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "protein_seq_ref", "protein_seq_germline", "protein_seq_tumor", "FPKM") %in% names(variants))) {
+    } else if (all(c("variant_id", "chromosome", "start_position", "end_position", "ref_allele", "alt_allele", "gene_id", "transcript_id", "gene_symbol", "variant_classification",
+                      "transcript_remark", "transcript_extension", "codon_ref", "codon_germline", "codon_tumor", "aa_ref", "aa_germline", "aa_tumor", "aa_pos_ref",
+                      "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "protein_seq_ref", "protein_seq_germline", "protein_seq_tumor", "FPKM") %in% names(variants))) {
     	# dealing with NKI varcontext (adapted from foreign antigen space project) data: rename column headers, take subset
-      if (any(is.na(variants[, variant_id])) | any(variants[, variant_id] == ".") | all(variants[, variant_id] == variants[, variant_id][1])) {
-        variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+      if (any(is.na(variants[, variant_id])) | any(variants[, variant_id] == '.') | all(variants[, variant_id] == variants[, variant_id][1])) {
+        variants[, variant_id := ifelse(test = variant_id == '.' | is.na(variant_id) | variant_id == variants[, variant_id][1],
+                                        yes = paste(sid, 1:nrow(variants), sep = '-'),
+                                        no = paste(sid, variant_id, sep = '-'))]
       }
     	variants[, chromosome := as.character(chromosome)]
 
@@ -122,11 +126,14 @@ processVariants = function(sid, variants) {
       variantssubset = unique(x = subset(x = variants,
                                          select = c("variant_id", "gene_symbol", "gene_id", "transcript_id", "peptidecontextnormal", "peptidecontexttumor", "rna_expression")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("variant_id", "chromosome", "start_position", "end_position", "ref_allele", "alt_allele", "gene_id", "transcript_id", "gene_symbol", "variant_classification", "transcript_remark", "transcript_extension", "nmd_status",
-                     "codon_ref", "codon_germline", "codon_tumor", "aa_ref", "aa_germline", "aa_tumor", "aa_pos_ref", "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "protein_seq_ref", "protein_seq_germline", "protein_seq_tumor") %in% names(variants))) {
+    } else if (all(c("variant_id", "chromosome", "start_position", "end_position", "ref_allele", "alt_allele", "gene_id", "transcript_id", "gene_symbol", "variant_classification",
+                      "transcript_remark", "transcript_extension", "codon_ref", "codon_germline", "codon_tumor", "aa_ref", "aa_germline", "aa_tumor", "aa_pos_ref",
+                      "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "protein_seq_ref", "protein_seq_germline", "protein_seq_tumor") %in% names(variants))) {
       # dealing with NKI new varcontext (adapted from foreign antigen space project) data: rename column headers, take subset
-      if (any(is.na(variants[, variant_id])) | any(variants[, variant_id] == ".") | all(variants[, variant_id] == variants[, variant_id][1])) {
-        variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
+      if (any(is.na(variants[, variant_id])) | any(variants[, variant_id] == '.') | all(variants[, variant_id] == variants[, variant_id][1])) {
+        variants[, variant_id := ifelse(test = variant_id == '.' | is.na(variant_id) | variant_id == variants[, variant_id][1],
+                                        yes = paste(sid, 1:nrow(variants), sep = '-'),
+                                        no = paste(sid, variant_id, sep = '-'))]
       }
       variants[, chromosome := as.character(chromosome)]
 
