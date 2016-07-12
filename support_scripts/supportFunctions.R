@@ -53,11 +53,11 @@ writePredictionsToDisk = function(table, unique_by = c("gene_id", "tumor_peptide
   if (nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = unique_by),
-              file = paste0(filepath, "/predictions_output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
+              file = file.path(filepath, 'predictions_output', paste0(paste(runStart, filename, allele, peptidelength, sep = '_'), 'mer_epitopes', suffix, '.csv')),
               row.names = FALSE)
   } else {
     write.csv(x = table,
-              file = paste0(filepath, "/predictions_output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
+              file = file.path(filepath, 'predictions_output', paste0(paste(runStart, filename, allele, peptidelength, sep = '_'), 'mer_epitopes', suffix, '.csv')),
               row.names = FALSE)
   }
 }

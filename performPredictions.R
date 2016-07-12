@@ -18,8 +18,12 @@ registerDoMC(cores = numberOfWorkers)
 # check availability of predictors
 checkPredictorPaths(paths = predictorPaths)
 
-# create directory to hold logs/output, if necessary
-dir.create(path = paste0(runParameters$filepath, "/predictions_output"),
+# create directory to hold input/logs/output, if necessary
+dir.create(path = file.path(runParameters$filepath, 'predictions_input'),
+           showWarnings = FALSE)
+dir.create(path = file.path(runParameters$filepath, 'predictions_logs'),
+           showWarnings = FALSE)
+dir.create(path = file.path(runParameters$filepath, 'predictions_output'),
            showWarnings = FALSE)
 
 # collect information on run; print to console and write to log
@@ -53,26 +57,25 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
                  "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
                  "Use self-epitope list:\t\t", runParameters$use_selflist, "\n"),
-      file = paste0(runParameters$filepath,
-                    "/predictions_output/",
-                    paste(runStart,
-                          runParameters$filename_no_ext,
-                          runParameters$allele,
-                          runParameters$peptidelength,
-                          sep = "_"),
-                    "mer_runInfo.txt"),
+      file = file.path(runParameters$filepath,
+                       'predictions_logs',
+                       paste0(paste(runStart,
+                                    runParameters$filename_no_ext,
+                                    runParameters$allele,
+                                    runParameters$peptidelength, sep = '_'),
+                              'mer_runInfo.txt')),
       append = FALSE)
 
 
 
 # re-direct output to log file
-sink(file = file(description = paste0(runParameters$filepath,
-                                      "/predictions_output/",
-                                      paste(runStart,
-                                            runParameters$filename_no_ext,
-                                            runParameters$allele,
-                                            runParameters$peptidelength, sep = "_"),
-                                      "mer_runLog.txt"),
+sink(file = file(description = file.path(runParameters$filepath,
+                                         'predictions_logs',
+                                         paste0(paste(runStart,
+                                                      runParameters$filename_no_ext,
+                                                      runParameters$allele,
+                                                      runParameters$peptidelength, sep = '_'),
+                                                'mer_runLog.txt')),
                  open = "wt"),
      type = "message",
      append = TRUE)
@@ -90,11 +93,11 @@ switch(EXPR = as.character(runParameters$single_sequence),
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
                  "comments:"),
-      file = paste0(runParameters$filepath,
-                    "/predictions_output/",
-                    paste(runStart,
-                          runParameters$filename_no_ext,
-                          runParameters$allele,
-                          runParameters$peptidelength, sep = "_"),
-                    "mer_runInfo.txt"),
+      file = file.path(runParameters$filepath,
+                       'predictions_logs',
+                       paste0(paste(runStart,
+                                    runParameters$filename_no_ext,
+                                    runParameters$allele,
+                                    runParameters$peptidelength, sep = '_'),
+                              'mer_runInfo.txt')),
       append = TRUE)

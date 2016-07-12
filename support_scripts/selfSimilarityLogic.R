@@ -14,13 +14,13 @@ loadSelfEpitopeList = function(path, allele, peptidelength) {
              old = names(selfEpitopes),
              new = tolower(names(selfEpitopes)))
     write(x = paste0("Self-epitope list:\t\t\t", basename(availableSelfLists[1]),"\n"),
-          file = paste0(runParameters$filepath,
-                        "/predictions_output/",
-                        paste(runStart,
-                              runParameters$filename_no_ext,
-                              runParameters$allele,
-                              runParameters$peptidelength, sep = "_"),
-                        "mer_runInfo.txt"),
+          file = file.path(runParameters$filepath,
+                           'predictions_logs',
+                           paste0(paste(runStart,
+                                        runParameters$filename_no_ext,
+                                        runParameters$allele,
+                                        runParameters$peptidelength, sep = '_'),
+                                  'mer_runInfo.txt')),
           append = TRUE)
     return(selfEpitopes)
   } else {

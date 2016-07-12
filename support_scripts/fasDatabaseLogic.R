@@ -12,7 +12,7 @@ logQueryErrorToDisk = function(querytype, file, index, error) {
                    " | file: ", file,
                    " | index: ", index,
                    " | error: ", error),
-        file = paste0(runParameters$filepath, "/predictions_output/", file, "_query_errors.log"),
+        file = file.path(runParameters$filepath, 'predictions_logs', paste0(file, '_query_errors.log')),
         append = TRUE)
 }
 
