@@ -76,12 +76,12 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                                           })
                                          ))
                                          
-                                         # epitope_variants[, aa_pos_germline := runParameters$peptidelength - (c_term_pos - aa_pos_germline)]
+                                         # epitope_variants[, aa_pos_germline := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_germline)]
                                          
-                                         epitope_variants[, aa_pos_tumor_start := runParameters$peptidelength - (c_term_pos - aa_pos_tumor_start)]
-                                         epitope_variants[, aa_pos_tumor_stop := ifelse(test = c_term_pos < aa_pos_tumor_stop,
-                                                                                        yes = c_term_pos,
-                                                                                        no = runParameters$peptidelength - (c_term_pos - aa_pos_tumor_stop))]
+                                         epitope_variants[, aa_pos_tumor_start := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_start)]
+                                         epitope_variants[, aa_pos_tumor_stop := ifelse(test = predicted_variants[x, ]$c_term_pos < aa_pos_tumor_stop,
+                                                                                        yes = predicted_variants[x, ]$c_term_pos,
+                                                                                        no = runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_stop))]
                                          setkey(x = epitope_variants, aa_pos_tumor_start)
                                          
                                          contributing_variants = paste(epitope_variants$variant_id,
