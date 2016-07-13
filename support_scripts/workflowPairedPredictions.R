@@ -206,9 +206,11 @@ performPairedSequencePredictions = function() {
     epitopePredictionsWithFiltersApplied[, aa_pos_tumor := filteredContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
-    epitopePredictionsAll[, c('variant_id', 'variant_classification', 'aa_pos_tumor_start', 'aa_pos_tumor_stop') := NULL]
-    epitopePredictionsWithFiltersApplied[, c('variant_id', 'variant_classification', 'aa_pos_tumor_start', 'aa_pos_tumor_stop') := NULL]
-
+    columnsToRemove = c('variant_id', 'chromosome', 'start_position', 'end_position', 'ref_allele', 'alt_allele', 
+                        'variant_classification', 'codon_germline', 'codon_tumor', 'aa_pos_tumor_start', 'aa_pos_tumor_stop')
+    epitopePredictionsAll[, columnsToRemove := NULL]
+    epitopePredictionsWithFiltersApplied[, columnsToRemove := NULL]
+    
     setcolorder(x = epitopePredictionsAll,
                 neworder = c(names(epitopePredictionsAll)[-match(x = c('aa_pos_germline', 'aa_pos_tumor'), table = names(epitopePredictionsAll))], c('aa_pos_germline', 'aa_pos_tumor')))
     setcolorder(x = epitopePredictionsWithFiltersApplied,
