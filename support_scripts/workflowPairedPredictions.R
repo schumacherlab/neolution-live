@@ -195,7 +195,7 @@ performPairedSequencePredictions = function() {
 
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
     # epitopePredictionsAll[, aa_pos_germline := allContributingVariantsInfo[, contributing_aa_pos_germline]]
-    epitopePredictionsAll[, aa_pos_tumor := allContributingVariantsInfo[, contributing_aa_pos_tumor]]
+    epitopePredictionsAll[, aa_peptide_pos_tumor := allContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     filteredContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
                                                                                    all_variants = variantInput),
@@ -203,7 +203,7 @@ performPairedSequencePredictions = function() {
 
     epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[, contributing_variants]]
     # epitopePredictionsWithFiltersApplied[, aa_pos_germline := filteredContributingVariantsInfo[, contributing_aa_pos_germline]]
-    epitopePredictionsWithFiltersApplied[, aa_pos_tumor := filteredContributingVariantsInfo[, contributing_aa_pos_tumor]]
+    epitopePredictionsWithFiltersApplied[, aa_peptide_pos_tumor := filteredContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
     columnsToRemove = c('variant_id', 'chromosome', 'start_position', 'end_position', 'ref_allele', 'alt_allele', 
@@ -213,12 +213,12 @@ performPairedSequencePredictions = function() {
     
     setcolorder(x = epitopePredictionsAll,
                 neworder = c(names(epitopePredictionsAll)[-match(x = c(# 'aa_pos_germline',
-                                                                       'aa_pos_tumor'), table = names(epitopePredictionsAll))], c(# 'aa_pos_germline', 
-                                                                                                                                  'aa_pos_tumor')))
+                                                                       'aa_peptide_pos_tumor'), table = names(epitopePredictionsAll))], c(# 'aa_pos_germline', 
+                                                                                                                                  'aa_peptide_pos_tumor')))
     setcolorder(x = epitopePredictionsWithFiltersApplied,
                 neworder = c(names(epitopePredictionsWithFiltersApplied)[-match(x = c(# 'aa_pos_germline', 
-                                                                                      'aa_pos_tumor'), table = names(epitopePredictionsWithFiltersApplied))], c(# 'aa_pos_germline',
-                                                                                                                                                                'aa_pos_tumor')))
+                                                                                      'aa_peptide_pos_tumor'), table = names(epitopePredictionsWithFiltersApplied))], c(# 'aa_pos_germline',
+                                                                                                                                                                'aa_peptide_pos_tumor')))
   }
 
   # write all predictions to disk
