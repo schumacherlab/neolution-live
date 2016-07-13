@@ -77,6 +77,12 @@ performPairedSequencePredictions = function() {
                                 allele = runParameters$allele,
                                 peptidelength = runParameters$peptidelength)
       }
+      # write calculated affinity values to MySQL db
+      writePeptideAffinityToDatabase(index = i,
+                                     predictions = unique(x = rbind(normalAndTumorPredictions[[1]][, c('peptide', paste0(runParameters$allele, 'affinity')), with = F],
+                                                                    normalAndTumorPredictions[[2]][, c('peptide', paste0(runParameters$allele, 'affinity')), with = F]),
+                                                          by = 'peptide'),
+                                     predictor = runParameters$panversion)
     } else {
       # do live predictions for all peptides
       normalAndTumorPredictions = foreach(k = 1:2) %do% {

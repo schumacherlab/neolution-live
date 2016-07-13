@@ -118,3 +118,43 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
       })
   }
 }
+
+writePeptideAffinityToDatabase = function(index, predictions, predictor) {
+  attempt = 1
+
+  while (attempt <= 10) {
+    attempt = attempt + 1
+
+    tryCatch(
+      {
+        dbConnection = dbConnect(MySQL(),
+                                 host = sqlConfiguration$sqlhost,
+                                 user = sqlConfiguration$sqluser,
+                                 password = sqlConfiguration$sqlpass,
+                                 dbname = sqlConfiguration$sqldbname)
+        
+        dbWriteTable(conn = dbConnection,
+                     name = paste('affinity', paste('pan', predictor, sep = '-'), sep = '_'),
+                     value = predictions,
+                     overwrite = FALSE)
+        
+        dbDisconnect(dbConnection)
+      }
+      ,
+      error = function(err) {
+        logQueryErrorToDisk(querytype = "writeAffinityScore",
+                            file = runParameters$filename,
+                            index = index,
+                            error = err)
+
+        if (!is.null(res)) {
+          dbClearResult(res)
+        }
+
+        res = NULL
+        if (exists("dbConnection")) {
+          dbDisconnect(dbConnection)
+        }
+      })
+  }
+}
