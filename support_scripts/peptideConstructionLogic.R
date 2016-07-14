@@ -75,15 +75,15 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                                               any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] <= transcript_variants$aa_pos_tumor_stop[y])
                                                                                           })
                                          ))
-                                         
+
                                          # epitope_variants[, aa_pos_germline := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_germline)]
-                                         
+
                                          epitope_variants[, aa_pos_tumor_start := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_start)]
-                                         epitope_variants[, aa_pos_tumor_stop := ifelse(test = predicted_variants[x, ]$c_term_pos < aa_pos_tumor_stop,
-                                                                                        yes = predicted_variants[x, ]$c_term_pos,
+                                         epitope_variants[, aa_pos_tumor_stop := ifelse(test = predicted_variants[x, ]$c_term_pos <= aa_pos_tumor_stop,
+                                                                                        yes = runParameters$peptidelength,
                                                                                         no = runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_stop))]
                                          setkey(x = epitope_variants, aa_pos_tumor_start)
-                                         
+
                                          contributing_variants = paste(epitope_variants$variant_id,
                                                                        epitope_variants$variant_classification,
                                                                        sep = " @ ",
