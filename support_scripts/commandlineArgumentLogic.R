@@ -70,7 +70,7 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
 # prepare table for holding run configuration
-runParameters = vector(mode = "list", length = 14)
+runParameters = vector(mode = "list", length = 15)
 runParameters = setNames(object = runParameters, nm = c("filename", "filename_no_ext", "filepath",
                                                         "allele", "peptidelength", "affinity", "rank", "processing", "expression",
                                                         "single_sequence", "simple_selfsim", "extended_selfsim", "use_selflist", "use_fasdb", "panversion"))
