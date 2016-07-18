@@ -41,7 +41,7 @@ processVariants = function(sid, variants) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp", 
+    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp",
               "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "protein_seq_ref", "protein_seq_alt") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
       variants[, chromosome := as.character(chromosome)]
@@ -87,7 +87,7 @@ processVariants = function(sid, variants) {
     					 new = c('peptidecontextnormal', 'peptidecontexttumor', 'rna_expression'))
 
     	variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
-      
+
     	# don't take SNP lines along (even though they shouldn't result in peptides for prediction)
     	variantssubset = unique(x = variants[!grepl(pattern = '^[gr]s\\d+$', x = variant_id, perl = TRUE)],
     	                        by = c("peptidecontextnormal", "peptidecontexttumor"))
@@ -148,7 +148,7 @@ processVariants = function(sid, variants) {
 
       variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
       variants[, rna_expression := NA]
-      
+
       # don't take SNP lines along (even though they shouldn't result in peptides for prediction)
       variantssubset = unique(x = variants[!grepl(pattern = '^[gr]s\\d+$', x = variant_id, perl = TRUE)],
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
