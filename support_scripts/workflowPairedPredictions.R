@@ -11,10 +11,6 @@ performPairedSequencePredictions = function() {
 
   variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
-  
-  write.csv(x = variantInput,
-            file = file.path(runParameters$filepath, 'predictions_input', paste0(runParameters$filename_no_ext, '_input.tsv')),
-            row.names = FALSE)
 
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
@@ -37,6 +33,10 @@ performPairedSequencePredictions = function() {
                            peptidelength = runParameters$peptidelength)
     return(NULL)
   }
+
+  write.csv(x = variantInput,
+            file = file.path(runParameters$filepath, 'predictions_input', paste0(runParameters$filename_no_ext, '_input.tsv')),
+            row.names = FALSE)
 
   # load required data for self-similarity check
   if ((runParameters$simple_selfsim | runParameters$extended_selfsim) & runParameters$use_selflist) {
