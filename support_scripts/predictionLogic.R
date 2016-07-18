@@ -42,7 +42,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 
   # write peptides to disk in temp dir
   invisible(sapply(seq(1, length(peptides), 1), function(x)
-    write(x = sprintf("%s", x, peptides[x]),
+    write(x = sprintf("%s", peptides[x]),
           file = paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
           append = TRUE,
           sep = "\n")))
