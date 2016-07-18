@@ -77,6 +77,7 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
 queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
   res = NULL
   attempt = 1
+
   while (is.null(res) && attempt <= 10) {
     attempt = attempt + 1
 
@@ -88,9 +89,31 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
                                  password = sqlConfiguration$sqlpass,
                                  dbname = sqlConfiguration$sqldbname)
 
-        res = dbGetQuery(dbConnection, paste0('SELECT peptide, ',paste0(allele,"affinity"),' ',
-                                              'FROM perPepAffinityScores_NEW',' ',
-                                              'WHERE ', paste0('peptide="',peptides,'"',collapse = ' OR '), ';'))
+        if (predictor != '2.4') {
+          res = dbGetQuery(dbConnection, paste('SELECT peptide,', paste0(allele, 'affinity'), ',', paste0(allele, 'percentile_rank'),
+                                               'FROM', paste('binding', paste('pan', gsub(pattern = '.',
+                                                                                          replacement = '_',
+                                                                                          x = predictor,
+                                                                                          fixed = T),
+                                                                              sep = '-'),
+                                                             sep = '_'),
+                                               'WHERE', paste0('peptide="', peptides, '"',
+                                                               collapse = ' OR '),
+                                               ';'))
+        } else if (predictor == '2.4') {
+          res = dbGetQuery(dbConnection, paste('SELECT peptide,', paste0(allele, 'affinity'),
+                                               'FROM', paste('binding', paste('pan', gsub(pattern = '.',
+                                                                                          replacement = '_',
+                                                                                          x = predictor,
+                                                                                          fixed = T),
+                                                                              sep = '-'),
+                                                             sep = '_'),
+                                               'WHERE', paste0('peptide="', peptides, '"',
+                                                               collapse = ' OR '),
+                                               ';'))
+          res[[paste0(allele, 'percentile_rank')]] = NA
+        }
+
         dbDisconnect(dbConnection)
 
         res = merge(x = data.table(peptide = peptides),
@@ -102,7 +125,7 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
       }
       ,
       error = function(err) {
-        logQueryErrorToDisk(querytype = "affinityScore",
+        logQueryErrorToDisk(querytype = "fetchAffinityScore",
                             file = runParameters$filename,
                             index = index,
                             error = err)
@@ -119,8 +142,17 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
   }
 }
 
-writePeptideAffinityToDatabase = function(index, predictions, predictor) {
+writePeptideAffinityToDatabase = function(index, allele, predictions, predictor) {
   attempt = 1
+
+  if (predictor != '2.4') {
+    setnames(x = predictions,
+             old = 'percentile_rank',
+             new = paste0(allele, 'percentile_rank'))
+  } else if (predictor == '2.4') {
+    predictions[, 'percentile_rank' := NULL]
+  }
+
 
   while (attempt <= 10) {
     attempt = attempt + 1
@@ -132,12 +164,26 @@ writePeptideAffinityToDatabase = function(index, predictions, predictor) {
                                  user = sqlConfiguration$sqluser,
                                  password = sqlConfiguration$sqlpass,
                                  dbname = sqlConfiguration$sqldbname)
-        
+
+        fieldTypes = list(peptide = 'VARCHAR(15)')
+        fieldTypes[[paste0(allele, 'affinity')]] = 'DOUBLE(16,4)'
+        if (predictor != '2.4') {
+          fieldTypes[[paste0(allele, 'percentile_rank')]] = 'DOUBLE(6,2)'
+        }
+
         dbWriteTable(conn = dbConnection,
-                     name = paste('affinity', paste('pan', predictor, sep = '-'), sep = '_'),
+                     name = paste('binding', paste('pan', gsub(pattern = '.',
+                                                               replacement = '_',
+                                                               x = predictor,
+                                                               fixed = T),
+                                                   sep = '-'),
+                                  sep = '_'),
                      value = predictions,
-                     overwrite = FALSE)
-        
+                     field.types = fieldTypes,
+                     row.names = FALSE,
+                     overwrite = FALSE,
+                     append = TRUE)
+
         dbDisconnect(dbConnection)
       }
       ,
