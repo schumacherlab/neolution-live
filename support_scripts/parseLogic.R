@@ -2,6 +2,10 @@ readFastaFile = function(file) {
   # read data
   lines = readLines(file)
 
+  if (length(lines) < 1) {
+    stop("No input data found")
+  }
+
   # find lines indices with name
   ind = which(substr(lines, 1L, 1L) == ">")
 
