@@ -62,7 +62,7 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                   make_option(opt_str = c("--panversion"),
                               action = "store",
                               type = "double",
-                              default = 2.8,
+                              default = 3.0,
                               help = "netMHCpan version (optional, default: %default)")
 )
 
