@@ -165,6 +165,12 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
                                  password = sqlConfiguration$sqlpass,
                                  dbname = sqlConfiguration$sqldbname)
 
+        fieldTypes = list(peptide = 'VARCHAR(15)')
+        fieldTypes[[paste0(allele, 'affinity')]] = 'DOUBLE(16,4)'
+        if (predictor != '2.4') {
+          fieldTypes[[paste0(allele, 'percentile_rank')]] = 'DOUBLE(6,2)'
+        }
+
         dbWriteTable(conn = dbConnection,
                      name = paste('binding', paste('pan', gsub(pattern = '.',
                                                                replacement = '_',
@@ -173,7 +179,10 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
                                                    sep = '-'),
                                   sep = '_'),
                      value = predictions,
-                     overwrite = FALSE)
+                     field.types = fieldTypes,
+                     row.names = FALSE,
+                     overwrite = FALSE,
+                     append = TRUE)
 
         dbDisconnect(dbConnection)
       }
