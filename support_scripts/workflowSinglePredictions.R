@@ -70,7 +70,7 @@ performSingleSequencePredictions = function() {
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
             cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = runParameters$rank,
+                          yes = "percentile_rank",
                           no = paste0(runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsAll,
               neworder = c("sequence_id", "hla_allele", "xmer",
@@ -80,7 +80,7 @@ performSingleSequencePredictions = function() {
 
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = runParameters$rank,
+                          yes = "percentile_rank",
                           no = paste0(runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
               neworder = c("sequence_id", "hla_allele", "xmer",
