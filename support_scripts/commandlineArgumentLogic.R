@@ -82,10 +82,10 @@ if (is.null(commandlineArguments$file)) {
 } else if (file.exists(commandlineArguments$file)) {
   runParameters$filename = basename(commandlineArguments$file)
   runParameters$filename_no_ext = substring(text = runParameters$filename,
-                                            first = 1, 
-                                            last = max(unlist(gregexpr(pattern = ".", 
+                                            first = 1,
+                                            last = max(unlist(gregexpr(pattern = ".",
                                                                        text = runParameters$filename,
-                                                                       fixed = TRUE)))-1)
+                                                                       fixed = TRUE))) - 1)
   runParameters$filepath = dirname(commandlineArguments$file)
 } else {
   message("Can't find file, make sure to provide full path to file")
@@ -105,7 +105,7 @@ if (is.null(commandlineArguments$mhc)) {
 if (is.null(commandlineArguments$length)) {
   message("Peptide length input (-l or --length) is required argument, use -h for help")
   q(status = 1)
-} else if (commandlineArguments$length >=8 & commandlineArguments$length <= 11) {
+} else if (commandlineArguments$length >= 8 & commandlineArguments$length <= 11) {
   runParameters$peptidelength = commandlineArguments$length
 } else {
   message("Peptide length input (-l or --length) should be >=8 and <= 11, use -h for help")
