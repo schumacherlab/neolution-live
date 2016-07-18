@@ -2,7 +2,7 @@ buildPeptideList = function(sequences, peptidelength) {
   if (runParameters$single_sequence) {
     # determine how many peptides can be made
     n_seq = nchar(sequences$sequence) - (peptidelength - 1)
-    
+
     # make peptides
     if (n_seq > 0) {
       peptide = sapply(seq(from = 1, to = n_seq, by = 1), function(i) substr(x = sequences$sequence,
@@ -17,14 +17,14 @@ buildPeptideList = function(sequences, peptidelength) {
     } else {
       table = data.table()
     }
-    
+
     return(table)
-    
+
   } else {
     # determine how many peptides can be made
     n_normal = nchar(sequences$peptidecontextnormal) - (peptidelength - 1)
     n_tumor = nchar(sequences$peptidecontexttumor) - (peptidelength - 1)
-    
+
     # make peptides
     if (n_normal > 0) {
       peptide = sapply(seq(from = 1, to = n_normal, by = 1), function(i) substr(x = sequences$peptidecontextnormal,
@@ -38,7 +38,7 @@ buildPeptideList = function(sequences, peptidelength) {
     } else {
       normal = data.table()
     }
-    
+
     if (n_tumor > 0) {
       peptide = sapply(seq(from = 1, to = n_tumor, by = 1), function(i) substr(x = sequences$peptidecontexttumor,
                                                                                start = i,
@@ -52,49 +52,60 @@ buildPeptideList = function(sequences, peptidelength) {
     } else {
       tumor = data.table()
     }
-    
+
     # select tumor peptides != normal peptides; select corresponding normal peptides (NOTE: in case of ins or dels corresponding normal peptide will likely be wrong)
     tumor = tumor[tumor$peptide %ni% normal$peptide]
     normal = normal[match(x = tumor$c_term_pos, table = normal$c_term_pos, nomatch = FALSE)]
-    
+
     return(list(normal, tumor))
   }
 }
 
 findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
   if (nrow(predicted_variants) > 0) {
-    contributing_variant_info = lapply(seq(1, nrow(predicted_variants), 1), 
+    contributing_variant_info = lapply(seq(1, nrow(predicted_variants), 1),
                                        function(x) {
                                          transcript_variants = subset(x = all_variants,
                                                                       subset = transcript_id == predicted_variants[x, ]$transcript_id)
-                                         
-                                         epitope_variants = unique(subset(x = transcript_variants, 
-                                                                          subset = sapply(seq(1, nrow(transcript_variants), 1), 
+
+                                         epitope_variants = unique(subset(x = transcript_variants,
+                                                                          subset = sapply(seq(1, nrow(transcript_variants), 1),
                                                                                           function(y) {
-                                                                                            any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] >= transcript_variants$protein_pos_alt_start[y]) &
-                                                                                              any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] <= transcript_variants$protein_pos_alt_stop[y])
+                                                                                            any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] >= transcript_variants$aa_pos_tumor_start[y]) &
+                                                                                              any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) : predicted_variants[x, ]$c_term_pos)[-1] <= transcript_variants$aa_pos_tumor_stop[y])
                                                                                           })
                                          ))
-                                         
-                                         contributing_variants = paste(epitope_variants$variant_id, 
+
+                                         # epitope_variants[, aa_pos_germline := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_germline)]
+
+                                         epitope_variants[, aa_pos_tumor_start := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_start)]
+                                         epitope_variants[, aa_pos_tumor_stop := ifelse(test = predicted_variants[x, ]$c_term_pos <= aa_pos_tumor_stop,
+                                                                                        yes = runParameters$peptidelength,
+                                                                                        no = runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_stop))]
+                                         setkey(x = epitope_variants, aa_pos_tumor_start)
+
+                                         contributing_variants = paste(epitope_variants$variant_id,
                                                                        epitope_variants$variant_classification,
                                                                        sep = " @ ",
                                                                        collapse = "!")
-                                         
-                                         contributing_protein_pos_ref = paste(epitope_variants$protein_pos_ref,
-                                                                              collapse = ";")
-                                         contributing_protein_pos_alt = paste(epitope_variants$protein_pos_alt_start,epitope_variants$protein_pos_alt_stop,
-                                                                              sep = "-",
-                                                                              collapse = ";")
-                                         
-                                         return(data.table(contributing_variants = contributing_variants, 
-                                                           contributing_protein_pos_ref = contributing_protein_pos_ref, 
-                                                           contributing_protein_pos_alt = contributing_protein_pos_alt))
+
+                                         # contributing_aa_pos_germline = paste(epitope_variants$aa_pos_germline,
+                                         #                                 collapse = ";")
+                                         contributing_aa_pos_tumor = paste(ifelse(test = epitope_variants$aa_pos_tumor_start == epitope_variants$aa_pos_tumor_stop,
+                                                                                  yes = epitope_variants$aa_pos_tumor_start,
+                                                                                  no = paste(epitope_variants$aa_pos_tumor_start,
+                                                                                             epitope_variants$aa_pos_tumor_stop,
+                                                                                             sep = '-')),
+                                                                           collapse = ";")
+
+                                         return(data.table(contributing_variants = contributing_variants,
+                                                           # contributing_aa_pos_germline = contributing_aa_pos_germline,
+                                                           contributing_aa_pos_tumor = contributing_aa_pos_tumor))
                                        })
     return(contributing_variant_info)
   } else {
     return(list(data.table(contributing_variants = NA,
-                      contributing_protein_pos_ref = NA,
-                      contributing_protein_pos_alt = NA)))
+                           # contributing_aa_pos_germline = NA,
+                           contributing_aa_pos_tumor = NA)))
   }
 }

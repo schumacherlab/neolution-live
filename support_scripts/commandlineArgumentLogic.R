@@ -19,11 +19,11 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               type = "double",
                               default = 500,
                               help = "netMHCpan affinity cutoff (optional, default: <= %default nM)"),
-                  # make_option(opt_str = c("-r", "--rank"),
-                  #             action = "store",
-                  #             type = "integer",
-                  #             default = -1,
-                  #             help = "netMHCpan affinity percentile rank cutoff (optional, default cutoff is nM affinity)"),
+                  make_option(opt_str = c("-r", "--rank"),
+                              action = "store",
+                              type = "double",
+                              default = NULL,
+                              help = "netMHCpan percentile rank cutoff (optional, default cutoff is affinity)"),
                   make_option(opt_str = c("-p", "--processing"),
                               action = "store",
                               type = "double",
@@ -62,7 +62,7 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                   make_option(opt_str = c("--panversion"),
                               action = "store",
                               type = "double",
-                              default = 2.8,
+                              default = 3.0,
                               help = "netMHCpan version (optional, default: %default)")
 )
 
@@ -70,9 +70,9 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
 # prepare table for holding run configuration
-runParameters = vector(mode = "list", length = 14)
+runParameters = vector(mode = "list", length = 15)
 runParameters = setNames(object = runParameters, nm = c("filename", "filename_no_ext", "filepath",
-                                                        "allele", "peptidelength", "affinity", "processing", "expression",
+                                                        "allele", "peptidelength", "affinity", "rank", "processing", "expression",
                                                         "single_sequence", "simple_selfsim", "extended_selfsim", "use_selflist", "use_fasdb", "panversion"))
 
 # parse other arguments
@@ -82,10 +82,10 @@ if (is.null(commandlineArguments$file)) {
 } else if (file.exists(commandlineArguments$file)) {
   runParameters$filename = basename(commandlineArguments$file)
   runParameters$filename_no_ext = substring(text = runParameters$filename,
-                                            first = 1, 
-                                            last = max(unlist(gregexpr(pattern = ".", 
+                                            first = 1,
+                                            last = max(unlist(gregexpr(pattern = ".",
                                                                        text = runParameters$filename,
-                                                                       fixed = TRUE)))-1)
+                                                                       fixed = TRUE))) - 1)
   runParameters$filepath = dirname(commandlineArguments$file)
 } else {
   message("Can't find file, make sure to provide full path to file")
@@ -105,7 +105,7 @@ if (is.null(commandlineArguments$mhc)) {
 if (is.null(commandlineArguments$length)) {
   message("Peptide length input (-l or --length) is required argument, use -h for help")
   q(status = 1)
-} else if (commandlineArguments$length >=8 & commandlineArguments$length <= 11) {
+} else if (commandlineArguments$length >= 8 & commandlineArguments$length <= 11) {
   runParameters$peptidelength = commandlineArguments$length
 } else {
   message("Peptide length input (-l or --length) should be >=8 and <= 11, use -h for help")
@@ -116,6 +116,13 @@ if (is.numeric(commandlineArguments$affinity)) {
   runParameters$affinity = commandlineArguments$affinity
 } else {
   message("Affinity cutoff input (-a or --affinity) should be numeric, use -h for help")
+  q(status = 1)
+}
+
+if (is.numeric(commandlineArguments$rank) | is.null(commandlineArguments$rank)) {
+  runParameters$rank = commandlineArguments$rank
+} else {
+  message("Rank cutoff input (-r or --rank) should be numeric, use -h for help")
   q(status = 1)
 }
 

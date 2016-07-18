@@ -40,8 +40,8 @@ emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
     table = as.data.table(read.table(file = textConnection(""),
                                      col.names = colnames,
                                      colClasses = colclasses))
-    
-    return(table)  
+
+    return(table)
   } else {
     warning("Argument(s) are not vectors and/or not of equal length; returning generic empty table")
     return(data.table())
@@ -53,12 +53,12 @@ writePredictionsToDisk = function(table, unique_by = c("gene_id", "tumor_peptide
   if (nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = unique_by),
-              file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
-              row.names = FALSE)  
+              file = file.path(filepath, 'predictions_output', paste0(paste(runStart, filename, allele, peptidelength, sep = '_'), 'mer_epitopes', suffix, '.csv')),
+              row.names = FALSE)
   } else {
     write.csv(x = table,
-              file = paste0(filepath, "/output/", paste(runStart, filename, allele, peptidelength, sep = "_"), "mer_epitopes", suffix, ".csv"),
-              row.names = FALSE)  
+              file = file.path(filepath, 'predictions_output', paste0(paste(runStart, filename, allele, peptidelength, sep = '_'), 'mer_epitopes', suffix, '.csv')),
+              row.names = FALSE)
   }
 }
 
