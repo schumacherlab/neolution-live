@@ -105,9 +105,9 @@ performPairedSequencePredictions = function() {
     # apply various cutoffs
     if (all(c("hugo_expression", "entrez_expression") %in% names(variantInfo))) {
       normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
-                                                   subset = ifelse(test = is.numeric(runParameters$rank),
-                                                                   yes = normalAndTumorPredictions[[1]][[paste0("normal_percentile_rank")]] <= runParameters$rank,
-                                                                   no = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                   subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                   'TRUE' = normalAndTumorPredictions[[1]][["normal_percentile_rank"]] <= runParameters$rank,
+                                                                   'FALSE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                      normal_processing_score >= runParameters$processing &
                                                      (
                                                         (hugo_expression > runParameters$expression & is.na(entrez_expression) == TRUE)
@@ -120,9 +120,9 @@ performPairedSequencePredictions = function() {
                                                      ))
 
       tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
-                                                  subset = ifelse(test = is.numeric(runParameters$rank),
-                                                                  yes = normalAndTumorPredictions[[2]][[paste0("tumor_percentile_rank")]] <= runParameters$rank,
-                                                                  no = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                  subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                  'TRUE' = normalAndTumorPredictions[[2]][["tumor_percentile_rank"]] <= runParameters$rank,
+                                                                  'FALSE' = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                     tumor_processing_score >= runParameters$processing &
                                                     (
                                                         (hugo_expression > runParameters$expression & is.na(entrez_expression) == TRUE)
@@ -135,16 +135,16 @@ performPairedSequencePredictions = function() {
                                                     ))
     } else {
       normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
-                                                   subset = ifelse(test = is.numeric(runParameters$rank),
-                                                                   yes = normalAndTumorPredictions[[1]][[paste0("normal_percentile_rank")]] <= runParameters$rank,
-                                                                   no = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                   subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                   'TRUE' = normalAndTumorPredictions[[1]][["normal_percentile_rank"]] <= runParameters$rank,
+                                                                   'FALSE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                      normal_processing_score >= runParameters$processing &
                                                      (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
 
       tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
-                                                  subset = ifelse(test = is.numeric(runParameters$rank),
-                                                                  yes = normalAndTumorPredictions[[2]][[paste0("tumor_percentile_rank")]] <= runParameters$rank,
-                                                                  no = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                  subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                  'TRUE' = normalAndTumorPredictions[[2]][["tumor_percentile_rank"]] <= runParameters$rank,
+                                                                  'FALSE' = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                     tumor_processing_score >= runParameters$processing &
                                                     (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
     }
@@ -248,9 +248,9 @@ performPairedSequencePredictions = function() {
                                                                                                      selfepitopes = selfEpitopes$peptide,
                                                                                                      scorematrix = scoreMatrix,
                                                                                                      normalepitopes = subset(x = epitopePredictionsAll,
-                                                                                                                             subset = ifelse(test = is.numeric(runParameters$rank),
-                                                                                                                                             yes = epitopePredictionsAll[["normal_percentile_rank"]] <= runParameters$rank,
-                                                                                                                                             no = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                                                                                             subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                                                                                             'TRUE' = epitopePredictionsAll[["normal_percentile_rank"]] <= runParameters$rank,
+                                                                                                                                             'FALSE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                                                                                                normal_processing_score >= runParameters$processing)$normal_peptide)]
 
     # filter for epitopes passing self-sim
@@ -276,9 +276,9 @@ performPairedSequencePredictions = function() {
                                                                                                    selfepitopes = selfEpitopes$peptide,
                                                                                                    scorematrix = scoreMatrix,
                                                                                                    normalepitopes = subset(x = epitopePredictionsAll,
-                                                                                                                           subset = ifelse(test = is.numeric(runParameters$rank),
-                                                                                                                                           yes = epitopePredictionsAll[["normal_percentile_rank"]] <= runParameters$rank,
-                                                                                                                                           no = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                                                                                           subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                                                                                           'TRUE' = epitopePredictionsAll[["normal_percentile_rank"]] <= runParameters$rank,
+                                                                                                                                           'FALSE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                                                                                              normal_processing_score >= runParameters$processing)$normal_peptide)]
 
     # filter for epitopes passing self-sim
