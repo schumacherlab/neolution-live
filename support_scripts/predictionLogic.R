@@ -37,12 +37,12 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   randomNumber = ceiling(runif(n = 1,
                                min = 0,
                                max = 10^10))
-  
+
   dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
-  
+
   # write peptides to disk in temp dir
   invisible(sapply(seq(1, length(peptides), 1), function(x)
-    write(x = sprintf(">%i\n%s", x, peptides[x]),
+    write(x = sprintf("%s", x, peptides[x]),
           file = paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
           append = TRUE,
           sep = "\n")))
@@ -67,6 +67,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                                       replacement = '\\1:\\2',
                                       x = allele),
                      ' -l ', peptidelength,
+                     ' -p ',
                      ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas")),
                    no = paste0(# "nice -n 9 ",
                      predictorPaths$netMHCpan,
@@ -74,6 +75,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                                       replacement = '\\1:\\2',
                                       x = allele),
                      ' -l ', peptidelength,
+                     ' -p ',
                      ' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
                      ' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber),
                      ' -ic50')
