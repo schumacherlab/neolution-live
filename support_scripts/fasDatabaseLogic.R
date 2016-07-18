@@ -145,9 +145,14 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
 writePeptideAffinityToDatabase = function(index, allele, predictions, predictor) {
   attempt = 1
 
-  setnames(x = predictions,
-           old = 'percentile_rank',
-           new = paste0(allele, 'percentile_rank'))
+  if (predictor != '2.4') {
+    setnames(x = predictions,
+             old = 'percentile_rank',
+             new = paste0(allele, 'percentile_rank'))
+  } else if (predictor == '2.4') {
+    predictions[, 'percentile_rank' := NULL]
+  }
+
 
   while (attempt <= 10) {
     attempt = attempt + 1
