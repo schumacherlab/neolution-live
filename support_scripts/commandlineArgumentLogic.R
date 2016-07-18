@@ -119,7 +119,7 @@ if (is.numeric(commandlineArguments$affinity)) {
   q(status = 1)
 }
 
-if (is.numeric(commandlineArguments$rank)) {
+if (is.numeric(commandlineArguments$rank) | is.null(commandlineArguments$rank)) {
   runParameters$rank = commandlineArguments$rank
 } else {
   message("Rank cutoff input (-r or --rank) should be numeric, use -h for help")
