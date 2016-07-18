@@ -74,7 +74,7 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
 }
 
 # function for querying FASdb for peptide affinity
-queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele) {
+queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele, predictor) {
   res = NULL
   attempt = 1
 
