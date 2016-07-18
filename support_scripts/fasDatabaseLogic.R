@@ -16,12 +16,13 @@ logQueryErrorToDisk = function(querytype, file, index, error) {
         append = TRUE)
 }
 
-performFasDbPredictions = function(index, peptides, peptidestretch, allele, peptidelength) {
+performFasDbPredictions = function(index, peptides, peptidestretch, allele, peptidelength, predictor) {
   if (nrow(peptides) > 0) {
     # do affinity lookups in FASdb
     affinityLookups = queryDatabaseWithPeptideForAffinityScore(index = index,
                                                                peptides = peptides$peptide,
-                                                               allele = allele)
+                                                               allele = allele,
+                                                               predictor = predictor)
 
     predictions = merge(x = peptides,
                         y = unique(x = affinityLookups,
