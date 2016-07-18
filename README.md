@@ -6,11 +6,12 @@
 This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the accuracy of the predictions.
 
 **Usage example:**  
-`Rscript performPredictions.R -f /home/NFS/users/l.fanchi/neolution-live/rte_kitchensink.txt -m A0201 -l 9`
+`Rscript performPredictions.R -f /home/NFS/users/username/patient/variants.tsv -m A0201 -l 9`
 
-The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **rte_kitchensink.txt**, __HLA-A*02:01__ and **9-mer** peptides. 
+The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
 
-**By default, netMHCpan v2.8 will be used and 1/4th of the available cores are used per run for parallel computations; four samples can be processed in parallel on one cluster. Make sure you *nice* your runs!!**
+**By default, netMHCpan v3.0 will be used and 1/4th of the available cores are used per run for parallel computations; four samples can be processed in parallel on one cluster.  
+Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cores)!!**
 
 **IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
 
@@ -23,6 +24,7 @@ The call should be run from the script directory from the Terminal and will star
 **Optional commandline arguments:**  
 
 1. netMHCpan affinity cutoff
+2. netMHCpan rank cutoff
 2. netChop processing cutoff
 3. rna expression cutoff
 4. single sequence input (fasta input: not paired tumor-normal, no rna expression)
@@ -53,6 +55,9 @@ The call should be run from the script directory from the Terminal and will star
 `-a AFFINITY, --affinity=AFFINITY`  
 *netMHCpan affinity cutoff (optional, default: <= 500 nM)*
 
+`-r RANK, --rank=RANK`  
+*netMHCpan rank cutoff (optional, default: FALSE)*
+
 `-p PROCESSING, --processing=PROCESSING`  
 *netChop processing score cutoff (optional, default: >= 0.5)*
 
@@ -75,7 +80,7 @@ The call should be run from the script directory from the Terminal and will star
 *Look up peptide affinity in FASdb, predict if not found; only compatible with 9-mers & netMHCpan-2.4 (optional, default: FALSE)*
 
 `--panversion`  
-*Use different version of netMHCpan; must be installed in path specified in runConfig.R (optional, default: 2.8)*
+*Use different version of netMHCpan; must be installed in path specified in runConfig.R (optional, default: 3.0)*
 
 `-h, --help`  
 *Show this help message and exit*
