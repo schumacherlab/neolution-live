@@ -75,7 +75,8 @@ performPairedSequencePredictions = function() {
                                 peptides = peptideList[[k]],
                                 peptidestretch = peptideStretchVector[k],
                                 allele = runParameters$allele,
-                                peptidelength = runParameters$peptidelength)
+                                peptidelength = runParameters$peptidelength,
+                                predictor = runParameters$panversion)
       }
       # write calculated affinity values to MySQL db
       writePeptideAffinityToDatabase(index = i,
