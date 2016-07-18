@@ -19,11 +19,11 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               type = "double",
                               default = 500,
                               help = "netMHCpan affinity cutoff (optional, default: <= %default nM)"),
-                  # make_option(opt_str = c("-r", "--rank"),
-                  #             action = "store",
-                  #             type = "integer",
-                  #             default = -1,
-                  #             help = "netMHCpan affinity percentile rank cutoff (optional, default cutoff is nM affinity)"),
+                  make_option(opt_str = c("-r", "--rank"),
+                              action = "store",
+                              type = "double",
+                              default = NULL,
+                              help = "netMHCpan percentile rank cutoff (optional, default cutoff is affinity)"),
                   make_option(opt_str = c("-p", "--processing"),
                               action = "store",
                               type = "double",
@@ -72,7 +72,7 @@ commandlineArguments = parse_args(OptionParser(option_list = optionList))
 # prepare table for holding run configuration
 runParameters = vector(mode = "list", length = 14)
 runParameters = setNames(object = runParameters, nm = c("filename", "filename_no_ext", "filepath",
-                                                        "allele", "peptidelength", "affinity", "processing", "expression",
+                                                        "allele", "peptidelength", "affinity", "rank", "processing", "expression",
                                                         "single_sequence", "simple_selfsim", "extended_selfsim", "use_selflist", "use_fasdb", "panversion"))
 
 # parse other arguments
@@ -116,6 +116,13 @@ if (is.numeric(commandlineArguments$affinity)) {
   runParameters$affinity = commandlineArguments$affinity
 } else {
   message("Affinity cutoff input (-a or --affinity) should be numeric, use -h for help")
+  q(status = 1)
+}
+
+if (is.numeric(commandlineArguments$rank)) {
+  runParameters$rank = commandlineArguments$rank
+} else {
+  message("Rank cutoff input (-r or --rank) should be numeric, use -h for help")
   q(status = 1)
 }
 

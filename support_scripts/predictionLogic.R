@@ -108,8 +108,8 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
       setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "variant_id",
                                                     "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"))
     } else {
-      data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "peptide_score_log50k", paste0(allele, "affinity")),
-                                                       colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric"))
+      data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"),
+                                                       colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric", "numeric"))
     }
     return(data)
   }
@@ -117,7 +117,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   data = processPreditionOutput(output)
 
   data = subset(x = data,
-                select = colnames(data[, -dropNa(match(x = c("position", "variant_id", "peptide_score_log50k", "percentile_rank", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore"),
+                select = colnames(data[, -dropNa(match(x = c("position", "variant_id", "peptide_score_log50k", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore"),
                                                         table = names(data))),
                                        with = FALSE]))
   return(data)

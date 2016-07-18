@@ -27,11 +27,11 @@ performSingleSequencePredictions = function() {
     # if no peptides found, move to next line
     if (nrow(peptideList) < 1) {
       emptyPredictionsTable = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer",
-                                                                                     "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), "processing_score"
+                                                                                     "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), "percentile_rank", "processing_score"
                                                                                      # , "rna_expression"
                                                                                      ),
                                                                         colclasses = c("character", "character", "numeric",
-                                                                                       "character", "character", "numeric", "numeric", "numeric"))
+                                                                                       "character", "character", "numeric", "numeric", "numeric", "numeric"))
       return(list(emptyPredictionsTable, emptyPredictionsTable))
     }
 
@@ -42,11 +42,19 @@ performSingleSequencePredictions = function() {
                                                                   peptidelength = runParameters$peptidelength)
 
     # apply various cutoffs
-    affinityAndProcessingPredictionsWithFiltersApplied = subset(x = affinityAndProcessingPredictions,
-                                                                subset = affinityAndProcessingPredictions[[paste0(runParameters$allele, "affinity")]] <= runParameters$affinity
-                                                                & processing_score >= runParameters$processing
-                                                                # & rna_expression > runParameters$expression
-    )
+    if (is.numeric(runParameters$rank)) {
+      affinityAndProcessingPredictionsWithFiltersApplied = subset(x = affinityAndProcessingPredictions,
+                                                                  subset = affinityAndProcessingPredictions[["percentile_rank"]] <= runParameters$rank
+                                                                  & processing_score >= runParameters$processing
+                                                                  # & rna_expression > runParameters$expression
+      )
+    } else {
+      affinityAndProcessingPredictionsWithFiltersApplied = subset(x = affinityAndProcessingPredictions,
+                                                                  subset = affinityAndProcessingPredictions[[paste0(runParameters$allele, "affinity")]] <= runParameters$affinity
+                                                                  & processing_score >= runParameters$processing
+                                                                  # & rna_expression > runParameters$expression
+      )
+    }
 
     return(list(affinityAndProcessingPredictionsWithFiltersApplied, affinityAndProcessingPredictions))
   }
@@ -61,18 +69,22 @@ performSingleSequencePredictions = function() {
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
-            cols = paste0(runParameters$allele, "affinity"))
+            cols = ifelse(test = is.numeric(runParameters$rank),
+                          yes = runParameters$rank,
+                          no = paste0(runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsAll,
               neworder = c("sequence_id", "hla_allele", "xmer",
-                           "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), "processing_score"
+                           "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), "percentile_rank", "processing_score"
                            # , "rna_expression"
               ))
 
   setorderv(x = epitopePredictionsWithFiltersApplied,
-            cols = paste0(runParameters$allele, "affinity"))
+            cols = ifelse(test = is.numeric(runParameters$rank),
+                          yes = runParameters$rank,
+                          no = paste0(runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
               neworder = c("sequence_id", "hla_allele", "xmer",
-                           "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), "processing_score"
+                           "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), "percentile_rank", "processing_score"
                            # , "rna_expression"
               ))
 
