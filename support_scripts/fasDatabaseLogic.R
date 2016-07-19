@@ -146,15 +146,6 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele, pre
 writePeptideAffinityToDatabase = function(index, allele, predictions, predictor) {
   attempt = 1
 
-  if (predictor != '2.4') {
-    setnames(x = predictions,
-             old = 'percentile_rank',
-             new = paste0(allele, 'percentile_rank'))
-  } else if (predictor == '2.4') {
-    predictions[, 'percentile_rank' := NULL]
-  }
-
-
   while (attempt <= 10) {
     attempt = attempt + 1
 
@@ -168,9 +159,7 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
 
         fieldTypes = list(peptide = 'VARCHAR(15)')
         fieldTypes[[paste0(allele, 'affinity')]] = 'DOUBLE(16,4)'
-        if (predictor != '2.4') {
-          fieldTypes[[paste0(allele, 'percentile_rank')]] = 'DOUBLE(6,2)'
-        }
+        fieldTypes[[paste0(allele, 'percentile_rank')]] = 'DOUBLE(6,2)'
 
         dbWriteTable(conn = dbConnection,
                      name = paste('binding', paste('pan', gsub(pattern = '.',
