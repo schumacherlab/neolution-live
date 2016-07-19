@@ -49,6 +49,11 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
                                                          yes = predictions[[paste0(allele, "affinity.predictions")]],
                                                          no = predictions[[paste0(allele, "affinity.lookups")]])]
       predictions[, c(paste0(allele, "affinity.lookups"), paste0(allele, "affinity.predictions")) := NULL]
+
+      predictions[, paste0(allele, "percentile_rank") := ifelse(test = is.na(predictions[[paste0(allele, "percentile_rank.lookups")]]),
+                                                                yes = predictions[[paste0(allele, "percentile_rank.predictions")]],
+                                                                no = predictions[[paste0(allele, "percentile_rank.lookups")]])]
+      predictions[, c(paste0(allele, "percentile_rank.lookups"), paste0(allele, "percentile_rank.predictions")) := NULL]
     }
 
     # perform processing predictions
