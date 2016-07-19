@@ -79,6 +79,13 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele, pre
   res = NULL
   attempt = 1
 
+  tableName = paste('binding', paste('pan', gsub(pattern = '.',
+                                                 replacement = '_',
+                                                 x = predictor,
+                                                 fixed = T),
+                                     sep = '_'),
+                    sep = '_')
+
   while (is.null(res) && attempt <= 10) {
     attempt = attempt + 1
 
@@ -90,29 +97,28 @@ queryDatabaseWithPeptideForAffinityScore = function(index, peptides, allele, pre
                                  password = sqlConfiguration$sqlpass,
                                  dbname = sqlConfiguration$sqldbname)
 
-        if (predictor != '2.4') {
-          res = dbGetQuery(dbConnection, paste('SELECT peptide,', paste0(allele, 'affinity'), ',', paste0(allele, 'percentile_rank'),
-                                               'FROM', paste('binding', paste('pan', gsub(pattern = '.',
-                                                                                          replacement = '_',
-                                                                                          x = predictor,
-                                                                                          fixed = T),
-                                                                              sep = '_'),
-                                                             sep = '_'),
-                                               'WHERE', paste0('peptide="', peptides, '"',
-                                                               collapse = ' OR '),
-                                               ';'))
-        } else if (predictor == '2.4') {
-          res = dbGetQuery(dbConnection, paste('SELECT peptide,', paste0(allele, 'affinity'),
-                                               'FROM', paste('binding', paste('pan', gsub(pattern = '.',
-                                                                                          replacement = '_',
-                                                                                          x = predictor,
-                                                                                          fixed = T),
-                                                                              sep = '_'),
-                                                             sep = '_'),
-                                               'WHERE', paste0('peptide="', peptides, '"',
-                                                               collapse = ' OR '),
-                                               ';'))
-          res[[paste0(allele, 'percentile_rank')]] = NA
+        if (paste0(allele, 'affinity') %in% dbListFields(conn = dbConnection,
+                                                         name = tableName)) {
+          if (predictor != '2.4') {
+            res = dbGetQuery(dbConnection, paste('SELECT peptide,', paste0(allele, 'affinity'), ',', paste0(allele, 'percentile_rank'),
+                                                 'FROM', tableName,
+                                                 'WHERE', paste0('peptide="', peptides, '"',
+                                                                 collapse = ' OR '),
+                                                 ';'))
+          } else if (predictor == '2.4') {
+            res = dbGetQuery(dbConnection, paste('SELECT peptide,', paste0(allele, 'affinity'),
+                                                 'FROM', tableName,
+                                                 'WHERE', paste0('peptide="', peptides, '"',
+                                                                 collapse = ' OR '),
+                                                 ';'))
+            res[[paste0(allele, 'percentile_rank')]] = NA
+          }
+        } else if (predictor != '2.4') {
+          res = emptyTableWithColumnNamesAndColumnClasses(colnames = c('peptide', paste0(allele, 'affinity'), paste0(allele, 'percentile_rank')),
+                                                          colclasses = c('character', 'numeric', 'numeric'))
+        } else {
+          res = emptyTableWithColumnNamesAndColumnClasses(colnames = c('peptide', paste0(allele, 'affinity')),
+                                                          colclasses = c('character', 'numeric'))
         }
 
         dbDisconnect(dbConnection)
