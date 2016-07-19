@@ -176,4 +176,9 @@ if (is.numeric(commandlineArguments$panversion)) {
 #   runParameters$use_fasdb = commandlineArguments$fasdb
 # }
 
-runParameters$use_fasdb = commandlineArguments$fasdb
+if (commandlineArguments$fasdb & runParameters$panversion == "2.4" & is.numeric(runParameters$rank)) {
+  message("Using FASdb with netMHCpan-2.4 and rank cutoffs is not supported")
+  q(status = 1)
+} else {
+  runParameters$use_fasdb = commandlineArguments$fasdb
+}
