@@ -176,8 +176,10 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
 
         if (paste0(allele, 'affinity') %ni% dbListFields(conn = dbConnection,
                                                          name = tableName)) {
-          dbSendQuery(paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[2], fieldTypes[2], ';'))
-          dbSendQuery(paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[3], fieldTypes[3], ';'))
+          dbSendQuery(conn = dbConnection,
+                      statement = paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[2], fieldTypes[2], ';'))
+          dbSendQuery(conn = dbConnection,
+                      statement = paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[3], fieldTypes[3], ';'))
         }
 
         dbWriteTable(conn = dbConnection,
