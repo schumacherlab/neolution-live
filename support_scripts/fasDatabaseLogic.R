@@ -189,7 +189,7 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
 
         dbSendQuery(conn = dbConnection,
                     statement = paste('INSERT INTO', tableName, paste0('(peptide,', allele, 'affinity,', allele, 'percentile_rank)'),
-                                      'VALUES', paste0('(',paste(predictions$peptide, collapse = ","), '),(', paste(predictions[[paste0(allele, "affinity")]], collapse = ","), '),(', paste(predictions[[paste0(allele, 'percentile_rank')]], collapse = ","), ')'),
+                                      'VALUES', paste0('("',paste(predictions$peptide, collapse = '","'), '"),(', paste(predictions[[paste0(allele, "affinity")]], collapse = ","), '),(', paste(predictions[[paste0(allele, 'percentile_rank')]], collapse = ","), ')'),
                                       'ON DUPLICATE KEY UPDATE', paste0(allele, "affinity", '=VALUES(', paste0(allele, "affinity"), '), ', paste0(allele, "percentile_rank"), '=VALUES(', paste0(allele, "percentile_rank"), ')'), ';'))
 
         # dbWriteTable(conn = dbConnection,
