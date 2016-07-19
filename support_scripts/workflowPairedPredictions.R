@@ -99,18 +99,18 @@ performPairedSequencePredictions = function() {
 
     # rename columns
     setnames(x = normalAndTumorPredictions[[1]],
-             old = c("peptide", paste0(runParameters$allele, "affinity"), "percentile_rank", "c_term_aa", "processing_score"),
-             new = c("normal_peptide", paste0("normal_", runParameters$allele, "affinity"), "normal_percentile_rank", "normal_c_term_aa", "normal_processing_score"))
+             old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "c_term_aa", "processing_score"),
+             new = c("normal_peptide", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_c_term_aa", "normal_processing_score"))
 
     setnames(x = normalAndTumorPredictions[[2]],
-             old = c("peptide", paste0(runParameters$allele, "affinity"), "percentile_rank", "c_term_aa", "processing_score"),
-             new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_percentile_rank", "tumor_c_term_aa", "tumor_processing_score"))
+             old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "c_term_aa", "processing_score"),
+             new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_c_term_aa", "tumor_processing_score"))
 
     # apply various cutoffs
     if (all(c("hugo_expression", "entrez_expression") %in% names(variantInfo))) {
       normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
                                                    subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                   'TRUE' = normalAndTumorPredictions[[1]][["normal_percentile_rank"]] <= runParameters$rank,
+                                                                   'TRUE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
                                                                    'FALSE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                      normal_processing_score >= runParameters$processing &
                                                      (
@@ -125,7 +125,7 @@ performPairedSequencePredictions = function() {
 
       tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
                                                   subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                  'TRUE' = normalAndTumorPredictions[[2]][["tumor_percentile_rank"]] <= runParameters$rank,
+                                                                  'TRUE' = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
                                                                   'FALSE' = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                     tumor_processing_score >= runParameters$processing &
                                                     (
@@ -140,14 +140,14 @@ performPairedSequencePredictions = function() {
     } else {
       normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
                                                    subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                   'TRUE' = normalAndTumorPredictions[[1]][["normal_percentile_rank"]] <= runParameters$rank,
+                                                                   'TRUE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
                                                                    'FALSE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                      normal_processing_score >= runParameters$processing &
                                                      (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
 
       tumorPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[2]],
                                                   subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                  'TRUE' = normalAndTumorPredictions[[2]][["tumor_percentile_rank"]] <= runParameters$rank,
+                                                                  'TRUE' = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
                                                                   'FALSE' = normalAndTumorPredictions[[2]][[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                     tumor_processing_score >= runParameters$processing &
                                                     (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
@@ -187,21 +187,21 @@ performPairedSequencePredictions = function() {
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
             cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = "tumor_percentile_rank",
+                          yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
                           no = paste0("tumor_", runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsAll,
               neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
-                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), "tumor_percentile_rank", "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_percentile_rank", "normal_processing_score"))
+                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
+                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
   setorderv(x = epitopePredictionsWithFiltersApplied,
             cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = "tumor_percentile_rank",
+                          yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
                           no = paste0("tumor_", runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsWithFiltersApplied,
               neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
-                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), "tumor_percentile_rank", "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), "normal_percentile_rank", "normal_processing_score"))
+                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
+                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
   # determine which variants contributed to the formation of predicted epitopes
   if (all(c("aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "variant_classification") %in% names(variantInput))) {
@@ -253,7 +253,7 @@ performPairedSequencePredictions = function() {
                                                                                                      scorematrix = scoreMatrix,
                                                                                                      normalepitopes = subset(x = epitopePredictionsAll,
                                                                                                                              subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                                                                                             'TRUE' = epitopePredictionsAll[["normal_percentile_rank"]] <= runParameters$rank,
+                                                                                                                                             'TRUE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
                                                                                                                                              'FALSE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                                                                                                normal_processing_score >= runParameters$processing)$normal_peptide)]
 
@@ -281,7 +281,7 @@ performPairedSequencePredictions = function() {
                                                                                                    scorematrix = scoreMatrix,
                                                                                                    normalepitopes = subset(x = epitopePredictionsAll,
                                                                                                                            subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                                                                                           'TRUE' = epitopePredictionsAll[["normal_percentile_rank"]] <= runParameters$rank,
+                                                                                                                                           'TRUE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
                                                                                                                                            'FALSE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
                                                                                                                              normal_processing_score >= runParameters$processing)$normal_peptide)]
 

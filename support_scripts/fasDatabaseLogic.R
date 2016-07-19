@@ -65,10 +65,10 @@ performFasDbPredictions = function(index, peptides, peptidestretch, allele, pept
     predictions[, xmer := peptidelength]
   } else {
     predictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c(names(peptides),
-                                                                         "xmer", "hla_allele", paste0(allele, "affinity"), "c_term_aa", "processing_score"),
+                                                                         "xmer", "hla_allele", paste0(allele, "affinity"), paste0(allele, "percentile_rank"), "c_term_aa", "processing_score"),
                                                             colclasses = c(unlist(lapply(peptides, class),
                                                                                   use.names = FALSE),
-                                                                           "numeric", "character", "numeric", "character", "numeric"))
+                                                                           "numeric", "character", "numeric", "numeric", "character", "numeric"))
   }
 
   return(predictions)

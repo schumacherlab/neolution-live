@@ -23,10 +23,10 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     predictions[, xmer := peptidelength]
   } else {
     predictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c(names(peptides),
-                                                                         "xmer", "hla_allele", paste0(allele, "affinity"), "c_term_aa", "processing_score"),
+                                                                         "xmer", "hla_allele", paste0(allele, "affinity"), paste0(allele, "percentile_rank"), "c_term_aa", "processing_score"),
                                                             colclasses = c(unlist(lapply(peptides, class),
-                                                                                  use.names=FALSE),
-                                                                           "numeric", "character", "numeric", "character", "numeric"))
+                                                                                  use.names = FALSE),
+                                                                           "numeric", "character", "numeric", "numeric", "character", "numeric"))
   }
 
   return(predictions)
@@ -101,14 +101,14 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
       data = as.data.table(read.table(text = clean_output,
                                       stringsAsFactors = FALSE))
       setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore", "variant_id",
-                                                    "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"))
+                                                    "peptide_score_log50k", paste0(allele, "affinity"), paste0(allele, "percentile_rank")))
     } else if (length(clean_output) > 0) {
       data = as.data.table(read.table(text = clean_output,
                                       stringsAsFactors = FALSE))
       setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "variant_id",
-                                                    "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"))
+                                                    "peptide_score_log50k", paste0(allele, "affinity"), paste0(allele, "percentile_rank")))
     } else {
-      data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "peptide_score_log50k", paste0(allele, "affinity"), "percentile_rank"),
+      data = emptyTableWithColumnNamesAndColumnClasses(colnames = c("position", "hla_allele", "peptide", "variant_id", "peptide_score_log50k", paste0(allele, "affinity"), paste0(allele, "percentile_rank")),
                                                        colclasses = c("numeric", "character", "character", "numeric", "numeric", "numeric", "numeric"))
     }
     return(data)
