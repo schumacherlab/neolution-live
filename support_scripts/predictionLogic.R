@@ -1,7 +1,7 @@
 ## this support script contains functions for peptide affinity and processing score predictions
 
 performParallelPredictions = function(peptides, peptidestretch, allele, peptidelength) {
-  if(nrow(peptides) > 0) {
+  if (nrow(peptides) > 0) {
     # perform affinity predictions
     affinityPredictions = performAffinityPredictions(peptides = peptides$peptide,
                                                      allele = allele,
@@ -36,7 +36,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   # generate random number to give to temp dir and temp file
   randomNumber = ceiling(runif(n = 1,
                                min = 0,
-                               max = 10^10))
+                               max = 10 ^ 10))
 
   dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
 
