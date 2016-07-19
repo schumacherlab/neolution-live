@@ -187,13 +187,18 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
                       statement = paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[3], fieldTypes[3], ';'))
         }
 
-        dbWriteTable(conn = dbConnection,
-                     name = tableName,
-                     value = predictions,
-                     field.types = fieldTypes,
-                     row.names = FALSE,
-                     overwrite = FALSE,
-                     append = TRUE)
+        dbSendQuery(conn = dbConnection,
+                    statement = paste('INSERT INTO', tableName, paste0('(peptide,', allele, 'affinity,', allele, 'percentile_rank)'),
+                                      'VALUES', paste0('(',paste(predictions$peptide, collapse = ","), '),(', paste(predictions[[paste0(allele, "affinity")]], collapse = ","), '),(', paste(predictions[[paste0(allele, 'percentile_rank')]], collapse = ","), ')'),
+                                      'ON DUPLICATE KEY UPDATE', paste0(allele, "affinity", '=VALUES(', paste0(allele, "affinity"), '), ', paste0(allele, "percentile_rank"), '=VALUES(', paste0(allele, "percentile_rank"), ')'), ';'))
+
+        # dbWriteTable(conn = dbConnection,
+        #              name = tableName,
+        #              value = predictions,
+        #              field.types = fieldTypes,
+        #              row.names = FALSE,
+        #              overwrite = FALSE,
+        #              append = TRUE)
 
         dbDisconnect(dbConnection)
       }
