@@ -174,7 +174,7 @@ writePeptideAffinityToDatabase = function(index, allele, predictions, predictor)
         fieldTypes[[paste0(allele, 'affinity')]] = 'DOUBLE(16,4)'
         fieldTypes[[paste0(allele, 'percentile_rank')]] = 'DOUBLE(6,2)'
 
-        if (paste0(allele, 'affinity') %nin% dbListFields(conn = dbConnection,
+        if (paste0(allele, 'affinity') %ni% dbListFields(conn = dbConnection,
                                                          name = tableName)) {
           dbSendQuery(paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[2], fieldTypes[2], ';'))
           dbSendQuery(paste('ALTER TABLE', tableName, 'ADD COLUMN', names(fieldTypes)[3], fieldTypes[3], ';'))
