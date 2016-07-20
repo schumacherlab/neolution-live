@@ -78,7 +78,9 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
 
                                          # epitope_variants[, aa_pos_germline := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_germline)]
 
-                                         epitope_variants[, aa_pos_tumor_start := runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_start)]
+                                         epitope_variants[, aa_pos_tumor_start := ifelse(test = aa_pos_tumor_start <= predicted_variants[x, ]$c_term_pos - runParameters$peptidelength + 1,
+                                                                                         yes = 1,
+                                                                                         no = runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_start))]
                                          epitope_variants[, aa_pos_tumor_stop := ifelse(test = predicted_variants[x, ]$c_term_pos <= aa_pos_tumor_stop,
                                                                                         yes = runParameters$peptidelength,
                                                                                         no = runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_stop))]
