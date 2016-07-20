@@ -41,7 +41,7 @@ processVariants = function(sid, variants) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp",
+    if (all(c("mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp",
               "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "protein_seq_ref", "protein_seq_alt") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
       variants[, chromosome := as.character(chromosome)]
@@ -98,7 +98,7 @@ processVariants = function(sid, variants) {
     ###
     # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
     ###
-    if (all(c("donor_id", "mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
+    if (all(c("mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
       variants[, chromosome := as.character(chromosome)]
       setnames(x = variants,
