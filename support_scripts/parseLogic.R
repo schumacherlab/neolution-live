@@ -89,7 +89,7 @@ processVariants = function(sid, variants) {
 
     	variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
 
-    	# don't take SNP lines along (even though they shouldn't result in peptides for prediction)
+    	# don't take SNP lines along (variants are already applied in lines with tumor-specific variants)
     	variantssubset = unique(x = variants[!grepl(pattern = '^[gr]s\\d+$', x = variant_id, perl = TRUE)],
     	                        by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else {
