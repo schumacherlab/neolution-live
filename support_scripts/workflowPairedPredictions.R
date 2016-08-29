@@ -246,10 +246,8 @@ performPairedSequencePredictions = function() {
                                                                                                      selfepitopes = selfEpitopes$peptide,
                                                                                                      scorematrix = scoreMatrix,
                                                                                                      normalepitopes = subset(x = epitopePredictionsAll,
-                                                                                                                             subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                                                                                             'TRUE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
-                                                                                                                                             'FALSE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
-                                                                                                                               normal_processing_score >= runParameters$processing)$normal_peptide)]
+                                                                                                                             subset = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= 1.8 & # rank cutoff of 1.8 equals ~255nM for A0201
+                                                                                                                               normal_processing_score >= 0.5)$normal_peptide)]
 
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
@@ -274,10 +272,8 @@ performPairedSequencePredictions = function() {
                                                                                                    selfepitopes = selfEpitopes$peptide,
                                                                                                    scorematrix = scoreMatrix,
                                                                                                    normalepitopes = subset(x = epitopePredictionsAll,
-                                                                                                                           subset = switch(as.character(is.numeric(runParameters$rank)),
-                                                                                                                                           'TRUE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
-                                                                                                                                           'FALSE' = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
-                                                                                                                             normal_processing_score >= runParameters$processing)$normal_peptide)]
+                                                                                                                           subset = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= 1.8 & # rank cutoff of 1.8 equals ~255nM for A0201
+                                                                                                                             normal_processing_score >= 0.5)$normal_peptide)]
 
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
