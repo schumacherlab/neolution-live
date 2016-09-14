@@ -3,10 +3,10 @@ performPairedSequencePredictions = function() {
   variantInput = unique(fread(input = file.path(runParameters$filepath, runParameters$filename),
                               na.strings = c("NA", "", "-")))
 
-  sampleId = toupper(gsub(pattern = paste("[-_]tumor|[-_]kitchensink|[-_]mdup|[-_]table|[-_]complete|[-_]merged|[-_]varcontext|[-_]rna", # substitute various suffixes
-                                          "_[ATCG]{8}|_S1_LMG_TR1_001", # remove some seq facility-specific info
+  sampleId = toupper(gsub(pattern = paste("[-_]tumor|[-_]kitchensink|[-_]mdup|[-_]ra|[-_]bq|[-_]table|[-_]complete|[-_]merged|[-_]varcontext|[-_]rna", # substitute various suffixes
+                                          "_[ATCG]{8}|_S1_LMG_TR1_001|_L[0-9]{3}_t", # remove some seq facility-specific info
                                           "|\\.txt.*$|\\.vcf.*$|\\.tsv.*", # substitute various extensions
-                                          "^[0-9]{8}_|^[0-9]{8}-[0-9]{4}_", # substitute various prefixes
+                                          "^[0-9]{8}_|^[0-9]{8}[-_][0-9]{4}_", # substitute various prefixes
                                           sep = "|"),
                           replacement = "",
                           x = runParameters$filename_no_ext))
