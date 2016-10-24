@@ -153,37 +153,51 @@ processVariants = function(sid, variants) {
       # don't take SNP lines along (even though they shouldn't result in peptides for prediction)
       variantssubset = unique(x = variants[!grepl(pattern = '[gr]s\\d+$', x = variant_id, perl = TRUE)],
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
+    } else if (all(c('a_full_aa_seq', 'b_full_aa_seq', 'fusion_aa_sequence') %in% colnames(variants))) {
+      # dealing with structural variants
+      variants[, chromosome := as.character(chromosome)]
+      variants[, rna_expression := NA]
+
+      variantssubset = subset(x = variants,
+                              select = names(variants) %ni% c("a_transcript_strand", "b_transcript_strand", "a_partner_nt_seq", "b_partner_nt_seq", "fusion_nt_sequence"))
+      runParameters$structural_variants = TRUE
+
     } else {
       stop("Input format not recognized")
     }
   }
 
-  # remove stop codon and any amino acid sequence after (if present)
-  variantssubset$peptidecontextnormal = gsub(pattern = "\\*[A-Z*]*",
+  if (runParameters$structural_variants) {
+    variantssubset$fusion_aa_sequence = gsub(pattern = "\\*[A-Z*]*",
                                              replacement = "",
-                                             x = variantssubset$peptidecontextnormal)
+                                             x = variantssubset$fusion_aa_sequence)
+  } else {
+    # remove stop codon and any amino acid sequence after (if present)
+    variantssubset$peptidecontextnormal = gsub(pattern = "\\*[A-Z*]*",
+                                               replacement = "",
+                                               x = variantssubset$peptidecontextnormal)
 
-  variantssubset$peptidecontexttumor = gsub(pattern = "\\*[A-Z*]*",
-                                            replacement = "",
-                                            x = variantssubset$peptidecontexttumor)
+    variantssubset$peptidecontexttumor = gsub(pattern = "\\*[A-Z*]*",
+                                              replacement = "",
+                                              x = variantssubset$peptidecontexttumor)
 
-  # take unique subset where normal context != tumor context
-  variantssubset = unique(x = subset(x = variantssubset,
-                                     subset = !variantssubset$peptidecontextnormal == variantssubset$peptidecontexttumor),
-                          by = c("peptidecontextnormal", "peptidecontexttumor"))
+    # take unique subset where normal context != tumor context
+    variantssubset = unique(x = subset(x = variantssubset,
+                                       subset = !variantssubset$peptidecontextnormal == variantssubset$peptidecontexttumor),
+                            by = c("peptidecontextnormal", "peptidecontexttumor"))
 
-  # clean (Sanger) expression data, set "Low confidence = 0" to 0 and set rest with alpha characters to NA (e.g. "Status: 'FAILED'|'LOW DATA'")
-  if ("rna_expression" %in% names(variantssubset)) {
-    variantssubset$rna_expression[grepl(pattern = "Low confidence = 0",
-                                        fixed = TRUE,
-                                        x = variantssubset$rna_expression)] = 0
+    # clean (Sanger) expression data, set "Low confidence = 0" to 0 and set rest with alpha characters to NA (e.g. "Status: 'FAILED'|'LOW DATA'")
+    if ("rna_expression" %in% names(variantssubset)) {
+      variantssubset$rna_expression[grepl(pattern = "Low confidence = 0",
+                                          fixed = TRUE,
+                                          x = variantssubset$rna_expression)] = 0
 
-    variantssubset$rna_expression[grepl(pattern = "[A-Za-z]",
-                                        x = variantssubset$rna_expression)] = NA
+      variantssubset$rna_expression[grepl(pattern = "[A-Za-z]",
+                                          x = variantssubset$rna_expression)] = NA
 
-    # convert rna_expression column to numeric, as otherwise filters won't work properly
-    variantssubset[, rna_expression := as.numeric(variantssubset$rna_expression)]
+      # convert rna_expression column to numeric, as otherwise filters won't work properly
+      variantssubset[, rna_expression := as.numeric(variantssubset$rna_expression)]
+    }
   }
-
   return(variantssubset)
 }
