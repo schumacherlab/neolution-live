@@ -5,7 +5,7 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     # perform affinity predictions
     affinityPredictions = lapply(peptides,
                                  function(x) {
-                                   performAffinityPredictions(peptides = peptides$peptide,
+                                   performAffinityPredictions(peptides = x$peptide,
                                                               allele = allele,
                                                               peptidelength = peptidelength)
                                  })
@@ -13,7 +13,7 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     # perform processing predictions
     processingPredictions = lapply(peptidestretch,
                                    function(x) {
-                                     performProcessingPredictions(peptidestretch = peptidestretch)
+                                     performProcessingPredictions(peptidestretch = x)
                                    })
 
     # merge prediction info
