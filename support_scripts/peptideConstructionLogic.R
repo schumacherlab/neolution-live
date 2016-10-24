@@ -108,7 +108,7 @@ buildPeptideList = function(sequences, peptidelength) {
     # select tumor peptides != normal peptides; select corresponding normal peptides (NOTE: in case of ins or dels corresponding normal peptide will likely be wrong)
     tumor = tumor[tumor$peptide %ni% c(normal_a$peptide, normal_b$peptide)]
 
-    return(list(list(normal_a, normal_b), tumor))
+    return(list(list(normal_a, normal_b), list(tumor)))
   }
 }
 
