@@ -20,7 +20,7 @@ buildPeptideList = function(sequences, peptidelength) {
 
     return(table)
 
-  } else {
+  } else if (runParameters$single_sequence == FALSE & runParameters$structural_variants == FALSE) {
     # determine how many peptides can be made
     n_normal = nchar(sequences$peptidecontextnormal) - (peptidelength - 1)
     n_tumor = nchar(sequences$peptidecontexttumor) - (peptidelength - 1)
@@ -58,6 +58,57 @@ buildPeptideList = function(sequences, peptidelength) {
     normal = normal[match(x = tumor$c_term_pos, table = normal$c_term_pos, nomatch = FALSE)]
 
     return(list(normal, tumor))
+  } else if (runParameters$structural_variants) {
+    # determine how many peptides can be made
+    n_normal_a = nchar(sequences$a_full_aa_seq) - (peptidelength - 1)
+    n_normal_b = nchar(sequences$b_full_aa_seq) - (peptidelength - 1)
+    n_tumor = nchar(sequences$fusion_aa_sequence) - (peptidelength - 1)
+
+    # make peptides
+    if (n_normal_a > 0) {
+      peptide = sapply(seq(from = 1, to = n_normal_a, by = 1), function(i) substr(x = sequences$a_full_aa_seq,
+                                                                                start = i,
+                                                                                stop = i + (peptidelength - 1)))
+      c_term_pos = seq(from = peptidelength,
+                         to = nchar(sequences$a_full_aa_seq),
+                         by = 1)
+      normal_a = data.table(peptide, c_term_pos)
+      normal_a = cbind(normal_a, subset(x = sequences, select = names(sequences) %ni% c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence")))
+    } else {
+      normal_a = data.table()
+    }
+
+    if (n_normal_b > 0) {
+      peptide = sapply(seq(from = 1, to = n_normal_b, by = 1), function(i) substr(x = sequences$b_full_aa_seq,
+                                                                                  start = i,
+                                                                                  stop = i + (peptidelength - 1)))
+      c_term_pos = seq(from = peptidelength,
+                       to = nchar(sequences$b_full_aa_seq),
+                       by = 1)
+      normal_b = data.table(peptide, c_term_pos)
+      normal_b = cbind(normal_b, subset(x = sequences, select = names(sequences) %ni% c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence")))
+    } else {
+      normal_b = data.table()
+    }
+
+    if (n_tumor > 0) {
+      peptide = sapply(seq(from = 1, to = n_tumor, by = 1), function(i) substr(x = sequences$fusion_aa_sequence,
+                                                                               start = i,
+                                                                               stop = i + (peptidelength - 1)))
+      c_term_pos = seq(from = peptidelength,
+                       to = nchar(sequences$fusion_aa_sequence),
+                       by = 1)
+      tumor = unique(x = data.table(peptide, c_term_pos),
+                     by = "peptide")
+      tumor = cbind(tumor, subset(x = sequences, select = names(sequences) %ni% c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence")))
+    } else {
+      tumor = data.table()
+    }
+
+    # select tumor peptides != normal peptides; select corresponding normal peptides (NOTE: in case of ins or dels corresponding normal peptide will likely be wrong)
+    tumor = tumor[tumor$peptide %ni% c(normal_a$peptide, normal_b$peptide)]
+
+    return(list(list(normal_a, normal_b), tumor))
   }
 }
 
