@@ -1,32 +1,65 @@
 ## this support script contains functions for peptide affinity and processing score predictions
 
 performParallelPredictions = function(peptides, peptidestretch, allele, peptidelength) {
-  if (nrow(peptides) > 0) {
+  if (runParameters$structural_variants) {
     # perform affinity predictions
-    affinityPredictions = performAffinityPredictions(peptides = peptides$peptide,
-                                                     allele = allele,
-                                                     peptidelength = peptidelength)
+    affinityPredictions = lapply(peptides,
+                                 function(x) {
+                                   performAffinityPredictions(peptides = peptides$peptide,
+                                                              allele = allele,
+                                                              peptidelength = peptidelength)
+                                 })
 
     # perform processing predictions
-    processingPredictions = performProcessingPredictions(peptidestretch = peptidestretch)
+    processingPredictions = lapply(peptidestretch,
+                                   function(x) {
+                                     performProcessingPredictions(peptidestretch = peptidestretch)
+                                   })
 
     # merge prediction info
-    predictions = merge(x = peptides,
-                        y = unique(x = affinityPredictions,
-                                   by = "peptide"),
-                        by = "peptide")
+    predictions = lapply(seq(1, length(affinityPredictions)),
+                         function(x) {
+                           data = merge(x = peptides[[x]],
+                                        y = unique(x = affinityPredictions[[x]],
+                                                   by = "peptide"),
+                                        by = "peptide")
 
-    predictions = merge(x = predictions,
-                        y = processingPredictions,
-                        by = "c_term_pos")
+                           data = merge(x = data,
+                                        y = processingPredictions[[x]],
+                                        by = "c_term_pos")
+                         })
+
+    predictions = rbindlist(predictions)
 
     predictions[, xmer := peptidelength]
   } else {
-    predictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c(names(peptides),
-                                                                         "xmer", "hla_allele", paste0(allele, "affinity"), paste0(allele, "percentile_rank"), "c_term_aa", "processing_score"),
-                                                            colclasses = c(unlist(lapply(peptides, class),
-                                                                                  use.names = FALSE),
-                                                                           "numeric", "character", "numeric", "numeric", "character", "numeric"))
+    if (nrow(peptides) > 0) {
+      # perform affinity predictions
+      affinityPredictions = performAffinityPredictions(peptides = peptides$peptide,
+                                                       allele = allele,
+                                                       peptidelength = peptidelength)
+
+      # perform processing predictions
+      processingPredictions = performProcessingPredictions(peptidestretch = peptidestretch)
+
+      # merge prediction info
+      predictions = merge(x = peptides,
+                          y = unique(x = affinityPredictions,
+                                     by = "peptide"),
+                          by = "peptide")
+
+      predictions = merge(x = predictions,
+                          y = processingPredictions,
+                          by = "c_term_pos")
+
+      predictions[, xmer := peptidelength]
+    } else {
+      predictions = emptyTableWithColumnNamesAndColumnClasses(colnames = c(names(peptides),
+                                                                           "xmer", "hla_allele", paste0(allele, "affinity"), paste0(allele, "percentile_rank"), "c_term_aa", "processing_score"),
+                                                              colclasses = c(unlist(lapply(peptides, class),
+                                                                                    use.names = FALSE),
+                                                                             "numeric", "character", "numeric", "numeric", "character", "numeric"))
+    }
   }
 
   return(predictions)
