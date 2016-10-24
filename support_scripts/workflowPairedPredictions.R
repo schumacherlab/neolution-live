@@ -13,6 +13,15 @@ performPairedSequencePredictions = function() {
 
   variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
+  write(x = paste0("Structural variants:\t\t", runParameters$structural_variants, "\n"),
+        file = file.path(runParameters$filepath,
+                         'predictions_logs',
+                         paste0(paste(runStart,
+                                      runParameters$filename_no_ext,
+                                      runParameters$allele,
+                                      runParameters$peptidelength, sep = '_'),
+                                'mer_runInfo.txt')),
+        append = TRUE)
 
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
@@ -34,7 +43,7 @@ performPairedSequencePredictions = function() {
                            allele = runParameters$allele,
                            peptidelength = runParameters$peptidelength,
                            suffix = '_unfiltered')
-    
+
     writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
                                                                              colclasses = columnClassesEmptyTable),
                            filepath = runParameters$filepath,
@@ -73,7 +82,12 @@ performPairedSequencePredictions = function() {
     # and make vector containing normal and tumor peptide stretches
     peptideList = buildPeptideList(sequences = variantInfo[i, ],
                                    peptidelength = runParameters$peptidelength)
-    peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
+
+    if (runParameters$structural_variants) {
+      peptideStretchVector = list(list(variantInfo[i, ]$a_full_aa_seq, variantInfo[i, ]$b_full_aa_seq), variantInfo[i, ]$fusion_aa_sequence)
+    } else {
+      peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
+    }
 
     # if no tumor peptides found, move to next line
     if (nrow(peptideList[[2]]) < 1) {
@@ -91,7 +105,7 @@ performPairedSequencePredictions = function() {
       normalAndTumorPredictions = foreach(k = 1:2) %do% {
         performFasDbPredictions(index = i,
                                 peptides = peptideList[[k]],
-                                peptidestretch = peptideStretchVector[k],
+                                peptidestretch = peptideStretchVector[[k]],
                                 allele = runParameters$allele,
                                 peptidelength = runParameters$peptidelength,
                                 predictor = runParameters$panversion)
@@ -109,7 +123,7 @@ performPairedSequencePredictions = function() {
       # do live predictions for all peptides
       normalAndTumorPredictions = foreach(k = 1:2) %do% {
         performParallelPredictions(peptides = peptideList[[k]],
-                                   peptidestretch = peptideStretchVector[k],
+                                   peptidestretch = peptideStretchVector[[k]],
                                    allele = runParameters$allele,
                                    peptidelength = runParameters$peptidelength)
       }
