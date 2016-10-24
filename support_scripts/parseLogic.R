@@ -155,7 +155,8 @@ processVariants = function(sid, variants) {
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else if (all(c('a_full_aa_seq', 'b_full_aa_seq', 'fusion_aa_sequence') %in% colnames(variants))) {
       # dealing with structural variants
-      variants[, chromosome := as.character(chromosome)]
+      variants[, a_chr := as.character(a_chr)]
+      variants[, b_chr := as.character(b_chr)]
       variants[, rna_expression := NA]
 
       variantssubset = subset(x = variants,
