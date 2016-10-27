@@ -199,9 +199,11 @@ performPairedSequencePredictions = function() {
     return(list(mergedTumorPredictionsWithFiltersApplied, mergedPredictions))
   }
   # bind all relevant predictions into one table
-  epitopePredictionsAll = rbindlist(lapply(seq(1, length(epitopePredictions), 1), function(x) epitopePredictions[[x]][[2]]),
+  epitopePredictionsAll = rbindlist(lapply(seq(1, length(epitopePredictions), 1), 
+                                           function(x) epitopePredictions[[x]][[2]]),
                                     use.names = TRUE)
-  epitopePredictionsWithFiltersApplied = rbindlist(lapply(seq(1, length(epitopePredictions), 1), function(x) epitopePredictions[[x]][[1]]),
+  epitopePredictionsWithFiltersApplied = rbindlist(lapply(seq(1, length(epitopePredictions), 1), 
+                                                          function(x) epitopePredictions[[x]][[1]]),
                                                    use.names = TRUE)
 
   # sort tables & set new order
