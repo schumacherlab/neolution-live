@@ -89,7 +89,9 @@ switch(EXPR = as.character(runParameters$single_sequence),
        # --single == TRUE (single seq input)
        "TRUE" = performSingleSequencePredictions(),
        # --single == FALSE (normal-tumor input)
-       "FALSE" = performPairedSequencePredictions()
+       "FALSE" = switch(EXPR = as.character(runParameters$structural_variants),
+                        "TRUE" = performStructuralVariantPredictions(),
+                        "FALSE" = performPairedSequencePredictions())
 )
 
 #====================================================================================================================================#
