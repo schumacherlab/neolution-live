@@ -83,11 +83,7 @@ performPairedSequencePredictions = function() {
     peptideList = buildPeptideList(sequences = variantInfo[i, ],
                                    peptidelength = runParameters$peptidelength)
 
-    if (runParameters$structural_variants) {
-      peptideStretchVector = list(list(variantInfo[i, ]$a_full_aa_seq, variantInfo[i, ]$b_full_aa_seq), list(variantInfo[i, ]$fusion_aa_sequence))
-    } else {
-      peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
-    }
+    peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
 
     # if no tumor peptides found, move to next line
     if (nrow(peptideList[[2]]) < 1) {
