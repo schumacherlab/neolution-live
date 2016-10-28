@@ -116,11 +116,11 @@ performStructuralVariantPredictions = function() {
              old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "c_term_aa", "processing_score"),
              new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_c_term_aa", "tumor_processing_score"))
 
-    if (nrow(normalAndTumorPredictions[[1]] < 1)) {
+    if (nrow(normalAndTumorPredictions[[1]]) < 1) {
       normalAndTumorPredictions[[1]] = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyNormalTable,
                                                                                  colclasses = columnClassesEmptyTable)
     }
-    if (nrow(normalAndTumorPredictions[[2]] < 1)) {
+    if (nrow(normalAndTumorPredictions[[2]]) < 1) {
       normalAndTumorPredictions[[2]] = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTumorTable,
                                                                                  colclasses = columnClassesEmptyTable)
     }
