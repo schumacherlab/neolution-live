@@ -147,6 +147,7 @@ performStructuralVariantPredictions = function() {
 
   # write all tumor predictions to disk
   writePredictionsToDisk(table = epitopePredictionsTumor,
+                         unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
                          filepath = runParameters$filepath,
                          filename = runParameters$filename_no_ext,
                          allele = runParameters$allele,
@@ -175,6 +176,7 @@ performStructuralVariantPredictions = function() {
 
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersApplied,
+                           unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -183,6 +185,7 @@ performStructuralVariantPredictions = function() {
 
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersAppliedPassedSelfSim,
+                           unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -201,6 +204,7 @@ performStructuralVariantPredictions = function() {
 
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersApplied,
+                           unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -209,6 +213,7 @@ performStructuralVariantPredictions = function() {
 
     # write different_from_self epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersAppliedPassedSelfSim,
+                           unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
@@ -216,6 +221,7 @@ performStructuralVariantPredictions = function() {
   } else {
     # write aff, chop, rna filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersApplied,
+                           unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
                            allele = runParameters$allele,
