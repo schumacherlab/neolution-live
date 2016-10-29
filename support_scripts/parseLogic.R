@@ -161,7 +161,6 @@ processVariants = function(sid, variants) {
 
       variantssubset = subset(x = variants,
                               select = names(variants) %ni% c("a_transcript_strand", "b_transcript_strand", "a_partner_nt_seq", "b_partner_nt_seq", "fusion_nt_sequence"))
-      runParameters$structural_variants = TRUE
 
     } else {
       stop("Input format not recognized")
