@@ -39,6 +39,11 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               type = "logical",
                               default = FALSE,
                               help = "Single sequence predictions (not paired normal-tumor) (optional, default: %default)"),
+                  make_option(opt_str = c("--structural"),
+                              action = "store_true",
+                              type = "logical",
+                              default = FALSE,
+                              help = "Structural variant predictions (optional, default: %default)"),
                   make_option(opt_str = c("--selfsim"),
                               action = "store_true",
                               type = "logical",
@@ -142,6 +147,8 @@ if (is.numeric(commandlineArguments$expression)) {
 
 runParameters$single_sequence = commandlineArguments$single
 
+runParameters$structural_variants = commandlineArguments$structural
+
 if (commandlineArguments$selfsim & commandlineArguments$extselfsim) {
   message("Please choose ONE type of self-similarity check, use -h for help")
   q(status = 1)
@@ -182,5 +189,3 @@ if (commandlineArguments$fasdb & runParameters$panversion == "2.4" & is.numeric(
 } else {
   runParameters$use_fasdb = commandlineArguments$fasdb
 }
-
-runParameters$structural_variants = FALSE
