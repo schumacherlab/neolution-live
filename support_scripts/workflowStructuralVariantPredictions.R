@@ -14,16 +14,6 @@ performStructuralVariantPredictions = function() {
   variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
 
-  write(x = paste0("Structural variants:\t\t", runParameters$structural_variants, "\n"),
-        file = file.path(runParameters$filepath,
-                         'predictions_logs',
-                         paste0(paste(runStart,
-                                      runParameters$filename_no_ext,
-                                      runParameters$allele,
-                                      runParameters$peptidelength, sep = '_'),
-                                'mer_runInfo.txt')),
-        append = TRUE)
-
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTumorTable = c(names(variantInfo)[-match(x = c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence"), table = names(variantInfo))],
                                   "c_term_pos", "hla_allele", "xmer",

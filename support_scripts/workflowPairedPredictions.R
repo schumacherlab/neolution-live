@@ -13,15 +13,6 @@ performPairedSequencePredictions = function() {
 
   variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
-  write(x = paste0("Structural variants:\t\t", runParameters$structural_variants, "\n"),
-        file = file.path(runParameters$filepath,
-                         'predictions_logs',
-                         paste0(paste(runStart,
-                                      runParameters$filename_no_ext,
-                                      runParameters$allele,
-                                      runParameters$peptidelength, sep = '_'),
-                                'mer_runInfo.txt')),
-        append = TRUE)
 
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
@@ -199,10 +190,10 @@ performPairedSequencePredictions = function() {
     return(list(mergedTumorPredictionsWithFiltersApplied, mergedPredictions))
   }
   # bind all relevant predictions into one table
-  epitopePredictionsAll = rbindlist(lapply(seq(1, length(epitopePredictions), 1), 
+  epitopePredictionsAll = rbindlist(lapply(seq(1, length(epitopePredictions), 1),
                                            function(x) epitopePredictions[[x]][[2]]),
                                     use.names = TRUE)
-  epitopePredictionsWithFiltersApplied = rbindlist(lapply(seq(1, length(epitopePredictions), 1), 
+  epitopePredictionsWithFiltersApplied = rbindlist(lapply(seq(1, length(epitopePredictions), 1),
                                                           function(x) epitopePredictions[[x]][[1]]),
                                                    use.names = TRUE)
 
