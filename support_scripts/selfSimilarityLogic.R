@@ -16,7 +16,7 @@ loadSelfEpitopeList = function(path, allele, peptidelength) {
     write(x = paste0("Self-epitope list:\t\t\t", basename(availableSelfLists[1]),"\n"),
           file = file.path(runParameters$filepath,
                            'predictions_logs',
-                           paste0(paste(runStart,
+                           paste0(paste(#runStart,
                                         runParameters$filename_no_ext,
                                         runParameters$allele,
                                         runParameters$peptidelength, sep = '_'),
