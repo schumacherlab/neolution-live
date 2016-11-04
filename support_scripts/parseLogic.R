@@ -174,7 +174,7 @@ processVariants = function(sid, variants) {
 
     # take unique subset where normal context != tumor context
     variantssubset = unique(x = subset(x = variantssubset,
-                                       subset = !variantssubset$peptidecontextnormal == variantssubset$peptidecontexttumor),
+                                       subset = variantssubset$peptidecontextnormal != variantssubset$peptidecontexttumor),
                             by = c("peptidecontextnormal", "peptidecontexttumor"))
 
     # clean (Sanger) expression data, set "Low confidence = 0" to 0 and set rest with alpha characters to NA (e.g. "Status: 'FAILED'|'LOW DATA'")
@@ -183,7 +183,7 @@ processVariants = function(sid, variants) {
                                           fixed = TRUE,
                                           x = variantssubset$rna_expression)] = 0
 
-      variantssubset$rna_expression[grepl(pattern = "[A-Za-z]",
+      variantssubset$rna_expression[grepl(pattern = "[A-Za-z]+",
                                           x = variantssubset$rna_expression)] = NA
 
       # convert rna_expression column to numeric, as otherwise filters won't work properly
