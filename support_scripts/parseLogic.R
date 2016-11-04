@@ -41,16 +41,16 @@ processVariants = function(sid, variants) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
-    if (all(c("mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp",
-              "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "protein_seq_ref", "protein_seq_alt") %in% names(variants))) {
+    if (all(c("variant_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "alt_allele", "ref_read_count", "alt_read_count", "vaf",
+              "aa_pos_ref", "aa_pos_tumor_start", "aa_pos_tumor_stop", "protein_seq_ref", "protein_seq_tumor") %in% names(variants))) {
       # dealing with antigenic space input, proceed with all columns
       variants[, chromosome := as.character(chromosome)]
       setnames(x = variants,
-               old = c("mut_id", "mut_allele", "ref_codon", "alt_codon", "ref_aa", "alt_aa", "protein_pos_ref", "protein_pos_alt_start", "protein_pos_alt_stop", "protein_seq_ref", "protein_seq_alt"),
-               new = c("variant_id", "alt_allele", "codon_germline", "codon_tumor", "aa_germline", "aa_tumor", "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "peptidecontextnormal", "peptidecontexttumor"))
+               old = c("protein_seq_germline", "protein_seq_tumor"),
+               new = c("peptidecontextnormal", "peptidecontexttumor"))
 
       variantssubset = unique(x = subset(x = variants,
-                                         select = names(variants) %ni% c("strand","ref_read_count","mut_read_count","vaf","snp6_amp","snp6_cov")),
+                                         select = names(variants) %ni% c("codon_ref", "aa_ref", "aa_pos_ref", "protein_seq_ref")),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, take subset
