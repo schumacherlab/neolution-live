@@ -99,16 +99,7 @@ processVariants = function(sid, variants) {
     ###
     # RNA EXPRESSION DATA ABSENT - determine source of data and take relevant subset
     ###
-    if (all(c("mut_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "mut_allele", "vaf", "snp6_amp") %in% names(variants))) {
-      # dealing with antigenic space input, proceed with all columns, add "no data" for rna_expression
-      variants[, chromosome := as.character(chromosome)]
-      setnames(x = variants,
-               old = c("mut_id"),
-               new = c("variant_id"))
-
-      variantssubset = unique(x = variants,
-                              by = c("peptidecontextnormal", "peptidecontexttumor"))
-    } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
+    if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, add "no data" for rna_expression & take subset
       variants[, variant_id := paste(sid, 1:nrow(variants), sep = "-")]
       setnames(x = variants,
