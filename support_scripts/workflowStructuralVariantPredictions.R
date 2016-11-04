@@ -26,8 +26,8 @@ performStructuralVariantPredictions = function() {
   columnClassesEmptyTable = c(unlist(lapply(variantInfo, class)[-match(x = c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence"), table = names(variantInfo))],
                                      use.names = FALSE),
                               "numeric", "character", "numeric",
+                              # "character", "character", "numeric", "numeric", "numeric",
                               "character", "character", "numeric", "numeric", "numeric")
-                              # "character", "character", "numeric", "numeric", "numeric")
 
   if (nrow(variantInfo) == 0) {
     writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
@@ -154,6 +154,7 @@ performStructuralVariantPredictions = function() {
                          peptidelength = runParameters$peptidelength,
                          suffix = "_unfiltered")
 
+  # apply various filters
   epitopePredictionsTumorWithFiltersApplied = subset(x = epitopePredictionsTumor,
                                                      subset = switch(as.character(is.numeric(runParameters$rank)),
                                                                      'TRUE' = epitopePredictionsTumor[[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,

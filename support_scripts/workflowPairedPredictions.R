@@ -16,9 +16,9 @@ performPairedSequencePredictions = function() {
 
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
-                            "c_term_pos", "hla_allele", "xmer",
-                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
-                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score")
+                                  "c_term_pos", "hla_allele", "xmer",
+                                  "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
+                                  "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score")
 
   columnClassesEmptyTable = c(unlist(lapply(variantInfo, class)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
                                      use.names = FALSE),
@@ -76,7 +76,7 @@ performPairedSequencePredictions = function() {
 
     peptideStretchVector = c(variantInfo[i, ]$peptidecontextnormal, variantInfo[i, ]$peptidecontexttumor)
 
-    # if no tumor peptides found, move to next line
+    # if no tumor peptides found, return empty lists & move to next line
     if (nrow(peptideList[[2]]) < 1) {
       mergedTumorPredictionsWithFiltersApplied = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
                                                                                            colclasses = columnClassesEmptyTable)
