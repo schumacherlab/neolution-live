@@ -149,7 +149,7 @@ performPairedSequencePredictions = function() {
                           yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
                           no = paste0("tumor_", runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsAll,
-              neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
+              neworder = c(names(variantInfo)[-match(x = c("strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
