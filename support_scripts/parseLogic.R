@@ -50,7 +50,7 @@ processVariants = function(sid, variants) {
                new = c("peptidecontextnormal", "peptidecontexttumor"))
 
       variantssubset = unique(x = subset(x = variants,
-                                         select = names(variants) %ni% c("codon_ref", "aa_ref", "aa_pos_ref", "protein_seq_ref", 'ref_allele_count', 'alt_allele_count', 'vaf')),
+                                         select = names(variants) %ni% c("codon_ref", "aa_ref", "aa_pos_ref", "protein_seq_ref", 'ref_read_count', 'alt_read_count', 'vaf')),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor", "Cufflinks FPKM value (expression level)") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, take subset
