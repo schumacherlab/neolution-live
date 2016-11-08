@@ -30,7 +30,7 @@ performStructuralVariantPredictions = function() {
                               "character", "character", "numeric", "numeric", "numeric")
 
   if (nrow(variantInfo) == 0) {
-    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTumorTable,
                                                                              colclasses = columnClassesEmptyTable),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
@@ -38,7 +38,7 @@ performStructuralVariantPredictions = function() {
                            peptidelength = runParameters$peptidelength,
                            suffix = '_unfiltered')
 
-    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTumorTable,
                                                                              colclasses = columnClassesEmptyTable),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
@@ -46,7 +46,7 @@ performStructuralVariantPredictions = function() {
                            peptidelength = runParameters$peptidelength,
                            suffix = '_no_selfsim')
 
-    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
+    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTumorTable,
                                                                              colclasses = columnClassesEmptyTable),
                            filepath = runParameters$filepath,
                            filename = runParameters$filename_no_ext,
