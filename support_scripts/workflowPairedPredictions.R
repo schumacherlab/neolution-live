@@ -52,9 +52,11 @@ performPairedSequencePredictions = function() {
     return(NULL)
   }
 
-  write.csv(x = variantInput,
-            file = file.path(runParameters$filepath, 'predictions_input', paste0(runParameters$filename_no_ext, '_input.tsv')),
-            row.names = FALSE)
+  write.table(x = variantInput,
+              file = file.path(runParameters$filepath, 'predictions_input', paste0(runParameters$filename_no_ext, '_input.tsv')),
+              quote = FALSE,
+              sep = '\t',
+              row.names = FALSE)
 
   # load required data for self-similarity check
   if ((runParameters$simple_selfsim | runParameters$extended_selfsim) & runParameters$use_selflist) {
