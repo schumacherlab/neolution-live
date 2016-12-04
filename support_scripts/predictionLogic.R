@@ -71,7 +71,7 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
 
 performAffinityPredictions = function(peptides, allele, peptidelength) {
 	if (length(peptides) < 1 ) {
-		data = processPredictionOutput('')
+		data = processPredictionOutput('', allele)
 	} else {
 		# generate random number to give to temp dir and temp file
 		randomNumber = ceiling(runif(n = 1,
@@ -126,7 +126,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 		file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
 		file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
 		
-		data = processPredictionOutput(output)
+		data = processPredictionOutput(output, allele)
 	}
 
   data = subset(x = data,
@@ -137,7 +137,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 }
 
 # perform regex on netMHC output
-processPredictionOutput = function(raw_output) {
+processPredictionOutput = function(raw_output, allele) {
 	raw_output = raw_output[-grep(pattern = "^\\#.+|^\\-.+|^Protein.+|pos.+|^HLA.+|^$",
 																ignore.case = TRUE,
 																x = raw_output)]
