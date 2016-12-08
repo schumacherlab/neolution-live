@@ -28,6 +28,7 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 2. netChop processing cutoff
 3. rna expression cutoff
 4. single sequence input (fasta input: not paired tumor-normal, no rna expression)
+5. structural variant predictions
 5. simple self-similarity check (9-, 10-, 11-mers)
 6. extended self-similarity check (9-mers only)
 7. use self-epitope list
@@ -66,6 +67,9 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 `--single`  
 *Single sequence predictions (not paired normal-tumor) (optional, default: FALSE)*
+
+`--structural`  
+*Structural variant predictions (optional, default: FALSE)*
 
 `--selfsim`  
 *Perform simple self-similarity check; compatible with 9-, 10-, 11-mers (optional, default: FALSE)*
