@@ -141,9 +141,6 @@ performPairedSequencePredictions = function() {
   # bind all relevant predictions into one table
   epitopePredictionsAll = rbindlist(epitopePredictions,
                                     use.names = TRUE)
-  # epitopePredictionsWithFiltersApplied = rbindlist(lapply(seq(1, length(epitopePredictions), 1),
-  #                                                         function(x) epitopePredictions[[x]][[1]]),
-  #                                                  use.names = TRUE)
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
@@ -155,15 +152,6 @@ performPairedSequencePredictions = function() {
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
-  # setorderv(x = epitopePredictionsWithFiltersApplied,
-  #           cols = ifelse(test = is.numeric(runParameters$rank),
-  #                         yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
-  #                         no = paste0("tumor_", runParameters$allele, "affinity")))
-  # setcolorder(x = epitopePredictionsWithFiltersApplied,
-  #             neworder = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
-  #                          "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
-  #                          "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
-
   # determine which variants contributed to the formation of predicted epitopes
   if (all(c("variant_id", "aa_pos_germline", "aa_pos_tumor_start", "aa_pos_tumor_stop", "variant_classification") %in% names(variantInput))) {
     allContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
@@ -171,32 +159,19 @@ performPairedSequencePredictions = function() {
                                             use.names = TRUE)
 
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
-    # epitopePredictionsAll[, aa_pos_germline := allContributingVariantsInfo[, contributing_aa_pos_germline]]
     epitopePredictionsAll[, aa_peptide_pos_tumor := allContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
-    # filteredContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsWithFiltersApplied,
-    #                                                                                all_variants = variantInput),
-    #                                              use.names = TRUE)
-
-    # epitopePredictionsWithFiltersApplied[, contributing_variants := filteredContributingVariantsInfo[, contributing_variants]]
-    # epitopePredictionsWithFiltersApplied[, aa_pos_germline := filteredContributingVariantsInfo[, contributing_aa_pos_germline]]
-    # epitopePredictionsWithFiltersApplied[, aa_peptide_pos_tumor := filteredContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
     columnsToRemove = c('variant_id', 'chromosome', 'start_position', 'end_position', 'ref_allele', 'alt_allele',
                         'variant_classification', 'codon_germline', 'codon_tumor', 'aa_germline', 'aa_tumor',
                         'aa_pos_germline', 'aa_pos_tumor_start', 'aa_pos_tumor_stop')
     epitopePredictionsAll = epitopePredictionsAll[, !columnsToRemove, with = FALSE]
-    # epitopePredictionsWithFiltersApplied = epitopePredictionsWithFiltersApplied[, !columnsToRemove, with = FALSE]
 
     setcolorder(x = epitopePredictionsAll,
                 neworder = c(names(epitopePredictionsAll)[-match(x = c(# 'aa_pos_germline',
                                                                        'aa_peptide_pos_tumor'), table = names(epitopePredictionsAll))], c(# 'aa_pos_germline',
                                                                                                                                   'aa_peptide_pos_tumor')))
-    # setcolorder(x = epitopePredictionsWithFiltersApplied,
-    #             neworder = c(names(epitopePredictionsWithFiltersApplied)[-match(x = c(# 'aa_pos_germline',
-    #                                                                                   'aa_peptide_pos_tumor'), table = names(epitopePredictionsWithFiltersApplied))], c(# 'aa_pos_germline',
-    #                                                                                                                                                             'aa_peptide_pos_tumor')))
   }
 
   # write all predictions to disk
@@ -209,13 +184,6 @@ performPairedSequencePredictions = function() {
 
   # apply various filtering cutoffs
   if ("rna_expression" %in% names(variantInfo)) {
-    # normalPredictionsWithFiltersApplied = subset(x = normalAndTumorPredictions[[1]],
-    #                                              subset = switch(as.character(is.numeric(runParameters$rank)),
-    #                                                              'TRUE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
-    #                                                              'FALSE' = normalAndTumorPredictions[[1]][[paste0("normal_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
-    #                                                normal_processing_score >= runParameters$processing &
-    #                                                (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
-
     epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
                                                 subset = switch(as.character(is.numeric(runParameters$rank)),
                                                                 'TRUE' = epitopePredictionsAll[[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
