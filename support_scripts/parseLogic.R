@@ -68,8 +68,8 @@ processVariants = function(sid, variants) {
       # dealing with antigenic space input, proceed with all columns
       variants[, chromosome := as.character(chromosome)]
       setnames(x = variants,
-               old = c("protein_seq_germline", "protein_seq_tumor"),
-               new = c("peptidecontextnormal", "peptidecontexttumor"))
+               old = c('strand', "protein_seq_germline", "protein_seq_tumor"),
+               new = c('transcript_strand', "peptidecontextnormal", "peptidecontexttumor"))
 
       variantssubset = unique(x = subset(x = variants,
                                          select = names(variants) %ni% c("codon_ref", "aa_ref", "aa_pos_ref", "protein_seq_ref", 'ref_read_count', 'alt_read_count', 'vaf')),
