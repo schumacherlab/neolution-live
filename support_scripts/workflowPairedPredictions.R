@@ -161,6 +161,9 @@ performPairedSequencePredictions = function() {
     epitopePredictionsAll[, contributing_variants := allContributingVariantsInfo[, contributing_variants]]
     epitopePredictionsAll[, aa_peptide_pos_tumor := allContributingVariantsInfo[, contributing_aa_pos_tumor]]
 
+    if ('rna_alt_expression' %in% names(variantInput)) {
+      epitopePredictionsAll[, contributing_variants_alt_expression := allContributingVariantsInfo[, contributing_variants_alt_expression]]
+    }
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
     columnsToRemove = c('variant_id', 'chromosome', 'start_position', 'end_position', 'ref_allele', 'alt_allele',
