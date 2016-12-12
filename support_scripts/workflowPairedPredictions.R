@@ -148,7 +148,7 @@ performPairedSequencePredictions = function() {
                           yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
                           no = paste0("tumor_", runParameters$allele, "affinity")))
   setcolorder(x = epitopePredictionsAll,
-              neworder = c(names(variantInfo)[-match(x = c("strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
+              neworder = c(names(variantInfo)[-match(x = c("transcript_strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "transcript_strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
@@ -166,7 +166,7 @@ performPairedSequencePredictions = function() {
     }
 
     # if contributing variants are determined, remove variant_id & variant_classification columns (not relevant anymore)
-    columnsToRemove = c('variant_id', 'chromosome', 'start_position', 'end_position', 'ref_allele', 'alt_allele',
+    columnsToRemove = c('variant_id', 'chromosome', 'start_position', 'end_position', 'variant_strand', 'ref_allele', 'alt_allele',
                         'variant_classification', 'codon_germline', 'codon_tumor', 'aa_germline', 'aa_tumor',
                         'aa_pos_germline', 'aa_pos_tumor_start', 'aa_pos_tumor_stop')
     epitopePredictionsAll = epitopePredictionsAll[, !columnsToRemove, with = FALSE]
