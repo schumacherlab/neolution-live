@@ -151,14 +151,34 @@ findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
                                                                                              sep = '-')),
                                                                            collapse = ";")
 
-                                         return(data.table(contributing_variants = contributing_variants,
-                                                           # contributing_aa_pos_germline = contributing_aa_pos_germline,
-                                                           contributing_aa_pos_tumor = contributing_aa_pos_tumor))
+                                         if ('rna_alt_expression' %in% names(epitope_variants)) {
+                                           contributing_variants_alt_expression = paste(epitope_variants$rna_alt_expression,
+                                                                                        collapse = '!')
+
+                                           data = data.table(contributing_variants = contributing_variants,
+                                                             # contributing_aa_pos_germline = contributing_aa_pos_germline,
+                                                             contributing_aa_pos_tumor = contributing_aa_pos_tumor,
+                                                             contributing_variants_alt_expression = contributing_variants_alt_expression)
+                                         } else {
+                                           data = data.table(contributing_variants = contributing_variants,
+                                                             # contributing_aa_pos_germline = contributing_aa_pos_germline,
+                                                             contributing_aa_pos_tumor = contributing_aa_pos_tumor)
+                                         }
+
+                                         return(data)
                                        })
     return(contributing_variant_info)
   } else {
-    return(list(data.table(contributing_variants = NA,
-                           # contributing_aa_pos_germline = NA,
-                           contributing_aa_pos_tumor = NA)))
+    if ('rna_alt_expression' %in% names(all_variants)) {
+      data = data.table(contributing_variants = NA,
+                        # contributing_aa_pos_germline = NA,
+                        contributing_aa_pos_tumor = NA,
+                        contributing_variants_alt_expression = NA)
+    } else {
+      data = data.table(contributing_variants = NA,
+                        # contributing_aa_pos_germline = NA,
+                        contributing_aa_pos_tumor = NA)
+    }
+    return(list(data))
   }
 }
