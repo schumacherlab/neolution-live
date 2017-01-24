@@ -4,8 +4,8 @@
 numberOfWorkers = detectCores()/4
 
 # set predictor paths
-predictorPaths = data.table(netMHCpan = paste0("/home/NFS/users/l.fanchi/netMHCpan-", runParameters$panversion, "/netMHCpan"),
-                            netChop = "/home/NFS/users/l.fanchi/netchop-3.1/bin/netChop")
+predictorPaths = data.table(netMHCpan = paste0("/home/NFS/users/l.fanchi/predictors/netMHCpan-", runParameters$panversion, "/netMHCpan"),
+                            netChop = "/home/NFS/users/l.fanchi/predictors/netchop-3.1/bin/netChop")
 
 # set path of self-epitope lists
 selfEpitopeListPath = "./selflists"
