@@ -24,6 +24,11 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               type = "double",
                               default = NULL,
                               help = "netMHCpan percentile rank cutoff (optional, default cutoff is affinity)"),
+                  make_option(opt_str = c("-d", "--model"),
+                              action = "store",
+                              type = "double",
+                              default = NULL,
+                              help = "Random forest prediction model cutoff (optional, default cutoff is affinity)"),
                   make_option(opt_str = c("-p", "--processing"),
                               action = "store",
                               type = "double",
@@ -75,10 +80,11 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
 # prepare table for holding run configuration
-runParameters = vector(mode = "list", length = 16)
+runParameters = vector(mode = "list", length = 18)
 runParameters = setNames(object = runParameters, nm = c("filename", "filename_no_ext", "filepath",
-                                                        "allele", "peptidelength", "affinity", "rank", "processing", "expression",
-                                                        "single_sequence", "structural_variants", "simple_selfsim", "extended_selfsim", "use_selflist", "use_fasdb", "panversion"))
+                                                        "allele", "peptidelength", "affinity", "rank", "model", "processing", "expression",
+                                                        "single_sequence", "structural_variants", "simple_selfsim", "extended_selfsim",
+                                                        "use_selflist", "use_rfModel", "use_fasdb", "panversion"))
 
 # parse other arguments
 if (is.null(commandlineArguments$file)) {
@@ -129,6 +135,16 @@ if (is.numeric(commandlineArguments$rank) | is.null(commandlineArguments$rank)) 
 } else {
   message("Rank cutoff input (-r or --rank) should be numeric, use -h for help")
   q(status = 1)
+}
+
+if (is.numeric(commandlineArguments$model)) {
+	runParameters$model = commandlineArguments$model
+	runParameters$use_rfModel = TRUE
+} else if (is.null(commandlineArguments$model)) {
+	runParameters$use_rfModel = FALSE
+} else {
+	message("Prediction model cutoff input (-r or --rank) should be numeric, use -h for help")
+	q(status = 1)
 }
 
 if (is.numeric(commandlineArguments$processing)) {
