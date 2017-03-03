@@ -9,6 +9,9 @@ pacman::p_load(char = required_packages)
 # define negation of %in% operator, returns logical vector for 'NOT IN'
 '%ni%' = Negate('%in%')
 
+# drop NA from vector
+dropNa = function(vector) { vector[!is.na(vector)] }
+
 # return directory where script is executed
 thisDirectory = function() {
   cmdArgs <- commandArgs(trailingOnly = FALSE)
@@ -69,9 +72,6 @@ multiMixedOrder = function(..., na.last = TRUE, decreasing = FALSE) {
     list(na.last = na.last, decreasing = decreasing)
   ))
 }
-
-# drop NA from vector
-dropNa = function(vector) { vector[!is.na(vector)] }
 
 # check presence of necessary tools
 checkPredictorPaths = function(paths) {
