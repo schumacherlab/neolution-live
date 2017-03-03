@@ -1,5 +1,6 @@
 # load dependencies
 suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(randomForest))
 suppressPackageStartupMessages(library(gtools))
 suppressPackageStartupMessages(library(utils))
 suppressPackageStartupMessages(library(parallel))
@@ -11,9 +12,6 @@ suppressPackageStartupMessages(library(compiler))
 
 # define negation of %in% operator, returns logical vector for 'NOT IN'
 '%ni%' = Negate('%in%')
-
-# function to make percentile rank
-returnPercentileRank = function(x) trunc(rank(x)) / length(x) * 100
 
 # return directory where script is executed
 thisDirectory = function() {
