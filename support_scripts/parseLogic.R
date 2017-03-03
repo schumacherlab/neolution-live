@@ -60,7 +60,7 @@ processVariants = function(sid, variants) {
 
       # don't take SNP lines along (variants are already applied in lines with tumor-specific variants)
       variantssubset = unique(x = subset(x = variants[!grepl(pattern = '[gr]s\\d+$', x = variant_id, perl = TRUE)],
-                                         select = names(variants) %ni% c('dna_ref_read_count', 'dna_alt_read_count', 'dna_vaf',
+                                         select = names(variants) %ni% c('dna_ref_read_count', 'dna_alt_read_count', 'dna_total_read_count', 'dna_vaf',
                                                                          'rna_ref_read_count', 'rna_alt_read_count', 'rna_total_read_count', 'rna_vaf', 'rna_alt_expression')),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else if (all(c("variant_id", "chromosome", "start_position", "end_position", "strand", "ref_allele", "alt_allele", "ref_read_count", "alt_read_count", "vaf",
