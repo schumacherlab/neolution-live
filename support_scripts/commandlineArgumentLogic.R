@@ -137,7 +137,10 @@ if (is.numeric(commandlineArguments$rank) | is.null(commandlineArguments$rank)) 
   q(status = 1)
 }
 
-if (is.numeric(commandlineArguments$model)) {
+if (commandlineArguments$single & is.numeric(commandlineArguments$model)) {
+	message("RNA expression data is currently needed for random forest model; not compatible with single sequence predictions")
+	q(status = 1)
+} else if (is.numeric(commandlineArguments$model)) {
 	runParameters$model = commandlineArguments$model
 	runParameters$use_rfModel = TRUE
 } else if (is.null(commandlineArguments$model)) {
