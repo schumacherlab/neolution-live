@@ -32,7 +32,7 @@ performSingleSequencePredictions = function() {
                                                                                      ),
                                                                         colclasses = c("character", "character", "numeric",
                                                                                        "character", "character", "numeric", "numeric", "numeric", "numeric"))
-      return(list(emptyPredictionsTable, emptyPredictionsTable))
+      return(emptyPredictionsTable)
     }
 
     # perform affinity & processing predictions
@@ -41,31 +41,12 @@ performSingleSequencePredictions = function() {
                                                                   allele = runParameters$allele,
                                                                   peptidelength = runParameters$peptidelength)
 
-    # apply various cutoffs
-    if (is.numeric(runParameters$rank)) {
-      affinityAndProcessingPredictionsWithFiltersApplied = subset(x = affinityAndProcessingPredictions,
-                                                                  subset = affinityAndProcessingPredictions[[paste0(runParameters$allele, "percentile_rank")]] <= runParameters$rank
-                                                                  & processing_score >= runParameters$processing
-                                                                  # & rna_expression > runParameters$expression
-      )
-    } else {
-      affinityAndProcessingPredictionsWithFiltersApplied = subset(x = affinityAndProcessingPredictions,
-                                                                  subset = affinityAndProcessingPredictions[[paste0(runParameters$allele, "affinity")]] <= runParameters$affinity
-                                                                  & processing_score >= runParameters$processing
-                                                                  # & rna_expression > runParameters$expression
-      )
-    }
-
-    return(list(affinityAndProcessingPredictionsWithFiltersApplied, affinityAndProcessingPredictions))
+    return(affinityAndProcessingPredictions)
   }
 
   # bind all relevant predictions into one table
-  epitopePredictionsAll = rbindlist(lapply(seq(1, length(epitopePredictions), 1),
-                                           function(x) epitopePredictions[[x]][[2]]),
+  epitopePredictionsAll = rbindlist(epitopePredictions,
                                     use.names = TRUE)
-  epitopePredictionsWithFiltersApplied = rbindlist(lapply(seq(1, length(epitopePredictions), 1),
-                                                          function(x) epitopePredictions[[x]][[1]]),
-                                                   use.names = TRUE)
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
@@ -82,11 +63,6 @@ performSingleSequencePredictions = function() {
                            # , "rna_expression"
               ))
 
-  setcolorder(x = epitopePredictionsWithFiltersApplied,
-              neworder = c("sequence_id", "hla_allele", "xmer",
-                           "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "processing_score"
-                           # , "rna_expression"
-              ))
   if (runParameters$use_rfModel) {
   	# apply random forest model to all predictions
   	model = get(load())
