@@ -12,12 +12,12 @@ source("./support_scripts/workflowStructuralVariantPredictions.R")
 source("./support_scripts/fasDatabaseLogic.R")
 
 # register parallel back-end
-registerDoMC(cores = numberOfWorkers)
+registerDoMC(cores = runOptions$general$numberOfWorkers)
 
 #scriptPath = thisDirectory()
 
 # check availability of predictors
-checkPredictorPaths(paths = predictorPaths)
+checkPredictorPaths(paths = runOptions$predictors)
 
 # create directory to hold input/logs/output, if necessary
 dir.create(path = file.path(runParameters$filepath, 'predictions_input'),
@@ -56,8 +56,8 @@ message(paste0("Input file:\t\t", paste(runParameters$filepath, runParameters$fi
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
 								 "Branch:\t\t\t\t\t", system("git symbolic-ref --short -q HEAD", intern = TRUE),"\n",
 								 "Commit hash:\t\t", system("git rev-parse HEAD", intern = TRUE),"\n\n",
-								 "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
-								 "Processing predictor:\t", predictorPaths$netChop, "\n",
+								 "Affinity predictor:\t\t", runOptions$predictors$netMHCpan, "\n",
+								 "Processing predictor:\t", runOptions$predictors$netChop, "\n",
 								 "\n",
 								 "Input file:\t\t\t\t\t", paste(runParameters$filepath, runParameters$filename, sep = "/"), "\n",
 								 "MHC/HLA allele:\t\t\t", runParameters$allele, "\n",

@@ -26,7 +26,7 @@ performParallelPredictions = function(peptides, peptidestretch, allele, peptidel
     										 							 y = unique(x = affinityPredictions[[x]],
     										 							 					 by = "peptide"),
     										 							 by = "peptide")
-    										 	
+
     										 	data = merge(x = data,
     										 							 y = processingPredictions[[x]],
     										 							 by = "c_term_pos")
@@ -77,16 +77,16 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 		randomNumber = ceiling(runif(n = 1,
 																 min = 0,
 																 max = 10 ^ 10))
-		
-		dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
-		
+
+		dir.create(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
+
 		# write peptides to disk in temp dir
 		invisible(sapply(seq(1, length(peptides), 1), function(x)
 			write(x = sprintf("%s", peptides[x]),
-						file = paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
+						file = paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
 						append = TRUE,
 						sep = "\n")))
-		
+
 		## use on local Mac
 		# perform predictions on HPC from local Mac
 		# sshconn = pipe(paste0('ssh -l l.fanchi paranoid "',
@@ -97,7 +97,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 		#                           ' -f ',fastafile,'"'))) # start pipe to paranoid
 		# output = readLines(sshconn) # start job on paranoid and read terminal output
 		# close(sshconn) # close pipe
-		
+
 		## use on HPC
 		# perform predictions
 		command = ifelse(test = runParameters$panversion == "3.0",
@@ -108,7 +108,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 										 									 x = allele),
 										 	' -l ', peptidelength,
 										 	' -p ',
-										 	' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas")),
+										 	' -f ', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas")),
 										 no = paste0(# "nice -n 9 ",
 										 	predictorPaths$netMHCpan,
 										 	' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
@@ -116,16 +116,16 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 										 									 x = allele),
 										 	' -l ', peptidelength,
 										 	' -p ',
-										 	' -f ', paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
-										 	' -tdir ', paste0(temporaryDirectoryPath,"/",randomNumber),
+										 	' -f ', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
+										 	' -tdir ', paste0(runOptions$general$temporaryDirectoryPath,"/",randomNumber),
 										 	' -ic50')
 		)
 		output = system(command = command,
 										intern = TRUE)
-		
-		file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
-		file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
-		
+
+		file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
+		file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
+
 		data = processPredictionOutput(output, allele)
 	}
 
@@ -170,11 +170,11 @@ performProcessingPredictions = function(peptidestretch) {
                                min = 0,
                                max = 10 ^ 10))
 
-  dir.create(paste0(temporaryDirectoryPath, "/", randomNumber))
+  dir.create(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
 
   # write peptidestretch to disk in temp dir
   write(x = sprintf(">1\n%s", peptidestretch),
-        file = paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
+        file = paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
         append = TRUE,
         sep = "\n")
 
@@ -190,13 +190,13 @@ performProcessingPredictions = function(peptidestretch) {
   # perform predictions
   output = system(command = paste(# "nice -n 9",
     predictorPaths$netChop,
-    '-tdir', paste0(temporaryDirectoryPath, "/", randomNumber),
-    paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
+    '-tdir', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber),
+    paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
     sep = " "),
     intern = TRUE)
 
-  file.remove(paste0(temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"))
-  file.remove(paste0(temporaryDirectoryPath, "/", randomNumber))
+  file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"))
+  file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
 
   # perform regex on netChop output
   if (length(output) > 17) {

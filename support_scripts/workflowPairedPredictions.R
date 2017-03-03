@@ -60,7 +60,7 @@ performPairedSequencePredictions = function() {
 
   # load required data for self-similarity check
   if ((runParameters$simple_selfsim | runParameters$extended_selfsim) & runParameters$use_selflist) {
-    selfEpitopes = loadSelfEpitopeList(path = selfEpitopeListPath,
+    selfEpitopes = loadSelfEpitopeList(path = runOptions$resources$selfEpitopeListPath,
                                        allele = runParameters$allele,
                                        peptidelength = runParameters$peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
