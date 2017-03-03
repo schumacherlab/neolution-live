@@ -87,6 +87,22 @@ performSingleSequencePredictions = function() {
                            "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "processing_score"
                            # , "rna_expression"
               ))
+  if (runParameters$use_rfModel) {
+  	# apply random forest model to all predictions
+  	model = get(load())
+
+  	setnames(x = epitopePredictionsAll,
+  					 old = c(paste0(runParameters$allele, "percentile_rank"), 'processing_score'),
+  					 new = c('affMIN', 'chop'))
+
+  	epitopePredictionsAll[, model_prediction := predict(model, epitopePredictionsAll, type = 'prob')[, 'yes']]
+
+  	setnames(x = epitopePredictionsAll,
+  					 old = c('affMIN', 'chop'),
+  					 new = c(paste0(runParameters$allele, "percentile_rank"), 'processing_score'))
+
+  	setorder(x = epitopePredictionsAll, -model_prediction)
+  }
 
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
@@ -96,6 +112,21 @@ performSingleSequencePredictions = function() {
                          allele = runParameters$allele,
                          peptidelength = runParameters$peptidelength,
                          suffix = "_unfiltered")
+
+  # apply various cutoffs
+  if (runParameters$use_rfModel) {
+  	epitopePredictionsWithFiltersApplied = epitopePredictionsAll[model_prediction > runParameters$model
+  																															 # & (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)
+  																															 ]
+  } else if (!runParameters$use_rfModel) {
+  	epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
+  																								subset = switch(as.character(is.numeric(runParameters$rank)),
+  																																'TRUE' = epitopePredictionsAll[[paste0(runParameters$allele, "percentile_rank")]] <= runParameters$rank,
+  																																'FALSE' = epitopePredictionsAll[[paste0(runParameters$allele, "affinity")]] <= runParameters$affinity) &
+  																									processing_score >= runParameters$processing
+  																								 # & (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)
+  																								)
+  }
 
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
   if (runParameters$extended_selfsim) {

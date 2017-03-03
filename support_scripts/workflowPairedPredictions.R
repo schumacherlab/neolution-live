@@ -181,6 +181,23 @@ performPairedSequencePredictions = function() {
                                                                                                                                   'aa_peptide_pos_tumor')))
   }
 
+  if (runParameters$use_rfModel) {
+    # apply random forest model to all predictions
+    model_rna = get(load(runOptions$resources$randomForestModelPath))
+
+    setnames(x = epitopePredictionsAll,
+             old = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score', 'rna_expression'),
+             new = c('affMIN', 'chop', 'rna'))
+
+    epitopePredictionsAll[, model_prediction := predict(model_rna, epitopePredictionsAll, type = 'prob')[, 'yes']]
+
+    setnames(x = epitopePredictionsAll,
+             old = c('affMIN', 'chop', 'rna'),
+             new = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score', 'rna_expression'))
+
+    setorder(x = epitopePredictionsAll, -model_prediction)
+  }
+
   # write all predictions to disk
   writePredictionsToDisk(table = epitopePredictionsAll,
                          filepath = runParameters$filepath,
@@ -190,7 +207,10 @@ performPairedSequencePredictions = function() {
                          suffix = "_unfiltered")
 
   # apply various filtering cutoffs
-  if ("rna_expression" %in% names(variantInfo)) {
+  if (runParameters$use_rfModel) {
+    epitopePredictionsWithFiltersApplied = epitopePredictionsAll[model_prediction > runParameters$model &
+                                                                   (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)]
+  } else if (!runParameters$use_rfModel & "rna_expression" %in% names(variantInfo)) {
     epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
                                                 subset = switch(as.character(is.numeric(runParameters$rank)),
                                                                 'TRUE' = epitopePredictionsAll[[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
