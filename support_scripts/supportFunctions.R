@@ -1,14 +1,10 @@
 # load dependencies
-suppressPackageStartupMessages(library(data.table))
-suppressPackageStartupMessages(library(randomForest))
-suppressPackageStartupMessages(library(gtools))
-suppressPackageStartupMessages(library(utils))
-suppressPackageStartupMessages(library(parallel))
-suppressPackageStartupMessages(library(foreach))
-suppressPackageStartupMessages(library(doMC))
-suppressPackageStartupMessages(library(optparse))
-suppressPackageStartupMessages(library(RMySQL))
-suppressPackageStartupMessages(library(compiler))
+if (!require("pacman")) install.packages("pacman")
+
+required_packages = c('data.table', 'randomForest', 'gtools', 'utils', 'parallel', 'foreach', 'doMC', 'optparse', 'RMySQL', 'DBI', 'compiler')
+
+library(pacman)
+pacman::p_load(char = required_packages)
 
 # define negation of %in% operator, returns logical vector for 'NOT IN'
 '%ni%' = Negate('%in%')
