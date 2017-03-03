@@ -144,9 +144,13 @@ performPairedSequencePredictions = function() {
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
-            cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
-                          no = paste0("tumor_", runParameters$allele, "affinity")))
+            cols = if (is.numeric(runParameters$rank)) {
+              c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score')
+            } else {
+              c(paste0("tumor_", runParameters$allele, "affinity"), 'tumor_processing_score')
+            },
+            order = c(1, -1))
+
   setcolorder(x = epitopePredictionsAll,
               neworder = c(names(variantInfo)[-match(x = c("transcript_strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "transcript_strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",

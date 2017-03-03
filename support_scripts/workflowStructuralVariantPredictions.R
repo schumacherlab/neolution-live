@@ -128,18 +128,24 @@ performStructuralVariantPredictions = function() {
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsNormal,
-            cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = paste0("normal_", runParameters$allele, "percentile_rank"),
-                          no = paste0("normal_", runParameters$allele, "affinity")))
+  					cols = if (is.numeric(runParameters$rank)) {
+  						c(paste0("normal_", runParameters$allele, "percentile_rank"), 'normal_processing_score')
+  					} else {
+  						c(paste0("normal_", runParameters$allele, "affinity"), 'normal_processing_score')
+  					},
+  					order = c(1, -1))
   setcolorder(x = epitopePredictionsNormal,
               neworder = c(names(variantInfo)[-match(x = c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            # "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
   setorderv(x = epitopePredictionsTumor,
-            cols = ifelse(test = is.numeric(runParameters$rank),
-                          yes = paste0("tumor_", runParameters$allele, "percentile_rank"),
-                          no = paste0("tumor_", runParameters$allele, "affinity")))
+  					cols = if (is.numeric(runParameters$rank)) {
+  						c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score')
+  					} else {
+  						c(paste0("tumor_", runParameters$allele, "affinity"), 'tumor_processing_score')
+  					},
+  					order = c(1, -1))
   setcolorder(x = epitopePredictionsTumor,
               neworder = c(names(variantInfo)[-match(x = c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score"))
