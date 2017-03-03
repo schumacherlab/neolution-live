@@ -21,92 +21,109 @@ checkPredictorPaths(paths = predictorPaths)
 
 # create directory to hold input/logs/output, if necessary
 dir.create(path = file.path(runParameters$filepath, 'predictions_input'),
-           showWarnings = FALSE)
+					 showWarnings = FALSE)
 dir.create(path = file.path(runParameters$filepath, 'predictions_logs'),
-           showWarnings = FALSE)
+					 showWarnings = FALSE)
 dir.create(path = file.path(runParameters$filepath, 'predictions_output'),
-           showWarnings = FALSE)
+					 showWarnings = FALSE)
 
 # collect information on run; print to console and write to log
 runStart = format(Sys.time(),"%Y%m%d-%H%M")
 message(paste0("Input file:\t\t", paste(runParameters$filepath, runParameters$filename, sep = "/"), "\n",
-               "MHC/HLA allele:\t\t", runParameters$allele, "\n",
-               "Peptide length:\t\t", runParameters$peptidelength, "\n",
-               ifelse(test = is.numeric(runParameters$rank),
-                      yes = paste0("Rank cutoff:\t\t", runParameters$rank, "\n"),
-                      no = paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n")),
-               "Processsing cutoff:\t", runParameters$processing, "\n",
-               "Expression cutoff:\t", runParameters$expression, "\n",
-               "Single seq predictions:\t\t", runParameters$single_sequence, "\n",
-               "Structural variants:\t\t", runParameters$structural_variants, "\n",
-               "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
-               "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
-               "Use self-epitope list:\t\t", runParameters$use_selflist, "\n",
-               "Use FASdb lookups:\t\t", runParameters$use_fasdb, "\n"))
+							 "MHC/HLA allele:\t\t", runParameters$allele, "\n",
+							 "Peptide length:\t\t", runParameters$peptidelength, "\n",
+							 if (is.numeric(runParameters$model)) {
+							 	paste0("Model cutoff:\t\t", runParameters$model, "\n")
+							 } else if (is.numeric(runParameters$rank)) {
+							 	paste0("Rank cutoff:\t\t", runParameters$rank, "\n")
+							 } else if (is.numeric(runParameters$affinity)) {
+							 	paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n")
+							 },
+							 if (is.numeric(runParameters$rank) | is.numeric(runParameters$affinity)) {
+							 	paste0("Processsing cutoff:\t", runParameters$processing, "\n",
+							 				 "Expression cutoff:\t", runParameters$expression, "\n")
+							 },
+							 "Use random forest model:\t", runParameters$use_rfModel, "\n",
+							 "\n",
+							 "Single seq predictions:\t\t", runParameters$single_sequence, "\n",
+							 "Structural variants:\t\t", runParameters$structural_variants, "\n",
+							 "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
+							 "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
+							 "Use self-epitope list:\t\t", runParameters$use_selflist, "\n",
+							 "Use FASdb lookups:\t\t", runParameters$use_fasdb, "\n"))
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run start\n\n",
-                 "Branch:\t\t\t\t\t", system("git symbolic-ref --short -q HEAD", intern = TRUE),"\n",
-                 "Commit hash:\t\t", system("git rev-parse HEAD", intern = TRUE),"\n\n",
-                 "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
-                 "Processing predictor:\t", predictorPaths$netChop, "\n\n",
-                 "Input file:\t\t\t\t\t", paste(runParameters$filepath, runParameters$filename, sep = "/"), "\n",
-                 "MHC/HLA allele:\t\t\t", runParameters$allele, "\n",
-                 "Peptide length:\t\t\t", runParameters$peptidelength, "\n",
-                 ifelse(test = is.numeric(runParameters$rank),
-                        yes = paste0("Rank cutoff:\t\t\t\t", runParameters$rank, "\n"),
-                        no = paste0("Affinity cutoff:\t\t", runParameters$affinity, " nM\n")),
-                 "Processing cutoff:\t", runParameters$processing, "\n",
-                 "Expression cutoff:\t", runParameters$expression, "\n\n",
-                 "Use FASdb lookups:\t\t\t\t", runParameters$use_fasdb, "\n",
-                 "Single seq predictions:\t\t", runParameters$single_sequence, "\n",
-                 "Structural variants:\t\t", runParameters$structural_variants, "\n",
-                 "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
-                 "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
-                 "Use self-epitope list:\t\t", runParameters$use_selflist, "\n"),
-      file = file.path(runParameters$filepath,
-                       'predictions_logs',
-                       paste0(paste(#runStart,
-                                    runParameters$filename_no_ext,
-                                    runParameters$allele,
-                                    runParameters$peptidelength, sep = '_'),
-                              'mer_runInfo.txt')),
-      append = FALSE)
+								 "Branch:\t\t\t\t\t", system("git symbolic-ref --short -q HEAD", intern = TRUE),"\n",
+								 "Commit hash:\t\t", system("git rev-parse HEAD", intern = TRUE),"\n\n",
+								 "Affinity predictor:\t\t", predictorPaths$netMHCpan, "\n",
+								 "Processing predictor:\t", predictorPaths$netChop, "\n",
+								 "\n",
+								 "Input file:\t\t\t\t\t", paste(runParameters$filepath, runParameters$filename, sep = "/"), "\n",
+								 "MHC/HLA allele:\t\t\t", runParameters$allele, "\n",
+								 "Peptide length:\t\t\t", runParameters$peptidelength, "\n",
+								 if (is.numeric(runParameters$model)) {
+								 	paste0("Model cutoff:\t\t\t", runParameters$model, "\n")
+								 } else if (is.numeric(runParameters$rank)) {
+								 	paste0("Rank cutoff:\t\t\t\t", runParameters$rank, "\n")
+								 } else if (is.numeric(runParameters$affinity)) {
+								 	paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n")
+								 },
+								 if (is.numeric(runParameters$rank) | is.numeric(runParameters$affinity)) {
+								 	paste0("Processing cutoff:\t", runParameters$processing, "\n",
+								 				 "Expression cutoff:\t", runParameters$expression, "\n")
+								 },
+								 "Use random forest model:\t", runParameters$use_rfModel, "\n",
+								 "\n",
+								 "Single seq predictions:\t\t", runParameters$single_sequence, "\n",
+								 "Structural variants:\t\t", runParameters$structural_variants, "\n",
+								 "Simple self-similarity:\t\t", runParameters$simple_selfsim, "\n",
+								 "Extended self-similarity:\t", runParameters$extended_selfsim, "\n",
+								 "Use self-epitope list:\t\t", runParameters$use_selflist, "\n",
+								 "Use FASdb lookups:\t\t\t\t", runParameters$use_fasdb, "\n"),
+			file = file.path(runParameters$filepath,
+											 'predictions_logs',
+											 paste0(paste(#runStart,
+											 	runParameters$filename_no_ext,
+											 	runParameters$allele,
+											 	runParameters$peptidelength, sep = '_'),
+											 	'mer_runInfo.txt')),
+			append = FALSE)
 
 
 
 # re-direct output to log file
 sink(file = file(description = file.path(runParameters$filepath,
-                                         'predictions_logs',
-                                         paste0(paste(#runStart,
-                                                      runParameters$filename_no_ext,
-                                                      runParameters$allele,
-                                                      runParameters$peptidelength, sep = '_'),
-                                                'mer_runLog.txt')),
-                 open = "wt"),
-     type = "message",
-     append = TRUE)
+																				 'predictions_logs',
+																				 paste0(paste(#runStart,
+																				 	runParameters$filename_no_ext,
+																				 	runParameters$allele,
+																				 	runParameters$peptidelength, sep = '_'),
+																				 	'mer_runLog.txt')),
+								 open = "wt"),
+		 type = "message",
+		 append = TRUE)
 
 # check if we want single seq predictions or paired normal-tumor predictions
 switch(EXPR = as.character(runParameters$single_sequence),
-       # --single == TRUE (single seq input)
-       "TRUE" = performSingleSequencePredictions(),
-       # --single == FALSE (normal-tumor input)
-       "FALSE" = switch(EXPR = as.character(runParameters$structural_variants),
-                        "TRUE" = performStructuralVariantPredictions(),
-                        "FALSE" = performPairedSequencePredictions())
+			 # --single == TRUE (single seq input)
+			 "TRUE" = performSingleSequencePredictions(),
+			 # --single == FALSE (normal-tumor input)
+			 "FALSE" = switch(EXPR = as.character(runParameters$structural_variants),
+			 								 "TRUE" = performStructuralVariantPredictions(),
+			 								 "FALSE" = performPairedSequencePredictions())
 )
 
 #====================================================================================================================================#
 
 # write run info to log
 write(x = paste0(Sys.time()," - Neolution run end\n\n",
-                 "comments:"),
-      file = file.path(runParameters$filepath,
-                       'predictions_logs',
-                       paste0(paste(#runStart,
-                                    runParameters$filename_no_ext,
-                                    runParameters$allele,
-                                    runParameters$peptidelength, sep = '_'),
-                              'mer_runInfo.txt')),
-      append = TRUE)
+								 "comments:"),
+			file = file.path(runParameters$filepath,
+											 'predictions_logs',
+											 paste0(paste(#runStart,
+											 	runParameters$filename_no_ext,
+											 	runParameters$allele,
+											 	runParameters$peptidelength, sep = '_'),
+											 	'mer_runInfo.txt')),
+			append = TRUE)
