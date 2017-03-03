@@ -37,14 +37,14 @@ readFastaFile = function(file) {
 
 processVariants = function(sid, variants) {
   # determine if there is any RNA expression data
-  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM", "hugo_expression", "entrez_expression") %in% names(variants))) {
+  if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM", 'tpm', "hugo_expression", "entrez_expression") %in% names(variants))) {
     ###
     # RNA EXPRESSION DATA PRESENT - determine source of data and take relevant subset
     ###
     if (all(c('variant_id', 'chromosome', 'start_position', 'end_position', 'variant_strand', 'ref_allele', 'alt_allele', 'dna_ref_read_count', 'dna_alt_read_count', 'dna_vaf',
               'rna_ref_read_count', 'rna_alt_read_count', 'rna_vaf', 'gene_id', 'transcript_id', 'transcript_strand', 'hugo_symbol', 'variant_classification',
               'transcript_remark', 'transcript_extension', 'codon_ref', 'codon_germline', 'codon_tumor', 'aa_ref', 'aa_germline', 'aa_tumor', 'aa_pos_ref',
-              'aa_pos_germline', 'aa_pos_tumor_start', 'aa_pos_tumor_stop', 'protein_seq_ref', 'protein_seq_germline', 'protein_seq_tumor', 'FPKM') %in% names(variants))) {
+              'aa_pos_germline', 'aa_pos_tumor_start', 'aa_pos_tumor_stop', 'protein_seq_ref', 'protein_seq_germline', 'protein_seq_tumor') %in% names(variants))) {
       # dealing with NKI varcontext (adapted from foreign antigen space project) data: rename column headers, take subset
       if (any(is.na(variants[, variant_id])) | any(variants[, variant_id] == '.') | all(variants[, variant_id] == variants[, variant_id][1])) {
         variants[, variant_id := ifelse(test = variant_id == '.' | is.na(variant_id) | variant_id == variants[, variant_id][1],
@@ -55,7 +55,7 @@ processVariants = function(sid, variants) {
       variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
 
       setnames(x = variants,
-               old = c('protein_seq_germline', 'protein_seq_tumor', 'FPKM'),
+               old = c('protein_seq_germline', 'protein_seq_tumor', grep('fpkm|tpm', names(variants), ignore.case = T, value = T)),
                new = c('peptidecontextnormal', 'peptidecontexttumor', 'rna_expression'))
 
       # don't take SNP lines along (variants are already applied in lines with tumor-specific variants)
