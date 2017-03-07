@@ -35,12 +35,12 @@ message(paste0("Input file:\t\t", paste(runParameters$filepath, runParameters$fi
 							 if (is.numeric(runParameters$model)) {
 							 	paste0("Model cutoff:\t\t", runParameters$model, "\n")
 							 } else if (is.numeric(runParameters$rank)) {
-							 	paste0("Rank cutoff:\t\t", runParameters$rank, "\n")
+							 	paste0("Rank cutoff:\t\t", runParameters$rank, "\n",
+							 				 "Processsing cutoff:\t", runParameters$processing, "\n",
+							 				 "Expression cutoff:\t", runParameters$expression, "\n")
 							 } else if (is.numeric(runParameters$affinity)) {
-							 	paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n")
-							 },
-							 if (is.numeric(runParameters$rank) | is.numeric(runParameters$affinity)) {
-							 	paste0("Processsing cutoff:\t", runParameters$processing, "\n",
+							 	paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n",
+							 				 "Processsing cutoff:\t", runParameters$processing, "\n",
 							 				 "Expression cutoff:\t", runParameters$expression, "\n")
 							 },
 							 "Use random forest model:\t", runParameters$use_rfModel, "\n",
@@ -65,12 +65,12 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
 								 if (is.numeric(runParameters$model)) {
 								 	paste0("Model cutoff:\t\t\t", runParameters$model, "\n")
 								 } else if (is.numeric(runParameters$rank)) {
-								 	paste0("Rank cutoff:\t\t\t\t", runParameters$rank, "\n")
+								 	paste0("Rank cutoff:\t\t", runParameters$rank, "\n",
+								 				 "Processsing cutoff:\t", runParameters$processing, "\n",
+								 				 "Expression cutoff:\t", runParameters$expression, "\n")
 								 } else if (is.numeric(runParameters$affinity)) {
-								 	paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n")
-								 },
-								 if (is.numeric(runParameters$rank) | is.numeric(runParameters$affinity)) {
-								 	paste0("Processing cutoff:\t", runParameters$processing, "\n",
+								 	paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n",
+								 				 "Processsing cutoff:\t", runParameters$processing, "\n",
 								 				 "Expression cutoff:\t", runParameters$expression, "\n")
 								 },
 								 "Use random forest model:\t", runParameters$use_rfModel, "\n",
