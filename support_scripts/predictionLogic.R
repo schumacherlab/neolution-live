@@ -91,7 +91,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 		# perform predictions on HPC from local Mac
 		# sshconn = pipe(paste0('ssh -l l.fanchi paranoid "',
 		#                    paste0("nice -n 9 ",
-		#                           predictorPaths$netMHCpan,
+		#                           runOptions$predictors$netMHCpan,
 		#                           ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
 		#                           ' -l ',peptidelength,
 		#                           ' -f ',fastafile,'"'))) # start pipe to paranoid
@@ -102,7 +102,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 		# perform predictions
 		command = ifelse(test = runParameters$panversion == "3.0",
 										 yes = paste0(# "nice -n 9 ",
-										 	predictorPaths$netMHCpan,
+										 	runOptions$predictors$netMHCpan,
 										 	' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
 										 									 replacement = '\\1:\\2',
 										 									 x = allele),
@@ -110,7 +110,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
 										 	' -p ',
 										 	' -f ', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas")),
 										 no = paste0(# "nice -n 9 ",
-										 	predictorPaths$netMHCpan,
+										 	runOptions$predictors$netMHCpan,
 										 	' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
 										 									 replacement = '\\1:\\2',
 										 									 x = allele),
@@ -189,7 +189,7 @@ performProcessingPredictions = function(peptidestretch) {
   ## use on HPC
   # perform predictions
   output = system(command = paste(# "nice -n 9",
-    predictorPaths$netChop,
+  	runOptions$predictors$netChop,
     '-tdir', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber),
     paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
     sep = " "),
