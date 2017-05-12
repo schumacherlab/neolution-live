@@ -1,11 +1,13 @@
-### **Neolution-live pipeline**  
-*Pipeline for the prediction of neo-antigens*
+# **Neolution-live**  
+## Pipeline for neo-antigen prediction
 
----
 
-This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the accuracy of the predictions.
+This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the precision of the predictions. Recently, a random forest model trained on mass spectrometry data was added, which integrates predicted affinity rank, proteasomal processing scores and RNA expression values to a combined model score. This score (0-1) gives the probability of peptide presentation and has been shown to substantially increase the precision and sensitivity over the conventional use of binary cutoff values for the various predicted parameters. This is now the preferred method. Suggested model score cutoff values are:
 
-**Usage example:**  
+* 0.01 for PBMC screens
+* 0.02 for TIL screens
+
+**Minimal usage example:**  
 `Rscript performPredictions.R -f /home/NFS/users/username/patient/variants.tsv -m A0201 -l 9`
 
 The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
@@ -23,17 +25,18 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 **Optional commandline arguments:**  
 
-1. netMHCpan affinity cutoff
-2. netMHCpan rank cutoff
-2. netChop processing cutoff
-3. rna expression cutoff
-4. single sequence input (fasta input: not paired tumor-normal, no rna expression)
-5. structural variant predictions
-5. simple self-similarity check (9-, 10-, 11-mers)
-6. extended self-similarity check (9-mers only)
-7. use self-epitope list
-8. use database for peptide affinity lookups (9-mers, netMHCpan-2.4 only)
-9. netMHCpan version
+1. Random forest model score cutoff
+2. netMHCpan affinity cutoff
+3. netMHCpan rank cutoff
+4. netChop processing cutoff
+5. RNA expression cutoff
+6. single sequence input (fasta input: not paired tumor-normal, no rna expression)
+7. structural variant predictions
+8. simple self-similarity check (9-, 10-, 11-mers)
+9. extended self-similarity check (9-mers only)
+10. use self-epitope list
+11. use database for peptide affinity lookups (9-mers, netMHCpan-2.4 only)
+12. netMHCpan version
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
 
@@ -52,6 +55,9 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 `-l LENGTH, --length=LENGTH`  
 *Peptide length (required)*
+
+`-d MODEL, --model=MODEL`  
+*Random forest model score cutoff (optional)*
 
 `-a AFFINITY, --affinity=AFFINITY`  
 *netMHCpan affinity cutoff (optional, default: <= 500 nM)*
@@ -90,8 +96,9 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 *Show this help message and exit*
 
 ---
+---
 
-### Suggested allele-specific cutoffs
+### Suggested allele-specific cutoffs (rank cutoffs are always preferred)
 
 |Allele|Affinity <br>cutoff (nM)|Population <br>frequency|
 |:------:|:----:|:---:|
