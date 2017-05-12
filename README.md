@@ -1,13 +1,15 @@
-# **Neolution-live**  
+# Neolution-live
 ## Pipeline for neo-antigen prediction
 
+### Introduction
 
 This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the precision of the predictions. Recently, a random forest model trained on mass spectrometry data was added, which integrates predicted affinity rank, proteasomal processing scores and RNA expression values to a combined model score. This score (0-1) gives the probability of peptide presentation and has been shown to substantially increase the precision and sensitivity over the conventional use of binary cutoff values for the various predicted parameters. This is now the preferred method. Suggested model score cutoff values are:
 
 * 0.01 for PBMC screens
 * 0.02 for TIL screens
 
-**Minimal usage example:**  
+### Minimal usage example
+
 `Rscript performPredictions.R -f /home/NFS/users/username/patient/variants.tsv -m A0201 -l 9`
 
 The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
@@ -17,13 +19,15 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 **IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
 
-**Required commandline arguments:**  
+### Commandline arguments
+
+#### Required
 
 1. full input file path
 2. hla/mhc type (e.g. A0201)
 3. peptide length (e.g. 9) 
 
-**Optional commandline arguments:**  
+#### Optional
 
 1. Random forest model score cutoff
 2. netMHCpan affinity cutoff
@@ -40,13 +44,37 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
 
+### Input file format
+
+Required input format is a wide, tab-separated table with the following columns. [Neolution-prep](https://gitlab.nki.nl/l.fanchi/neolution-prep) generates all required data and provides required input file.
+
+#### Variant
+
+| variant\_id | chromosome | start\_position | end\_position | variant\_strand | ref\_allele | alt\_allele |
+|-------------|------------|-----------------|---------------|-----------------|-------------|-------------|
+
+#### Gene/Transcript
+
+| gene\_id | transcript\_id | transcript\_strand | hugo\_symbol | variant\_classification | transcript\_remark | transcript\_extension | nmd\_status | nmd\_remark |
+|----------|----------|---------|----------|-----------|---------|------------|-------------|-------------|
+
+#### DNA/RNA
+
+| dna\_ref\_read\_count | dna\_alt\_read\_count | dna\_total\_read\_count | dna\_vaf | rna\_ref\_read\_count | rna\_alt\_read\_count | rna\_total\_read\_count | rna\_vaf | rna\_alt\_expression | rna\_expression |
+|----------|-----------|------------|------------|----------|-----------|-----------|------------|--------|--------|
+
+#### Effect
+
+| codon\_germline | codon\_tumor | aa\_germline | aa\_tumor | aa\_pos\_germline | aa\_pos\_tumor\_start | aa\_pos\_tumor\_stop | peptidecontextnormal | peptidecontexttumor |
+|----------|-----------|------------|-------------|-----------|------------|-----------|----------|--------|
+
 ---
 
 `Rscript performPredictions.R --help`  
 
-**Usage: performPredictions.R [options]**
+**Usage: performPredictions.R [OPTIONS]**
 
-**Options:**  
+**OPTIONS**  
 `-f FILE, --file=FILE`  
 *Full path to file containing variant calls (required)*
 
@@ -94,52 +122,3 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 `-h, --help`  
 *Show this help message and exit*
-
----
----
-
-### Suggested allele-specific cutoffs (rank cutoffs are always preferred)
-
-|Allele|Affinity <br>cutoff (nM)|Population <br>frequency|
-|:------:|:----:|:---:|
-|A\*01:01|884|16.2|
-|A\*02:01|255|25.2|
-|A\*02:03|92|3.3|
-|A\*02:06|60|4.9|
-|A\*03:01|602|15.4|
-|A\*11:01|382|12.9|
-|A\*23:01|740|6.4|
-|A\*24:02|849|16.8|
-|A\*25:01|795|2.5|
-|A\*26:01|815|4.7|
-|A\*29:02|641|2.9|
-|A\*30:01|109|5.1|
-|A\*30:02|674|5|
-|A\*31:01|329|4.7|
-|A\*32:01|131|5.7|
-|A\*33:01|606|3.2|
-|A\*68:01|197|4.6|
-|A\*68:02|259|3.3|
-|B\*07:02|687|13.3|
-|B\*08:01|663|11.5|
-|B\*14:02|700|2.8|
-|B\*15:01|528|5.2|
-|B\*18:01|732|4.4|
-|B\*27:05|584|2|
-|B\*35:01|348|6.5|
-|B\*35:03|888|1.2|
-|B\*38:01|944|2|
-|B\*39:01|542|2.9|
-|B\*40:01|639|10.3|
-|B\*40:02|590|3.5|
-|B\*44:02|904|9.2|
-|B\*44:03|780|7.6|
-|B\*46:01|926|4|
-|B\*48:01|887|1.8|
-|B\*51:01|939|5.5|
-|B\*53:01|538|5.4|
-|B\*57:01|716|3.2|
-|B\*58:01|446|3.6|
-
-
-[1 http://help.iedb.org/entries/23854373-Selecting-thresholds-cut-offs-for-MHC-class-I-and-II-binding-predictions](http://help.iedb.org/entries/23854373-Selecting-thresholds-cut-offs-for-MHC-class-I-and-II-binding-predictions)
