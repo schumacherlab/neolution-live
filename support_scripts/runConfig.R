@@ -7,7 +7,7 @@ runOptions = list(general = list(numberOfWorkers = detectCores()/4, # set number
 									predictors = list(netMHCpan = file.path(data_path, paste0('predictors/netMHCpan-', runParameters$panversion, '/netMHCpan')),
 																		netChop = file.path(data_path, 'predictors/netchop-3.1/bin/netChop')),
 
-									resources = list(selfEpitopeListPath = './selflists', # set path of self-epitope lists
+									resources = list(selfEpitopeListPath = file.path(data_path, 'resources/neolution_selflists'), # set path of self-epitope lists
 																	 randomForestModelPath = './resources/rf_model.RData') # set path to random forest model
 									)
 
