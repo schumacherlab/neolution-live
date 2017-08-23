@@ -1,7 +1,8 @@
 # load dependencies
 if (!require("pacman")) install.packages("pacman")
 
-required_packages = c('data.table', 'randomForest', 'gtools', 'utils', 'parallel', 'foreach', 'doMC', 'optparse', 'RMySQL', 'DBI', 'compiler')
+required_packages = c('data.table', 'randomForest', 'gtools', 'utils', 'parallel', 'foreach', 'doMC', 'optparse', 'compiler')
+# required_packages = c(required_packages, 'RMySQL', 'DBI')
 
 library(pacman)
 pacman::p_load(char = required_packages)
