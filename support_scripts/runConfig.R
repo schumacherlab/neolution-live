@@ -1,7 +1,7 @@
 #### Lookup parameters and other configuration options can be set here ####
 data_path = '/DATA/users/l.fanchi'
 
-runOptions = list(general = list(numberOfWorkers = detectCores()/4, # set number of cores available for parallel processing
+runOptions = list(general = list(numberOfWorkers = round(detectCores()/6, 0), # set number of cores available for parallel processing
 																 temporaryDirectoryPath = file.path(data_path, 'scratch')), # set path of temporary directory (set chmod 1777 on tempdir)
 
 									predictors = list(netMHCpan = file.path(data_path, paste0('predictors/netMHCpan-', runParameters$panversion, '/netMHCpan')),
