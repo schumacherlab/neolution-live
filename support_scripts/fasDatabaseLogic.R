@@ -1,5 +1,3 @@
-suppressPackageStartupMessages(library(RMySQL))
-
 # set mysql configuration
 sqlConfiguration = data.table(sqlhost = "medoid",
                               sqluser = "l.fanchi",
