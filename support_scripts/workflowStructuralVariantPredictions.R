@@ -1,4 +1,6 @@
 performStructuralVariantPredictions = function() {
+  if (runParameters$verbose) message('Starting structural variant workflow')
+
   # import data & clean up
   variantInput = unique(fread(input = file.path(runParameters$filepath, runParameters$filename),
                               na.strings = c("NA", "", "-")))

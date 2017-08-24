@@ -73,18 +73,23 @@ optionList = list(make_option(opt_str = c("-f", "--file"),
                               action = "store",
                               type = "double",
                               default = 3.0,
-                              help = "netMHCpan version (optional, default: %default)")
+                              help = "netMHCpan version (optional, default: %default)"),
+                  make_option(opt_str = c("--verbose"),
+                              action = "store_true",
+                              type = "logical",
+                              default = FALSE,
+                              help = "Be chatty (optional, default: %default)")
 )
 
 # parse commandline arguments
 commandlineArguments = parse_args(OptionParser(option_list = optionList))
 
 # prepare table for holding run configuration
-runParameters = vector(mode = "list", length = 18)
+runParameters = vector(mode = "list", length = 19)
 runParameters = setNames(object = runParameters, nm = c("filename", "filename_no_ext", "filepath",
                                                         "allele", "peptidelength", "affinity", "rank", "model", "processing", "expression",
                                                         "single_sequence", "structural_variants", "simple_selfsim", "extended_selfsim",
-                                                        "use_selflist", "use_rfModel", "use_fasdb", "panversion"))
+                                                        "use_selflist", "use_rfModel", "use_fasdb", "panversion", "verbose"))
 
 # parse other arguments
 if (is.null(commandlineArguments$file)) {
@@ -213,3 +218,5 @@ if (commandlineArguments$fasdb & runParameters$panversion == "2.4" & is.numeric(
 } else {
   runParameters$use_fasdb = commandlineArguments$fasdb
 }
+
+runParameters$verbose = commandlineArguments$verbose

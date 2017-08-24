@@ -1,5 +1,7 @@
 # load self-epitope lists
 loadSelfEpitopeList = function(path, allele, peptidelength) {
+  if (runParameters$verbose) message('Loading list of self-epitopes')
+
   availableSelfLists = dir(path = path,
                            pattern = paste0(allele, ".*", paste0(peptidelength,"mer")),
                            include.dirs = FALSE,
@@ -31,6 +33,8 @@ loadSelfEpitopeList = function(path, allele, peptidelength) {
 
 # prepare matrix used in self-similarity function
 loadSelfSimilarityMatrix = function() {
+  if (runParameters$verbose) message('Loading self-similarity matrix')
+
   scoreMatrix = matrix(c(1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                          1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                          0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -52,6 +56,8 @@ loadSelfSimilarityMatrix = function() {
 
 # simple self-similarity check
 performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = list()) {
+  if (runParameters$verbose) message('Performing simple self-similarity check')
+
   if (length(epitopes) < 1) {
     return(c(""))
   }
@@ -73,6 +79,8 @@ performSimpleSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix,
 
 # extended self-similarity check using predicted human proteome epitopes (and normal epitopes)
 performExtendedSelfSimilarityCheck = function(epitopes, selfepitopes, scorematrix, normalepitopes = list()) {
+  if (runParameters$verbose) message('Performing extended self-similarity check')
+
   if (length(epitopes) < 1) {
     return(c(""))
   }

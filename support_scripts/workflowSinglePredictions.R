@@ -1,4 +1,6 @@
 performSingleSequencePredictions = function() {
+  if (runParameters$verbose) message('Starting single sequence workflow')
+
   # import data & clean up
   sequenceInfo = readFastaFile(file = paste(runParameters$filepath, runParameters$filename, sep = "/"))
 

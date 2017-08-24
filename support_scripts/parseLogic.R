@@ -36,6 +36,8 @@ readFastaFile = function(file) {
 }
 
 processVariants = function(sid, variants) {
+  if (runParameters$verbose) message('Processing variants')
+
   # determine if there is any RNA expression data
   if (any(c("rna_expression", "Cufflinks FPKM value (expression level)", "gene_FPKM", "FPKM", 'tpm', "hugo_expression", "entrez_expression") %in% names(variants))) {
     ###

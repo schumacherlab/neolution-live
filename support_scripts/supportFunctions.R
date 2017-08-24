@@ -48,6 +48,8 @@ emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
 
 # wrapper for writing predictions to disk
 writePredictionsToDisk = function(table, unique_by = c("gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"), filepath, filename, allele, peptidelength, suffix = NULL) {
+  if (runParameters$verbose) message('Writing predictions to disk')
+
   if (nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = unique_by),
@@ -76,6 +78,8 @@ multiMixedOrder = function(..., na.last = TRUE, decreasing = FALSE) {
 
 # check presence of necessary tools
 checkPredictorPaths = function(paths) {
+  if (runParameters$verbose) message('Checking predictor paths')
+
   if (!all(sapply(paths, file.exists))) {
     stop(paste0("One or more predictors not found, please check runConfig.R. Expected paths are:\n",
                 paste0(paths,

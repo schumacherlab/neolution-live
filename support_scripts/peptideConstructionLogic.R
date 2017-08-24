@@ -1,4 +1,6 @@
 buildPeptideList = function(sequences, peptidelength) {
+  if (runParameters$verbose) message('Building peptide list')
+
   if (runParameters$single_sequence) {
     # determine how many peptides can be made
     n_seq = nchar(sequences$sequence) - (peptidelength - 1)
@@ -113,6 +115,8 @@ buildPeptideList = function(sequences, peptidelength) {
 }
 
 findVariantsContributingToEpitope = function(predicted_variants, all_variants) {
+  if (runParameters$verbose) message('Determining contributing variants')
+
   if (nrow(predicted_variants) > 0) {
     contributing_variant_info = lapply(seq(1, nrow(predicted_variants), 1),
                                        function(x) {

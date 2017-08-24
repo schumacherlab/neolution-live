@@ -1,4 +1,6 @@
 performPairedSequencePredictions = function() {
+  if (runParameters$verbose) message('Starting paired sequence workflow')
+
   # import data & clean up
   variantInput = unique(fread(input = file.path(runParameters$filepath, runParameters$filename),
                               na.strings = c("NA", "", "-")))
@@ -182,6 +184,8 @@ performPairedSequencePredictions = function() {
   }
 
   if (runParameters$use_rfModel) {
+    if (runParameters$verbose) message('Applying random forest model')
+
     # apply random forest model to all predictions
     model_rna = get(load(runOptions$resources$randomForestModelPath))
 

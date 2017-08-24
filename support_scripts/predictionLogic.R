@@ -1,6 +1,8 @@
 ## this support script contains functions for peptide affinity and processing score predictions
 
 performParallelPredictions = function(peptides, peptidestretch, allele, peptidelength) {
+  if (runParameters$verbose) message('Performing predictions')
+
   if (runParameters$structural_variants) {
     # perform affinity predictions
     affinityPredictions = lapply(peptides,
