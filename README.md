@@ -10,11 +10,11 @@ This pipeline performs live predictions using netMHCpan and netChop to predict p
 
 ### Minimal usage example
 
-`Rscript performPredictions.R -f /home/NFS/users/username/patient/variants.tsv -m A0201 -l 9`
+`Rscript performPredictions.R -f /path/to/variants.tsv -m A0201 -l 9`
 
-The call should be run from the script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
+The call should be run from the neolution script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
 
-**By default, netMHCpan v3.0 will be used and 1/4th of the available cores are used per run for parallel computations; four samples can be processed in parallel on one cluster.  
+**By default, netMHCpan v3.0 will be used and 1/6th of the available cores are used per run for parallel computations.  
 Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cores)!!**
 
 **IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
@@ -119,6 +119,9 @@ Required input format is a wide, tab-separated table with the following columns.
 
 `--panversion`  
 *Use different version of netMHCpan; must be installed in path specified in runConfig.R (optional, default: 3.0)*
+
+`--verbose`  
+*Be chatty (optional, default: FALSE)*
 
 `-h, --help`  
 *Show this help message and exit*
