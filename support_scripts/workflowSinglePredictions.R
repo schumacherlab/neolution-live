@@ -20,6 +20,7 @@ performSingleSequencePredictions = function() {
     scoreMatrix = loadSelfSimilarityMatrix()
   }
 
+  if (runParameters$verbose) message('Performing predictions, this may take a while..')
   epitopePredictions = foreach(i = 1:nrow(sequenceInfo)) %dopar% {
     # for each sequence line, make list of peptides and make vector containing sequence peptide stretches
     peptideList = buildPeptideList(sequences = sequenceInfo[i, ],
@@ -52,12 +53,12 @@ performSingleSequencePredictions = function() {
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsAll,
-  					cols = if (is.numeric(runParameters$rank)) {
-  						c(paste0(runParameters$allele, "percentile_rank"), 'processing_score')
-  					} else {
-  						c(paste0(runParameters$allele, "affinity"), 'processing_score')
-  					},
-  					order = c(1, -1))
+            cols = if (is.numeric(runParameters$rank)) {
+              c(paste0(runParameters$allele, "percentile_rank"), 'processing_score')
+            } else {
+              c(paste0(runParameters$allele, "affinity"), 'processing_score')
+            },
+            order = c(1, -1))
 
   setcolorder(x = epitopePredictionsAll,
               neworder = c("sequence_id", "hla_allele", "xmer",
@@ -66,20 +67,22 @@ performSingleSequencePredictions = function() {
               ))
 
   if (runParameters$use_rfModel) {
-  	# apply random forest model to all predictions
-  	model = get(load())
+    if (runParameters$verbose) message('Applying random forest model')
 
-  	setnames(x = epitopePredictionsAll,
-  					 old = c(paste0(runParameters$allele, "percentile_rank"), 'processing_score'),
-  					 new = c('affMIN', 'chop'))
+    # apply random forest model to all predictions
+    model = get(load())
 
-  	epitopePredictionsAll[, model_prediction := predict(model, epitopePredictionsAll, type = 'prob')[, 'yes']]
+    setnames(x = epitopePredictionsAll,
+             old = c(paste0(runParameters$allele, "percentile_rank"), 'processing_score'),
+             new = c('affMIN', 'chop'))
 
-  	setnames(x = epitopePredictionsAll,
-  					 old = c('affMIN', 'chop'),
-  					 new = c(paste0(runParameters$allele, "percentile_rank"), 'processing_score'))
+    epitopePredictionsAll[, model_prediction := predict(model, epitopePredictionsAll, type = 'prob')[, 'yes']]
 
-  	setorder(x = epitopePredictionsAll, -model_prediction)
+    setnames(x = epitopePredictionsAll,
+             old = c('affMIN', 'chop'),
+             new = c(paste0(runParameters$allele, "percentile_rank"), 'processing_score'))
+
+    setorder(x = epitopePredictionsAll, -model_prediction)
   }
 
   # write all predictions to disk
@@ -93,17 +96,17 @@ performSingleSequencePredictions = function() {
 
   # apply various cutoffs
   if (runParameters$use_rfModel) {
-  	epitopePredictionsWithFiltersApplied = epitopePredictionsAll[model_prediction > runParameters$model
-  																															 # & (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)
-  																															 ]
+    epitopePredictionsWithFiltersApplied = epitopePredictionsAll[model_prediction > runParameters$model
+                                                                 # & (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)
+                                                                 ]
   } else if (!runParameters$use_rfModel) {
-  	epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
-  																								subset = switch(as.character(is.numeric(runParameters$rank)),
-  																																'TRUE' = epitopePredictionsAll[[paste0(runParameters$allele, "percentile_rank")]] <= runParameters$rank,
-  																																'FALSE' = epitopePredictionsAll[[paste0(runParameters$allele, "affinity")]] <= runParameters$affinity) &
-  																									processing_score >= runParameters$processing
-  																								 # & (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)
-  																								)
+    epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
+                                                  subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                  'TRUE' = epitopePredictionsAll[[paste0(runParameters$allele, "percentile_rank")]] <= runParameters$rank,
+                                                                  'FALSE' = epitopePredictionsAll[[paste0(runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                    processing_score >= runParameters$processing
+                                                  # & (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)
+    )
   }
 
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
@@ -115,6 +118,8 @@ performSingleSequencePredictions = function() {
     # filter for epitopes passing self-sim
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
+
+    if (runParameters$verbose) message('Writing predictions to disk')
 
     # write aff, chop filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
@@ -141,6 +146,8 @@ performSingleSequencePredictions = function() {
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
 
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            unique_by = c("sequence_id", "peptide", paste0(runParameters$allele, "affinity"), "processing_score"),
@@ -158,6 +165,8 @@ performSingleSequencePredictions = function() {
                            allele = runParameters$allele,
                            peptidelength = runParameters$peptidelength)
   } else {
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            unique_by = c("sequence_id", "peptide", paste0(runParameters$allele, "affinity"), "processing_score"),

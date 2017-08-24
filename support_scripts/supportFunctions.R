@@ -48,8 +48,6 @@ emptyTableWithColumnNamesAndColumnClasses = function(colnames, colclasses) {
 
 # wrapper for writing predictions to disk
 writePredictionsToDisk = function(table, unique_by = c("gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"), filepath, filename, allele, peptidelength, suffix = NULL) {
-  if (runParameters$verbose) message('Writing predictions to disk')
-
   if (nrow(table) > 0) {
     write.csv(x = unique(x = table,
                          by = unique_by),

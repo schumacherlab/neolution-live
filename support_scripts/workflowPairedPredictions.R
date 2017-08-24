@@ -72,6 +72,7 @@ performPairedSequencePredictions = function() {
     scoreMatrix = loadSelfSimilarityMatrix()
   }
 
+  if (runParameters$verbose) message('Performing predictions, this may take a while..')
   epitopePredictions = foreach(i = 1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
     # and make vector containing normal and tumor peptide stretches
@@ -236,6 +237,8 @@ performPairedSequencePredictions = function() {
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
 
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            filepath = runParameters$filepath,
@@ -262,6 +265,8 @@ performPairedSequencePredictions = function() {
     epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
                                                                subset = different_from_self == TRUE)
 
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            filepath = runParameters$filepath,
@@ -277,6 +282,8 @@ performPairedSequencePredictions = function() {
                            allele = runParameters$allele,
                            peptidelength = runParameters$peptidelength)
   } else {
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop, rna filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
                            filepath = runParameters$filepath,

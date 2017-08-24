@@ -73,6 +73,7 @@ performStructuralVariantPredictions = function() {
     scoreMatrix = loadSelfSimilarityMatrix()
   }
 
+  if (runParameters$verbose) message('Performing predictions, this may take a while..')
   epitopePredictions = foreach(i = 1:nrow(variantInfo)) %dopar% {
     # for each variant line, make list tumor peptides which are different from normal (and corresponding normal peptides)
     # and make vector containing normal and tumor peptide stretches
@@ -130,44 +131,46 @@ performStructuralVariantPredictions = function() {
 
   # sort tables & set new order
   setorderv(x = epitopePredictionsNormal,
-  					cols = if (is.numeric(runParameters$rank)) {
-  						c(paste0("normal_", runParameters$allele, "percentile_rank"), 'normal_processing_score')
-  					} else {
-  						c(paste0("normal_", runParameters$allele, "affinity"), 'normal_processing_score')
-  					},
-  					order = c(1, -1))
+            cols = if (is.numeric(runParameters$rank)) {
+              c(paste0("normal_", runParameters$allele, "percentile_rank"), 'normal_processing_score')
+            } else {
+              c(paste0("normal_", runParameters$allele, "affinity"), 'normal_processing_score')
+            },
+            order = c(1, -1))
   setcolorder(x = epitopePredictionsNormal,
               neworder = c(names(variantInfo)[-match(x = c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            # "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
   setorderv(x = epitopePredictionsTumor,
-  					cols = if (is.numeric(runParameters$rank)) {
-  						c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score')
-  					} else {
-  						c(paste0("tumor_", runParameters$allele, "affinity"), 'tumor_processing_score')
-  					},
-  					order = c(1, -1))
+            cols = if (is.numeric(runParameters$rank)) {
+              c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score')
+            } else {
+              c(paste0("tumor_", runParameters$allele, "affinity"), 'tumor_processing_score')
+            },
+            order = c(1, -1))
   setcolorder(x = epitopePredictionsTumor,
               neworder = c(names(variantInfo)[-match(x = c("a_full_aa_seq", "b_full_aa_seq", "fusion_aa_sequence"), table = names(variantInfo))], "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score"))
-                           # "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
+                         # "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 
   if (runParameters$use_rfModel) {
-  	# apply random forest model to all predictions
-  	model = get(load())
+    if (runParameters$verbose) message('Applying random forest model')
 
-  	setnames(x = epitopePredictionsTumor,
-  					 old = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score'),
-  					 new = c('affMIN', 'chop'))
+    # apply random forest model to all predictions
+    model = get(load())
 
-  	epitopePredictionsTumor[, model_prediction := predict(model, epitopePredictionsTumor, type = 'prob')[, 'yes']]
+    setnames(x = epitopePredictionsTumor,
+             old = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score'),
+             new = c('affMIN', 'chop'))
 
-  	setnames(x = epitopePredictionsTumor,
-  					 old = c('affMIN', 'chop'),
-  					 new = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score'))
+    epitopePredictionsTumor[, model_prediction := predict(model, epitopePredictionsTumor, type = 'prob')[, 'yes']]
 
-  	setorder(x = epitopePredictionsTumor, -model_prediction)
+    setnames(x = epitopePredictionsTumor,
+             old = c('affMIN', 'chop'),
+             new = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score'))
+
+    setorder(x = epitopePredictionsTumor, -model_prediction)
   }
 
   # write all tumor predictions to disk
@@ -181,15 +184,15 @@ performStructuralVariantPredictions = function() {
 
   # apply various filters
   if (runParameters$use_rfModel) {
-  	epitopePredictionsTumorWithFiltersApplied = epitopePredictionsTumor[model_prediction > runParameters$model &
-  																																				(rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)]
+    epitopePredictionsTumorWithFiltersApplied = epitopePredictionsTumor[model_prediction > runParameters$model &
+                                                                          (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)]
   } else if (!runParameters$use_rfModel) {
-  	epitopePredictionsTumorWithFiltersApplied = subset(x = epitopePredictionsTumor,
-  																										 subset = switch(as.character(is.numeric(runParameters$rank)),
-  																										 								'TRUE' = epitopePredictionsTumor[[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
-  																										 								'FALSE' = epitopePredictionsTumor[[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
-  																										 	tumor_processing_score >= runParameters$processing &
-  																										 	(rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
+    epitopePredictionsTumorWithFiltersApplied = subset(x = epitopePredictionsTumor,
+                                                       subset = switch(as.character(is.numeric(runParameters$rank)),
+                                                                       'TRUE' = epitopePredictionsTumor[[paste0("tumor_", runParameters$allele, "percentile_rank")]] <= runParameters$rank,
+                                                                       'FALSE' = epitopePredictionsTumor[[paste0("tumor_", runParameters$allele, "affinity")]] <= runParameters$affinity) &
+                                                         tumor_processing_score >= runParameters$processing &
+                                                         (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
   }
 
   # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
@@ -204,6 +207,8 @@ performStructuralVariantPredictions = function() {
     # filter for epitopes passing self-sim
     epitopePredictionsTumorWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsTumorWithFiltersApplied,
                                                                     subset = different_from_self == TRUE)
+
+    if (runParameters$verbose) message('Writing predictions to disk')
 
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersApplied,
@@ -233,6 +238,8 @@ performStructuralVariantPredictions = function() {
     epitopePredictionsTumorWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsTumorWithFiltersApplied,
                                                                     subset = different_from_self == TRUE)
 
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersApplied,
                            unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
@@ -250,6 +257,8 @@ performStructuralVariantPredictions = function() {
                            allele = runParameters$allele,
                            peptidelength = runParameters$peptidelength)
   } else {
+    if (runParameters$verbose) message('Writing predictions to disk')
+
     # write aff, chop, rna filtered epitopes to disk
     writePredictionsToDisk(table = epitopePredictionsTumorWithFiltersApplied,
                            unique_by = c("a_gene_id", "b_gene_id", "tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), "tumor_processing_score"),
