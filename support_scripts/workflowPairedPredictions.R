@@ -11,7 +11,8 @@ performPairedSequencePredictions = function() {
                                           "^[0-9]{8}_|^[0-9]{8}[-_][0-9]{4}_", # substitute various prefixes
                                           sep = "|"),
                           replacement = "",
-                          x = runParameters$filename_no_ext))
+                          x = runParameters$filename_no_ext,
+                          perl = T))
 
   variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
