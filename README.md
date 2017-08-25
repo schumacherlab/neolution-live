@@ -8,6 +8,8 @@ This pipeline performs live predictions using netMHCpan and netChop to predict p
 * 0.01 for PBMC screens
 * 0.02 for TIL screens
 
+As input, the pipeline expects a tsv file with affected germline and tumor transcripts. Additional variant/transcript information can be provided and will be transferred into the output. See **Input file format** paragraph for more information regarding input file generation.
+
 ### Minimal usage example
 
 `Rscript performPredictions.R -f /path/to/variants.tsv -m A0201 -l 9`
