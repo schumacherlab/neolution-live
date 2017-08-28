@@ -5,7 +5,7 @@ performPairedSequencePredictions = function() {
   variantInput = unique(fread(input = file.path(runParameters$filepath, runParameters$filename),
                               na.strings = c("NA", "", "-")))
 
-  sampleId = toupper(gsub(pattern = paste(regexPatterns$seqdata_prefix, # remove some seq facility-specific info # old regex: "_[ATCG]{8}|_S1_LMG_TR1_001|_L[0-9]{3}_t"
+  sampleId = toupper(gsub(pattern = paste("_[ATCG]{7,8}|_S1_LMG_TR1_001|_L[0-9]{3}_t", # remove some seq facility-specific info
                                           "[-_]tumor|[-_]kitchensink|[-_]mdup|[-_]ra|[-_]bq|[-_]table|[-_]complete|[-_]merged|[-_]varcontext|[-_]rna", # substitute various suffixes
                                           "|\\.txt.*$|\\.vcf.*$|\\.[ct]sv.*", # substitute various extensions
                                           "^[0-9]{8}_|^[0-9]{8}[-_][0-9]{4}_", # substitute various prefixes
