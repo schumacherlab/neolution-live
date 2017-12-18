@@ -5,8 +5,8 @@
 
 This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the precision of the predictions. Recently, a random forest model trained on mass spectrometry data was added, which integrates predicted affinity rank, proteasomal processing scores and RNA expression values to a combined model score. This score (0-1) gives the probability of peptide presentation and has been shown to substantially increase the precision and sensitivity over the conventional use of binary cutoff values for the various predicted parameters. This is now the preferred method. Suggested model score cutoff values are:
 
-* 0.01 for PBMC screens
-* 0.02 for TIL screens
+* 0.01 for TIL screens (more inclusive; we picked up low magnitude TIL hits at low prob scores)
+* 0.02 for PBMC screens (more stringent; unlikely to pick up low magnitude responses with low prob scores in peripheral blood)
 
 As input, the pipeline expects a tsv file with affected germline and tumor transcripts. Additional variant/transcript information can be provided and will be transferred into the output. See **Input file format** paragraph for more information regarding input file generation.
 
@@ -16,7 +16,7 @@ As input, the pipeline expects a tsv file with affected germline and tumor trans
 
 The call should be run from the neolution script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
 
-**By default, netMHCpan v3.0 will be used and 1/6th of the available cores are used per run for parallel computations.  
+**By default, netMHCpan v4.0 will be used and 1/6th of the available cores are used per run for parallel computations.  
 Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cores)!!**
 
 **IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
@@ -120,7 +120,7 @@ Required input format is a wide, tab-separated table with the following columns.
 *Look up peptide affinity in FASdb, predict if not found; only compatible with 9-mers & netMHCpan-2.4 (optional, default: FALSE)*
 
 `--panversion`  
-*Use different version of netMHCpan; must be installed in path specified in runConfig.R (optional, default: 3.0)*
+*Use different version of netMHCpan; must be installed in path specified in runConfig.R (optional, default: 4.0)*
 
 `--verbose`  
 *Be chatty (optional, default: FALSE)*
