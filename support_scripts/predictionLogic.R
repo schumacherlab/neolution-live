@@ -150,7 +150,7 @@ processPredictionOutput = function(raw_output, allele) {
   clean_output = gsub(pattern = "[[:blank:]]+",
                       replacement = "\t",
                       x = raw_output)
-  if (length(clean_output) > 0 & runParameters$panversion == "3.0") {
+  if (length(clean_output) > 0 & as.numeric(runParameters$panversion) >= 3) {
     data = as.data.table(read.table(text = clean_output,
                                     stringsAsFactors = FALSE))
     setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore", "variant_id",
