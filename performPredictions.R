@@ -40,7 +40,7 @@ message(paste0("Input file:\t\t", paste(runParameters$filepath, runParameters$fi
                } else if (is.numeric(runParameters$affinity)) {
                  paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n",
                         "Processsing cutoff:\t", runParameters$processing, "\n")
-               }
+               },
                if (is.numeric(runParameters$expression)) {
                  paste0("Expression cutoff:\t", runParameters$expression, "\n")
                },
@@ -71,7 +71,7 @@ write(x = paste0(Sys.time()," - Neolution run start\n\n",
                  } else if (is.numeric(runParameters$affinity)) {
                    paste0("Affinity cutoff:\t", runParameters$affinity, " nM\n",
                           "Processsing cutoff:\t", runParameters$processing, "\n")
-                 }
+                 },
                  if (is.numeric(runParameters$expression)) {
                           paste0("Expression cutoff:\t", runParameters$expression, "\n")
                  },
