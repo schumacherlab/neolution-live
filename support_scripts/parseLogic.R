@@ -123,8 +123,8 @@ processVariants = function(sid, variants) {
 
       # don't take SNP lines along (even though they shouldn't result in peptides for prediction)
       variantssubset = unique(x = subset(x = variants[!grepl(pattern = regexPatterns$gs_identifier, x = variant_id, perl = TRUE)],
-                                         select = c('dna_ref_read_count', 'dna_alt_read_count', 'dna_vaf',
-                                                    'rna_ref_read_count', 'rna_alt_read_count', 'rna_total_read_count', 'rna_vaf', 'rna_alt_expression')),
+                                         select = names(variants) %ni% c('dna_ref_read_count', 'dna_alt_read_count', 'dna_vaf',
+                                                                         'rna_ref_read_count', 'rna_alt_read_count', 'rna_total_read_count', 'rna_vaf', 'rna_alt_expression')),
                               by = c("peptidecontextnormal", "peptidecontexttumor"))
     } else if (all(c("Gene", "transcriptid", "peptidecontextnormal", "peptidecontexttumor") %in% names(variants))) {
       # dealing with Sanger data: rename column headers, add "no data" for rna_expression & take subset
