@@ -1,31 +1,21 @@
 # load external scripts
-source("./support_scripts/supportFunctions.R")
-source("./support_scripts/commandlineArgumentLogic.R")
-source("./support_scripts/runConfig.R")
-source("./support_scripts/parseLogic.R")
-source("./support_scripts/predictionLogic.R")
-source("./support_scripts/selfSimilarityLogic.R")
-source("./support_scripts/peptideConstructionLogic.R")
-source("./support_scripts/workflowSinglePredictions.R")
-source("./support_scripts/workflowPairedPredictions.R")
-source("./support_scripts/workflowStructuralVariantPredictions.R")
-source("./support_scripts/fasDatabaseLogic.R")
+support_scripts = list.files(path = './support_scripts', pattern = '[.]R$', full.names = T)
+support_scripts = support_scripts[c(grep(pattern = 'supportFunctions', support_scripts),
+                                    grep(pattern = 'supportFunctions', support_scripts, invert = T))]
+
+invisible(sapply(support_scripts,
+                 source))
 
 # register parallel back-end
 registerDoMC(cores = runOptions$general$numberOfWorkers)
-
-#scriptPath = thisDirectory()
 
 # check availability of predictors
 checkPredictorPaths(paths = runOptions$predictors)
 
 # create directory to hold input/logs/output, if necessary
-dir.create(path = file.path(runParameters$filepath, 'predictions_input'),
-           showWarnings = FALSE)
-dir.create(path = file.path(runParameters$filepath, 'predictions_logs'),
-           showWarnings = FALSE)
-dir.create(path = file.path(runParameters$filepath, 'predictions_output'),
-           showWarnings = FALSE)
+invisible(sapply(paste('predictions', c('input', 'logs', 'output'), sep = '_'),
+                 function(dir) dir.create(path = file.path(runParameters$filepath, dir),
+                                          showWarnings = F)))
 
 # collect information on run; print to console and write to log
 runStart = format(Sys.time(),"%Y%m%d-%H%M")
