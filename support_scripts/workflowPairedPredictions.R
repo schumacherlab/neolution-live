@@ -17,6 +17,13 @@ performPairedSequencePredictions = function() {
   variantInfo = processVariants(sid = sampleId,
                                 variants = variantInput)
 
+  # write input to disk
+  write.table(x = variantInput,
+              file = file.path(runParameters$filepath, 'predictions_input', paste0(runParameters$filename_no_ext, '_input.tsv')),
+              quote = FALSE,
+              sep = '\t',
+              row.names = FALSE)
+
   # prepare vectors with colnames and colclasses for making empty tables, in case needed
   columnNamesEmptyTable = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
                                   "c_term_pos", "hla_allele", "xmer",
@@ -29,23 +36,8 @@ performPairedSequencePredictions = function() {
                               "character", "character", "numeric", "numeric", "numeric",
                               "character", "character", "numeric", "numeric", "numeric")
 
+  # write empty output if no variants found
   if (nrow(variantInfo) == 0) {
-    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
-                                                                             colclasses = columnClassesEmptyTable),
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength,
-                           suffix = '_unfiltered')
-
-    writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
-                                                                             colclasses = columnClassesEmptyTable),
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength,
-                           suffix = '_no_selfsim')
-
     writePredictionsToDisk(table = emptyTableWithColumnNamesAndColumnClasses(colnames = columnNamesEmptyTable,
                                                                              colclasses = columnClassesEmptyTable),
                            filepath = runParameters$filepath,
@@ -54,12 +46,6 @@ performPairedSequencePredictions = function() {
                            peptidelength = runParameters$peptidelength)
     return(NULL)
   }
-
-  write.table(x = variantInput,
-              file = file.path(runParameters$filepath, 'predictions_input', paste0(runParameters$filename_no_ext, '_input.tsv')),
-              quote = FALSE,
-              sep = '\t',
-              row.names = FALSE)
 
   # load required data for self-similarity check
   if ((runParameters$simple_selfsim | runParameters$extended_selfsim) & runParameters$use_selflist) {
@@ -219,14 +205,6 @@ performPairedSequencePredictions = function() {
     setorder(x = epitopePredictionsAll, -model_prediction)
   }
 
-  # write all predictions to disk
-  writePredictionsToDisk(table = epitopePredictionsAll,
-                         filepath = runParameters$filepath,
-                         filename = runParameters$filename_no_ext,
-                         allele = runParameters$allele,
-                         peptidelength = runParameters$peptidelength,
-                         suffix = "_unfiltered")
-
   # apply various filtering cutoffs
   if (runParameters$use_rfModel & is.numeric(epitopePredictionsAll$model_prediction) & is.numeric(epitopePredictionsAll$rna_expression)) {
     epitopePredictionsWithFiltersApplied = epitopePredictionsAll[model_prediction >= runParameters$model &
@@ -246,7 +224,7 @@ performPairedSequencePredictions = function() {
                                                     tumor_processing_score >= runParameters$processing)
   }
 
-  # if needed, determine self-sim and write tables to disk ('if' and 'else if'), otherwise just write table to disk ('else')
+  # if needed, determine self-sim
   if (runParameters$extended_selfsim) {
     epitopePredictionsWithFiltersApplied[, different_from_self := performExtendedSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                      selfepitopes = selfEpitopes$peptide,
@@ -254,27 +232,6 @@ performPairedSequencePredictions = function() {
                                                                                                      normalepitopes = subset(x = epitopePredictionsAll,
                                                                                                                              subset = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= 1.8 & # rank cutoff of 1.8 equals ~255nM for A0201
                                                                                                                                normal_processing_score >= 0.5)$normal_peptide)]
-
-    # filter for epitopes passing self-sim
-    epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
-                                                               subset = different_from_self == TRUE)
-
-    if (runParameters$verbose) message('Writing predictions to disk')
-
-    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
-    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength,
-                           suffix = "_no_selfsim")
-
-    # write different_from_self epitopes to disk
-    writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength)
   } else if (runParameters$simple_selfsim) {
     epitopePredictionsWithFiltersApplied[, different_from_self := performSimpleSelfSimilarityCheck(epitopes = epitopePredictionsWithFiltersApplied$tumor_peptide,
                                                                                                    selfepitopes = selfEpitopes$peptide,
@@ -282,36 +239,24 @@ performPairedSequencePredictions = function() {
                                                                                                    normalepitopes = subset(x = epitopePredictionsAll,
                                                                                                                            subset = epitopePredictionsAll[[paste0("normal_", runParameters$allele, "percentile_rank")]] <= 1.8 & # rank cutoff of 1.8 equals ~255nM for A0201
                                                                                                                              normal_processing_score >= 0.5)$normal_peptide)]
-
-    # filter for epitopes passing self-sim
-    epitopePredictionsWithFiltersAppliedPassedSelfSim = subset(x = epitopePredictionsWithFiltersApplied,
-                                                               subset = different_from_self == TRUE)
-
-    if (runParameters$verbose) message('Writing predictions to disk')
-
-    # write aff, chop, rna filtered epitopes to disk, no self_sim filter applied
-    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength,
-                           suffix = "_no_selfsim")
-
-    # write different_from_self epitopes to disk
-    writePredictionsToDisk(table = epitopePredictionsWithFiltersAppliedPassedSelfSim,
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength)
   } else {
-    if (runParameters$verbose) message('Writing predictions to disk')
-
-    # write aff, chop, rna filtered epitopes to disk
-    writePredictionsToDisk(table = epitopePredictionsWithFiltersApplied,
-                           filepath = runParameters$filepath,
-                           filename = runParameters$filename_no_ext,
-                           allele = runParameters$allele,
-                           peptidelength = runParameters$peptidelength,
-                           suffix = "_no_selfsim")
+    # no selfsim
+    epitopePredictionsWithFiltersApplied[, different_from_self := NA]
   }
+
+  # merge selfsim data back to unfiltered table
+  epitopePredictionsAllMerged = merge(x = epitopePredictionsAll,
+                                      y = epitopePredictionsWithFiltersApplied[, .('gene_id', 'transcript_id', 'tumor_peptide',
+                                                                                   paste0('tumor_', runParameters$allele, 'affinity'), 'tumor_processing_score', 'different_from_self')],
+                                      all.x = TRUE)
+  if (nrow(epitopePredictionsAll) != nrow(epitopePredictionsAllMerged)) stop('Self-sim post-merge table has more rows than pre-merge')
+
+  if (runParameters$verbose) message('Writing predictions to disk')
+
+  # write predictions to disk
+  writePredictionsToDisk(table = epitopePredictionsAllMerged,
+                         filepath = runParameters$filepath,
+                         filename = runParameters$filename_no_ext,
+                         allele = runParameters$allele,
+                         peptidelength = runParameters$peptidelength)
 }
