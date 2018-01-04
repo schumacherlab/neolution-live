@@ -192,7 +192,7 @@ if (runParameters$single_sequence & (runParameters$simple_selfsim | runParameter
 }
 
 if (is.numeric(commandlineArguments$panversion)) {
-  runParameters$panversion = format(round(commandlineArguments$panversion, 2), nsmall = 1)
+  runParameters$panversion = commandlineArguments$panversion
 } else {
   message("Please input version number for netMHCpan (e.g. 2.4, 2.8 or 3.0")
   q(status = 1)

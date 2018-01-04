@@ -90,7 +90,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                              sep = "\n")))
 
     # perform predictions
-    if (as.numeric(runParameters$panversion) >= 3) {
+    if (runParameters$panversion >= 3) {
       command = paste0(# "nice -n 9 ",
         runOptions$predictors$netMHCpan,
         ' -a HLA-', gsub(pattern = '^([A-Z]{1}[0-9]{2})([0-9]{2})$',
@@ -99,7 +99,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
         ' -l ', peptidelength,
         ' -p ',
         ' -f ', file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, '_peps.fas')),
-        if (as.numeric(runParameters$panversion) == 4) paste(' -BA'))
+        if (runParameters$panversion >= 4) paste(' -BA'))
     } else {
       command = paste0(# "nice -n 9 ",
         runOptions$predictors$netMHCpan,
@@ -143,7 +143,7 @@ processPredictionOutput = function(raw_output, allele) {
                       x = raw_output)
 
   # parse cleaned output
-  if (length(clean_output) > 0 & as.numeric(runParameters$panversion) >= 3) {
+  if (length(clean_output) > 0 & runParameters$panversion >= 3) {
     data = as.data.table(read.table(text = clean_output,
                                     stringsAsFactors = FALSE))
     setnames(x = data, old = names(data), new = c("position", "hla_allele", "peptide", "peptide_core", "Of", "Gp", "Gl", "Ip", "Il", "Icore", "variant_id",

@@ -4,8 +4,8 @@ data_path = '/DATA'
 runOptions = list(general = list(numberOfWorkers = round(detectCores()/6, 0), # set number of cores available for parallel processing
                                  temporaryDirectoryPath = file.path(data_path, 'NetMHCtmp')), # set path of temporary directory (set chmod 1777 on tempdir)
 
-                  predictors = list(netMHCpan = file.path(data_path, paste0('resources/predictors/netMHCpan-', runParameters$panversion, '/netMHCpan')),
-                                    netChop = file.path(data_path, 'resources/predictors/netchop-3.1/bin/netChop')),
+                  predictors = list(netMHCpan = file.path(data_path, 'resources/predictors', paste0('netMHCpan-', format(runParameters$panversion, nsmall = 1)), 'netMHCpan'),
+                                    netChop = file.path(data_path, 'resources/predictors', 'netchop-3.1', 'bin/netChop')),
 
                   resources = list(selfEpitopeListPath = file.path(data_path, 'resources/neolution_selflists'), # set path of self-epitope lists
                                    randomForestModelPath = './resources/rf_model.RData') # set path to random forest model
