@@ -219,4 +219,5 @@ if (commandlineArguments$fasdb) {
 #   runParameters$use_fasdb = commandlineArguments$fasdb
 # }
 
+runParameters$use_fasdb = FALSE
 runParameters$verbose = commandlineArguments$verbose
