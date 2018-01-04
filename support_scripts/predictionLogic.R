@@ -73,32 +73,22 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   if (length(peptides) < 1 ) {
     data = processPredictionOutput('', allele)
   } else {
-    # generate random number to give to temp dir and temp file
-    randomNumber = ceiling(runif(n = 1,
-                                 min = 0,
-                                 max = 10 ^ 10))
+    # generate random string to give to temp dir and temp file
+    randomString = paste(sample(c(letters, LETTERS),
+                                size = 8,
+                                replace = T),
+                         collapse = '')
 
-    dir.create(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
+    dir.create(file.path(runOptions$general$temporaryDirectoryPath, randomString))
 
     # write peptides to disk in temp dir
-    invisible(sapply(seq(1, length(peptides), 1), function(x)
-      write(x = sprintf("%s", peptides[x]),
-            file = paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
-            append = TRUE,
-            sep = "\n")))
+    invisible(sapply(seq(1, length(peptides), 1),
+                     function(x)
+                       write(x = sprintf("%s", peptides[x]),
+                             file = file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, '_peps.fas')),
+                             append = TRUE,
+                             sep = "\n")))
 
-    ## use on local Mac
-    # perform predictions on HPC from local Mac
-    # sshconn = pipe(paste0('ssh -l l.fanchi paranoid "',
-    #                    paste0("nice -n 9 ",
-    #                           runOptions$predictors$netMHCpan,
-    #                           ' -a HLA-',gsub('^([A-Z]{1}[0-9]{2})([0-9]{2})$', '\\1:\\2', allele),
-    #                           ' -l ',peptidelength,
-    #                           ' -f ',fastafile,'"'))) # start pipe to paranoid
-    # output = readLines(sshconn) # start job on paranoid and read terminal output
-    # close(sshconn) # close pipe
-
-    ## use on HPC
     # perform predictions
     if (as.numeric(runParameters$panversion) >= 3) {
       command = paste0(# "nice -n 9 ",
@@ -108,7 +98,7 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                          x = allele),
         ' -l ', peptidelength,
         ' -p ',
-        ' -f ', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
+        ' -f ', file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, '_peps.fas')),
         if (as.numeric(runParameters$panversion) == 4) paste(' -BA'))
     } else {
       command = paste0(# "nice -n 9 ",
@@ -118,16 +108,16 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
                          x = allele),
         ' -l ', peptidelength,
         ' -p ',
-        ' -f ', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"),
-        ' -tdir ', paste0(runOptions$general$temporaryDirectoryPath,"/",randomNumber),
+        ' -f ', file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, '_peps.fas')),
+        ' -tdir ', file.path(runOptions$general$temporaryDirectoryPath, randomString),
         ' -ic50')
     }
 
     output = system(command = command,
                     intern = TRUE)
 
-    file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peps.fas"))
-    file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
+    file.remove(file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, '_peps.fas')))
+    file.remove(file.path(runOptions$general$temporaryDirectoryPath, randomString))
 
     data = processPredictionOutput(output, allele)
   }
@@ -139,8 +129,9 @@ performAffinityPredictions = function(peptides, allele, peptidelength) {
   return(data)
 }
 
-# perform regex on netMHC output
+
 processPredictionOutput = function(raw_output, allele) {
+  # regex the raw netMHC output
   raw_output = raw_output[-grep(pattern = "^\\#.+|^\\-.+|^Protein.+|pos.+|^HLA.+|^$",
                                 ignore.case = TRUE,
                                 x = raw_output)]
@@ -150,6 +141,8 @@ processPredictionOutput = function(raw_output, allele) {
   clean_output = gsub(pattern = "[[:blank:]]+",
                       replacement = "\t",
                       x = raw_output)
+
+  # parse cleaned output
   if (length(clean_output) > 0 & as.numeric(runParameters$panversion) >= 3) {
     data = as.data.table(read.table(text = clean_output,
                                     stringsAsFactors = FALSE))
@@ -167,39 +160,32 @@ processPredictionOutput = function(raw_output, allele) {
   return(data)
 }
 
-performProcessingPredictions = function(peptidestretch) {
-  # generate random number to give to temp dir and temp file
-  randomNumber = ceiling(runif(n = 1,
-                               min = 0,
-                               max = 10 ^ 10))
 
-  dir.create(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
+performProcessingPredictions = function(peptidestretch) {
+  # generate random string to give to temp dir and temp file
+  randomString = paste(sample(c(letters, LETTERS),
+                              size = 8,
+                              replace = T),
+                       collapse = '')
+
+  dir.create(file.path(runOptions$general$temporaryDirectoryPath, randomString))
 
   # write peptidestretch to disk in temp dir
   write(x = sprintf(">1\n%s", peptidestretch),
-        file = paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
+        file = file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, "_peptidestretch.fas")),
         append = TRUE,
         sep = "\n")
 
-  #   sshconn = pipe(paste('ssh -l l.fanchi paranoid "',
-  #                      paste(netChoppath,
-  #                            ' ',peptidestretch,'"',
-  #                            sep = ""),
-  #                      sep = "")) # start pipe to paranoid
-  #   output = readLines(sshconn) # start job on paranoid and read terminal output
-  #   close(sshconn)
-
-  ## use on HPC
   # perform predictions
   output = system(command = paste(# "nice -n 9",
   	runOptions$predictors$netChop,
-    '-tdir', paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber),
-    paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"),
+    '-tdir', file.path(runOptions$general$temporaryDirectoryPath, randomString),
+  	file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, "_peptidestretch.fas")),
     sep = " "),
     intern = TRUE)
 
-  file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber, "/", randomNumber, "_peptidestretch.fas"))
-  file.remove(paste0(runOptions$general$temporaryDirectoryPath, "/", randomNumber))
+  file.remove(file.path(runOptions$general$temporaryDirectoryPath, randomString, paste0(randomString, "_peptidestretch.fas")))
+  file.remove(file.path(runOptions$general$temporaryDirectoryPath, randomString))
 
   # perform regex on netChop output
   if (length(output) > 17) {
@@ -211,7 +197,8 @@ performProcessingPredictions = function(peptidestretch) {
     output = gsub(pattern = "[[:blank:]]+",
                   replacement = "\t",
                   x = output)
-    # read data into table
+
+    # parse cleaned output
     data = as.data.table(read.table(text = output,
                                     stringsAsFactors = FALSE))
     data = data[, -match(x = c("V3", "V5"), table = names(data)), with = FALSE]
