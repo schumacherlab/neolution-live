@@ -68,8 +68,12 @@ performPairedSequencePredictions = function() {
                                        peptidelength = runParameters$peptidelength)
     scoreMatrix = loadSelfSimilarityMatrix()
   } else if (runParameters$simple_selfsim | runParameters$extended_selfsim) {
-    selfEpitopes = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer", "peptide", "c_term_aa", "c_term_pos", paste0(runParameters$allele,"affinity"), "processing_score"),
-                                                             colclasses = c("character", "character", "numeric", "character", "character", "numeric", "numeric", "numeric"))
+    selfEpitopes = emptyTableWithColumnNamesAndColumnClasses(colnames = c("sequence_id", "hla_allele", "xmer",
+                                                                          "peptide", "c_term_aa", "c_term_pos",
+                                                                          paste0(runParameters$allele,"affinity"), "processing_score"),
+                                                             colclasses = c("character", "character", "numeric",
+                                                                            "character", "character", "numeric",
+                                                                            "numeric", "numeric"))
     scoreMatrix = loadSelfSimilarityMatrix()
   }
 
@@ -104,8 +108,12 @@ performPairedSequencePredictions = function() {
       if (runParameters$panversion != 2.4) {
         writePeptideAffinityToDatabase(index = i,
                                        allele = runParameters$allele,
-                                       predictions = unique(x = rbind(normalAndTumorPredictions[[1]][, c('peptide', paste0(runParameters$allele, 'affinity'), paste0(runParameters$allele, "percentile_rank")), with = F],
-                                                                      normalAndTumorPredictions[[2]][, c('peptide', paste0(runParameters$allele, 'affinity'), paste0(runParameters$allele, "percentile_rank")), with = F]),
+                                       predictions = unique(x = rbind(normalAndTumorPredictions[[1]][, c('peptide', paste0(runParameters$allele, 'affinity'),
+                                                                                                         paste0(runParameters$allele, "percentile_rank")),
+                                                                                                     with = F],
+                                                                      normalAndTumorPredictions[[2]][, c('peptide', paste0(runParameters$allele, 'affinity'),
+                                                                                                         paste0(runParameters$allele, "percentile_rank")),
+                                                                                                     with = F]),
                                                             by = 'peptide'),
                                        predictor = runParameters$panversion)
       }
@@ -121,18 +129,23 @@ performPairedSequencePredictions = function() {
 
     # rename columns
     setnames(x = normalAndTumorPredictions[[1]],
-             old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "c_term_aa", "processing_score"),
-             new = c("normal_peptide", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_c_term_aa", "normal_processing_score"))
+             old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"),
+                     "c_term_aa", "processing_score"),
+             new = c("normal_peptide", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"),
+                     "normal_c_term_aa", "normal_processing_score"))
 
     setnames(x = normalAndTumorPredictions[[2]],
-             old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"), "c_term_aa", "processing_score"),
-             new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_c_term_aa", "tumor_processing_score"))
+             old = c("peptide", paste0(runParameters$allele, "affinity"), paste0(runParameters$allele, "percentile_rank"),
+                     "c_term_aa", "processing_score"),
+             new = c("tumor_peptide", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"),
+                     "tumor_c_term_aa", "tumor_processing_score"))
 
     # merge all info for both tumor only predictions and all predictions
     if (nrow(normalAndTumorPredictions[[2]]) > 0) {
       mergedPredictions = merge(x = normalAndTumorPredictions[[2]],
                                 y = normalAndTumorPredictions[[1]],
-                                by = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))],
+                                by = c(names(variantInfo)[-match(x = c("peptidecontextnormal", "peptidecontexttumor"),
+                                                                 table = names(variantInfo))],
                                        "c_term_pos", "xmer", "hla_allele"),
                                 all.x = TRUE)
     } else {
@@ -156,7 +169,8 @@ performPairedSequencePredictions = function() {
             order = c(1, -1))
 
   setcolorder(x = epitopePredictionsAll,
-              neworder = c(names(variantInfo)[-match(x = c("transcript_strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"), table = names(variantInfo))], "transcript_strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
+              neworder = c(names(variantInfo)[-match(x = c("transcript_strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"),
+                                                     table = names(variantInfo))], "transcript_strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
                            "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
                            "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
 

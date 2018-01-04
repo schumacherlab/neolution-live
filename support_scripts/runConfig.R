@@ -1,7 +1,7 @@
 #### Lookup parameters and other configuration options can be set here ####
 data_path = '/DATA'
 
-runOptions = list(general = list(numberOfWorkers = round(detectCores()/6, 0), # set number of cores available for parallel processing
+runOptions = list(general = list(numberOfWorkers = round(detectCores()/6, digits =  0), # set number of cores available for parallel processing
                                  temporaryDirectoryPath = file.path(data_path, 'NetMHCtmp')), # set path of temporary directory (set chmod 1777 on tempdir)
 
                   predictors = list(netMHCpan = file.path(data_path, 'resources/predictors', paste0('netMHCpan-', format(runParameters$panversion, nsmall = 1)), 'netMHCpan'),
