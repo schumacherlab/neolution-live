@@ -198,9 +198,9 @@ if (is.numeric(commandlineArguments$panversion)) {
   q(status = 1)
 }
 
-# if (commandlineArguments$fasdb & runParameters$panversion == "2.4" & runParameters$peptidelength == 9) {
+# if (commandlineArguments$fasdb & runParameters$panversion == 2.4 & runParameters$peptidelength == 9) {
 #   runParameters$use_fasdb = commandlineArguments$fasdb
-# } else if (commandlineArguments$fasdb & (runParameters$panversion != "2.4" | runParameters$peptidelength != 9)) {
+# } else if (commandlineArguments$fasdb & (runParameters$panversion != 2.4 | runParameters$peptidelength != 9)) {
 #   message("FASdb peptide affinity lookups are only supported for 9-mers & when using netMHCpan-2.4, use -h for help")
 #   q(status = 1)
 # } else {
@@ -212,11 +212,11 @@ if (commandlineArguments$fasdb) {
   q(status = 1)
 }
 
-if (commandlineArguments$fasdb & runParameters$panversion == "2.4" & is.numeric(runParameters$rank)) {
-  message("Using FASdb with netMHCpan-2.4 and rank cutoffs is not supported")
-  q(status = 1)
-} else {
-  runParameters$use_fasdb = commandlineArguments$fasdb
-}
+# if (commandlineArguments$fasdb & runParameters$panversion == 2.4 & is.numeric(runParameters$rank)) {
+#   message("Using FASdb with netMHCpan-2.4 and rank cutoffs is not supported")
+#   q(status = 1)
+# } else {
+#   runParameters$use_fasdb = commandlineArguments$fasdb
+# }
 
 runParameters$verbose = commandlineArguments$verbose
