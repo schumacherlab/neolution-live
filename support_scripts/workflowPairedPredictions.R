@@ -201,8 +201,6 @@ performPairedSequencePredictions = function() {
     setnames(x = epitopePredictionsAll,
              old = c('affMIN', 'chop', 'rna'),
              new = c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score', 'rna_expression'))
-
-    setorder(x = epitopePredictionsAll, -model_prediction)
   }
 
   # apply various filtering cutoffs
@@ -250,6 +248,14 @@ performPairedSequencePredictions = function() {
                                       by = 'tumor_peptide',
                                       all.x = TRUE)
   if (nrow(epitopePredictionsAll) != nrow(epitopePredictionsAllMerged)) stop('Self-sim post-merge table has more rows than pre-merge')
+
+  if ('model_prediction' %in% names(epitopePredictionsAllMerged)) {
+    setorder(x = epitopePredictionsAllMerged, -model_prediction)
+  } else {
+    switch(as.character(is.numeric(runParameters$rank)),
+           'TRUE' = setorder(x = epitopePredictionsAllMerged, -paste0("tumor_", runParameters$allele, "percentile_rank")),
+           'FALSE' = setorder(x = epitopePredictionsAllMerged, -paste0("tumor_", runParameters$allele, "affinity")))
+  }
 
   if (runParameters$verbose) message('Writing predictions to disk')
 
