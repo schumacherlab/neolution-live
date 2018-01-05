@@ -246,8 +246,8 @@ performPairedSequencePredictions = function() {
 
   # merge selfsim data back to unfiltered table
   epitopePredictionsAllMerged = merge(x = epitopePredictionsAll,
-                                      y = epitopePredictionsWithFiltersApplied[, .('gene_id', 'transcript_id', 'tumor_peptide',
-                                                                                   paste0('tumor_', runParameters$allele, 'affinity'), 'tumor_processing_score', 'different_from_self')],
+                                      y = epitopePredictionsWithFiltersApplied[!duplicated(tumor_peptide), .(tumor_peptide, different_from_self)],
+                                      by = 'tumor_peptide',
                                       all.x = TRUE)
   if (nrow(epitopePredictionsAll) != nrow(epitopePredictionsAllMerged)) stop('Self-sim post-merge table has more rows than pre-merge')
 
