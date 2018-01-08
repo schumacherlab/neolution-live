@@ -244,14 +244,14 @@ performPairedSequencePredictions = function() {
                                order = c(1, -1)))
   }
 
-  col_names = c('hugo_symbol', names(variantInfo)[-match(x = c('rna_expression', 'peptidecontextnormal', 'peptidecontexttumor'),
+  col_names = c('hugo_symbol', names(variantInfo)[-match(x = c('hugo_symbol', 'rna_expression', 'peptidecontextnormal', 'peptidecontexttumor'),
                                                          table = names(variantInfo))],
                 'rna_expression', 'c_term_pos', 'hla_allele', 'xmer',
                 'tumor_peptide', 'tumor_c_term_aa',
                 paste0('tumor_', runParameters$allele, 'affinity'), paste0('tumor_', runParameters$allele, 'percentile_rank'), 'tumor_processing_score',
                 'normal_peptide', 'normal_c_term_aa',
                 paste0('normal_', runParameters$allele, 'affinity'), paste0('normal_', runParameters$allele, 'percentile_rank'), 'normal_processing_score',
-                'contributing_variants', 'contributing_variants_alt_expression', 'different_from_self')
+                'contributing_variants', 'aa_peptide_pos_tumor', 'contributing_variants_alt_expression', 'model_prediction', 'different_from_self')
 
   setcolorder(x = epitopePredictionsAllMerged,
               neworder = col_names[col_names %in% names(epitopePredictionsAllMerged)])
