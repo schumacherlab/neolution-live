@@ -244,8 +244,9 @@ performPairedSequencePredictions = function() {
                                order = c(1, -1)))
   }
 
-  col_names = c(names(variantInfo)[-match(x = c('transcript_strand', 'rna_expression', 'peptidecontextnormal', 'peptidecontexttumor'),
-                                          table = names(variantInfo))], 'transcript_strand', 'rna_expression', 'c_term_pos', 'hla_allele', 'xmer',
+  col_names = c('hugo_symbol', names(variantInfo)[-match(x = c('rna_expression', 'peptidecontextnormal', 'peptidecontexttumor'),
+                                                         table = names(variantInfo))],
+                'rna_expression', 'c_term_pos', 'hla_allele', 'xmer',
                 'tumor_peptide', 'tumor_c_term_aa',
                 paste0('tumor_', runParameters$allele, 'affinity'), paste0('tumor_', runParameters$allele, 'percentile_rank'), 'tumor_processing_score',
                 'normal_peptide', 'normal_c_term_aa',
