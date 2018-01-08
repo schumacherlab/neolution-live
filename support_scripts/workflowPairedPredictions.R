@@ -147,21 +147,6 @@ performPairedSequencePredictions = function() {
   epitopePredictionsAll = rbindlist(epitopePredictions,
                                     use.names = TRUE)
 
-  # sort tables & set new order
-  setorderv(x = epitopePredictionsAll,
-            cols = if (is.numeric(runParameters$rank)) {
-              c(paste0("tumor_", runParameters$allele, "percentile_rank"), 'tumor_processing_score')
-            } else {
-              c(paste0("tumor_", runParameters$allele, "affinity"), 'tumor_processing_score')
-            },
-            order = c(1, -1))
-
-  setcolorder(x = epitopePredictionsAll,
-              neworder = c(names(variantInfo)[-match(x = c("transcript_strand", "rna_expression", "peptidecontextnormal", "peptidecontexttumor"),
-                                                     table = names(variantInfo))], "transcript_strand", "rna_expression", "c_term_pos", "hla_allele", "xmer",
-                           "tumor_peptide", "tumor_c_term_aa", paste0("tumor_", runParameters$allele, "affinity"), paste0("tumor_", runParameters$allele, "percentile_rank"), "tumor_processing_score",
-                           "normal_peptide", "normal_c_term_aa", paste0("normal_", runParameters$allele, "affinity"), paste0("normal_", runParameters$allele, "percentile_rank"), "normal_processing_score"))
-
   # determine which variants contributed to the formation of predicted epitopes
   if (all(c('variant_id', 'aa_pos_germline', 'aa_pos_tumor_start', 'aa_pos_tumor_stop', 'variant_classification') %in% names(variantInput))) {
     allContributingVariantsInfo = rbindlist(findVariantsContributingToEpitope(predicted_variants = epitopePredictionsAll,
@@ -180,11 +165,6 @@ performPairedSequencePredictions = function() {
                         'variant_classification', 'codon_germline', 'codon_tumor', 'aa_germline', 'aa_tumor',
                         'aa_pos_germline', 'aa_pos_tumor_start', 'aa_pos_tumor_stop')
     epitopePredictionsAll = epitopePredictionsAll[, !columnsToRemove, with = FALSE]
-
-    setcolorder(x = epitopePredictionsAll,
-                neworder = c(names(epitopePredictionsAll)[-match(x = c(# 'aa_pos_germline',
-                                                                       'aa_peptide_pos_tumor'), table = names(epitopePredictionsAll))], c(# 'aa_pos_germline',
-                                                                                                                                  'aa_peptide_pos_tumor')))
   }
 
   # model epitope cell surface presentation using random forest model trained on mass spec data
@@ -251,13 +231,29 @@ performPairedSequencePredictions = function() {
                                       all.x = TRUE)
   if (nrow(epitopePredictionsAll) != nrow(epitopePredictionsAllMerged)) stop('Self-sim post-merge table has more rows than pre-merge')
 
+  # sort tables & set new column order
   if ('model_prediction' %in% names(epitopePredictionsAllMerged)) {
     setorder(x = epitopePredictionsAllMerged, -model_prediction)
   } else {
     switch(as.character(is.numeric(runParameters$rank)),
-           'TRUE' = setorder(x = epitopePredictionsAllMerged, -paste0("tumor_", runParameters$allele, "percentile_rank")),
-           'FALSE' = setorder(x = epitopePredictionsAllMerged, -paste0("tumor_", runParameters$allele, "affinity")))
+           'TRUE' = setorderv(x = epitopePredictionsAllMerged,
+                              cols = c(paste0('tumor_', runParameters$allele, 'percentile_rank'), 'tumor_processing_score'),
+                              order = c(1, -1)),
+           'FALSE' = setorderv(x = epitopePredictionsAllMerged,
+                               cols = c(paste0('tumor_', runParameters$allele, 'affinity'), 'tumor_processing_score'),
+                               order = c(1, -1)))
   }
+
+  col_names = c(names(variantInfo)[-match(x = c('transcript_strand', 'rna_expression', 'peptidecontextnormal', 'peptidecontexttumor'),
+                                          table = names(variantInfo))], 'transcript_strand', 'rna_expression', 'c_term_pos', 'hla_allele', 'xmer',
+                'tumor_peptide', 'tumor_c_term_aa',
+                paste0('tumor_', runParameters$allele, 'affinity'), paste0('tumor_', runParameters$allele, 'percentile_rank'), 'tumor_processing_score',
+                'normal_peptide', 'normal_c_term_aa',
+                paste0('normal_', runParameters$allele, 'affinity'), paste0('normal_', runParameters$allele, 'percentile_rank'), 'normal_processing_score',
+                'contributing_variants', 'contributing_variants_alt_expression', 'different_from_self')
+
+  setcolorder(x = epitopePredictionsAllMerged,
+              neworder = col_names[col_names %in% names(epitopePredictionsAllMerged)])
 
   if (runParameters$verbose) message('Writing predictions to disk')
 
