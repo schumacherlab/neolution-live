@@ -87,13 +87,13 @@ Required input format is a wide, tab-separated table with the following columns.
 *Peptide length (required)*
 
 `-d MODEL, --model=MODEL`  
-*Random forest model score cutoff (optional)*
+*Random forest model score cutoff (optional, default: >= 0.02)*
 
 `-a AFFINITY, --affinity=AFFINITY`  
-*netMHCpan affinity cutoff (optional, default: <= 500 nM)*
+*netMHCpan affinity cutoff (optional, default is model cutoff)*
 
 `-r RANK, --rank=RANK`  
-*netMHCpan rank cutoff (optional, default: FALSE)*
+*netMHCpan rank cutoff (optional, default is model cutoff - suggested is 2.8 ~500nM for A\*02:01)*
 
 `-p PROCESSING, --processing=PROCESSING`  
 *netChop processing score cutoff (optional, default: >= 0.5)*
