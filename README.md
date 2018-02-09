@@ -12,9 +12,9 @@ As input, the pipeline expects a tsv file with affected germline and tumor trans
 
 ### Minimal usage example
 
-`Rscript performPredictions.R -f /path/to/variants.tsv -m A0201 -l 9`
+`Rscript performPredictions.R -f /path/to/variants.tsv -m A0201 -d 0.02 -l 9`
 
-The call should be run from the neolution script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__ and **9-mer** peptides. 
+The call should be run from the neolution script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__, **9-mer** peptides, applying a model prediction cutoff score of 0.02. 
 
 **By default, netMHCpan v4.0 will be used and 1/6th of the available cores are used per run for parallel computations.  
 Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cores)!!**
@@ -27,22 +27,20 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 1. full input file path
 2. hla/mhc type (e.g. A0201)
-3. peptide length (e.g. 9) 
+3. model prediction or affinity(rank) cutoff value
+4. peptide length (e.g. 9) 
 
 #### Optional
 
-1. Random forest model score cutoff
-2. netMHCpan affinity cutoff
-3. netMHCpan rank cutoff
-4. netChop processing cutoff
-5. RNA expression cutoff
-6. single sequence input (fasta input: not paired tumor-normal, no rna expression)
-7. structural variant predictions
-8. simple self-similarity check (9-, 10-, 11-mers)
-9. extended self-similarity check (9-mers only)
-10. use self-epitope list
-11. use database for peptide affinity lookups (9-mers, netMHCpan-2.4 only)
-12. netMHCpan version
+1. netChop processing cutoff
+2. RNA expression cutoff
+3. single sequence input (fasta input: not paired tumor-normal, no rna expression)
+4. structural variant predictions
+5. simple self-similarity check (9-, 10-, 11-mers)
+6. extended self-similarity check (9-mers only)
+7. use self-epitope list
+8. use database for peptide affinity lookups (9-mers, netMHCpan-2.4 only)
+9. netMHCpan version
 
 **NOTE: self-similarity checking requires predicted self-epitope lists of matching HLA & peptide length**
 
@@ -87,13 +85,13 @@ Required input format is a wide, tab-separated table with the following columns.
 *Peptide length (required)*
 
 `-d MODEL, --model=MODEL`  
-*Random forest model score cutoff (optional, default: >= 0.02)*
-
-`-a AFFINITY, --affinity=AFFINITY`  
-*netMHCpan affinity cutoff (optional, default is model cutoff)*
+*Random forest model score cutoff (optional, suggested cutoff 0.02 for PBMC, 0.01 for TIL screens)*
 
 `-r RANK, --rank=RANK`  
-*netMHCpan rank cutoff (optional, default is model cutoff - suggested is 2.8 ~500nM for A\*02:01)*
+*netMHCpan rank cutoff (optional, suggested is 2.8 ~500nM for A\*02:01)*
+
+`-a AFFINITY, --affinity=AFFINITY`  
+*netMHCpan affinity cutoff (optional)*
 
 `-p PROCESSING, --processing=PROCESSING`  
 *netChop processing score cutoff (optional, default: >= 0.5)*
