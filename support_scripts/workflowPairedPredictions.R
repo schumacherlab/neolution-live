@@ -178,7 +178,11 @@ performPairedSequencePredictions = function() {
              old = c(paste0('tumor_', runParameters$allele, 'percentile_rank'), 'tumor_processing_score', 'rna_expression'),
              new = c('affMIN', 'chop', 'rna'))
 
-    epitopePredictionsAll[, model_prediction := predict(model_rna, epitopePredictionsAll, type = 'prob')[, 'yes']]
+    rfModelPrediction = predict(model_rna, epitopePredictionsAll, type = 'prob', na.action = 'na.pass')[, 'yes']
+
+    if (nrow(epitopePredictionsAll) != length(rfModelPrediction)) stop('Random forest output length unequal to input')
+
+    epitopePredictionsAll[, model_prediction := rfModelPrediction]
 
     setnames(x = epitopePredictionsAll,
              old = c('affMIN', 'chop', 'rna'),
@@ -189,19 +193,21 @@ performPairedSequencePredictions = function() {
   if (runParameters$use_rfModel & is.numeric(epitopePredictionsAll$model_prediction) & is.numeric(epitopePredictionsAll$rna_expression)) {
     epitopePredictionsWithFiltersApplied = epitopePredictionsAll[model_prediction >= runParameters$model &
                                                                    (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE)]
-  } else if ('rna_expression' %in% names(variantInfo)) {
+  } else if ((is.numeric(runParameters$rank) | is.numeric(runParameters$affinity)) & 'rna_expression' %in% names(variantInfo)) {
     epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
                                                 subset = switch(as.character(is.numeric(runParameters$rank)),
                                                                 'TRUE' = epitopePredictionsAll[[paste0('tumor_', runParameters$allele, 'percentile_rank')]] <= runParameters$rank,
                                                                 'FALSE' = epitopePredictionsAll[[paste0('tumor_', runParameters$allele, 'affinity')]] <= runParameters$affinity) &
                                                   tumor_processing_score >= runParameters$processing &
                                                   (rna_expression > runParameters$expression | is.na(rna_expression) == TRUE))
-  } else {
+  } else if (is.numeric(runParameters$rank) | is.numeric(runParameters$affinity)) {
     epitopePredictionsWithFiltersApplied = subset(x = epitopePredictionsAll,
                                                   subset = switch(as.character(is.numeric(runParameters$rank)),
                                                                   'TRUE' = epitopePredictionsAll[[paste0('tumor_', runParameters$allele, 'percentile_rank')]] <= runParameters$rank,
                                                                   'FALSE' = epitopePredictionsAll[[paste0('tumor_', runParameters$allele, 'affinity')]] <= runParameters$affinity) &
                                                     tumor_processing_score >= runParameters$processing)
+  } else {
+    stop('Not enough runParameters defined to apply cutoffs')
   }
 
   # if needed, determine self-sim
