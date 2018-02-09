@@ -128,7 +128,7 @@ if (is.null(commandlineArguments$length)) {
   q(status = 1)
 }
 
-if (is.numeric(commandlineArguments$affinity)) {
+if (is.numeric(commandlineArguments$affinity) | is.null(commandlineArguments$affinity)) {
   runParameters$affinity = commandlineArguments$affinity
 } else {
   message("Affinity cutoff input (-a or --affinity) should be numeric, use -h for help")
