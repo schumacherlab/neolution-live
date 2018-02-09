@@ -57,7 +57,7 @@ processVariants = function(sid, variants) {
       variants[, c('codon_ref', 'aa_ref', 'aa_pos_ref', 'protein_seq_ref') := NULL]
 
       setnames(x = variants,
-               old = c('protein_seq_germline', 'protein_seq_tumor', grep('fpkm|tpm', names(variants), ignore.case = T, value = T)),
+               old = c('protein_seq_germline', 'protein_seq_tumor', grep('fpkm|tpm|expression', names(variants), ignore.case = T, value = T)),
                new = c('peptidecontextnormal', 'peptidecontexttumor', 'rna_expression'))
 
       # don't take SNP lines along (variants are already applied in lines with tumor-specific variants)
