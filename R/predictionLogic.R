@@ -66,11 +66,11 @@ performParallelPredictions <- function(peptides, peptidestretch, allele,
     } else {
       predictions <- emptyTableWithColumnNamesAndColumnClasses(
         colnames = c(names(peptides), "xmer", "hla_allele",
-          paste0(allele, 'affinity'), 
-          paste0(allele, 'percentile_rank'), 
+          paste0(allele, 'affinity'),
+          paste0(allele, 'percentile_rank'),
           'c_term_aa', 'processing_score'),
-        colclasses = c(unlist(lapply(peptides, class), 
-            use.names = FALSE), 
+        colclasses = c(unlist(lapply(peptides, class),
+            use.names = FALSE),
           'numeric', 'character', 'numeric', 'numeric', 'character', 'numeric'))
     }
   }
@@ -88,21 +88,21 @@ performAffinityPredictions <- function(
     if (is.na(allele)) {
       # hla_allele   peptide A0201affinity A0201percentile_rank
       # HLA-A*02:01 CCGSSSGGS         44368                   85
-      dtf <- data.table('hla_allele' = as.character(NA), 'peptide' = peptides, 
+      dtf <- data.table('hla_allele' = as.character(NA), 'peptide' = peptides,
         'NAaffinity' = as.numeric(NA), 'NApercentile_rank' = as.numeric(NA))
       return(dtf)
     }
     randomString <- sample(c(letters, LETTERS), size = 8, replace = T) %>%
       paste(collapse = '')
 
-    dir.create(file.path(runParameters$temporaryDirectoryPath, 
+    dir.create(file.path(runParameters$temporaryDirectoryPath,
         randomString))
 
     # write peptides to disk in temp dir
     invisible(sapply(seq(1, length(peptides), 1),
         function(x)
           write(x = sprintf('%s', peptides[x]),
-            file = file.path(runParameters$temporaryDirectoryPath, 
+            file = file.path(runParameters$temporaryDirectoryPath,
               randomString, paste0(randomString, '_peps.fas')),
             append = TRUE,
             sep = "\n")))
@@ -116,7 +116,7 @@ performAffinityPredictions <- function(
                          x = allele),
         ' -l ', peptidelength,
         ' -p ',
-        ' -f ', file.path(runParameters$temporaryDirectoryPath, 
+        ' -f ', file.path(runParameters$temporaryDirectoryPath,
           randomString, paste0(randomString, '_peps.fas')),
         if (runParameters$panversion >= 4) paste(' -BA'))
     } else {
@@ -127,27 +127,27 @@ performAffinityPredictions <- function(
                          x = allele),
         ' -l ', peptidelength,
         ' -p ',
-        ' -f ', file.path(runParameters$temporaryDirectoryPath, 
+        ' -f ', file.path(runParameters$temporaryDirectoryPath,
           randomString, paste0(randomString, '_peps.fas')),
-        ' -tdir ', file.path(runParameters$temporaryDirectoryPath, 
+        ' -tdir ', file.path(runParameters$temporaryDirectoryPath,
           randomString),
         ' -ic50')
     }
 
     output <- system(command = command, intern = TRUE)
 
-    file.remove(file.path(runParameters$temporaryDirectoryPath, 
+    file.remove(file.path(runParameters$temporaryDirectoryPath,
         randomString, paste0(randomString, '_peps.fas')))
-    file.remove(file.path(runParameters$temporaryDirectoryPath, 
+    file.remove(file.path(runParameters$temporaryDirectoryPath,
         randomString))
 
-    dtf <- processPredictionOutput(output, allele, 
+    dtf <- processPredictionOutput(output, allele,
       runParameters = runParameters)
   }
 
   dtf <- subset(x = dtf,
     select = colnames(dtf[, -dropNa(match(
-          x = c('position', 'variant_id', 'peptide_score_log50k', 
+          x = c('position', 'variant_id', 'peptide_score_log50k',
             'peptide_core', 'Of', 'Gp', 'Gl', 'Ip', 'Il', 'Icore'),
           table = names(dtf))),
       with = FALSE]))
@@ -155,7 +155,7 @@ performAffinityPredictions <- function(
 }
 
 
-processPredictionOutput <- function(raw_output, allele, 
+processPredictionOutput <- function(raw_output, allele,
   runParameters) {
   ## Regex the raw netMHC output
   raw_output <- raw_output[-grep(pattern = "^\\#.+|^\\-.+|^Protein.+|pos.+|^HLA.+|^$",
@@ -213,8 +213,8 @@ performProcessingPredictions <- function(
   fasta_fn <- tempfile(fileext = '.fasta', tmpdir = tmp_dir)
   write(x = sprintf(">1\n%s", peptidestretch),
     file = fasta_fn, append = F, sep = "\n")
-  output <- paste('python', '/home/m.slagter/libs/netchop/predict.py', 
-    '--threshold', processing_threshold, '--method netchop --noplot', 
+  output <- paste(runParameters$netChop, '--threshold',
+    processing_threshold, '--method netchop --noplot',
     fasta_fn) %>%
     system(intern = T)
   unlink(tmp_dir, recursive = T)

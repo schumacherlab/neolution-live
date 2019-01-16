@@ -8,5 +8,5 @@ Depends: R (>= 3.0.0), data.table, dtplyr, dplyr
 License: BSD
 LazyData: true
 Imports: gdata, ggthemes, ggplot2 (>= 2.2.0), grid, gridExtra, plyr,
-  tools, Matrix, NMF, utils, dplyr, purrr
+  tools, Matrix, NMF, utils, dplyr, purrr, yaml
 Suggests: testthat

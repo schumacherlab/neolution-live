@@ -1,0 +1,5 @@
+netChop: python /path/to/netchop/predict.py
+netMHCpan: /path/to/netMHCpan
+selfEpitopeListPath: /path/to/neolution_selflists
+randomForestModelPath: /path/to/neolution/data-raw/rf_model.RData
+temporaryDirectoryPath: /path/to/NetMHCtmp

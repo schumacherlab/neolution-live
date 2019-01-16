@@ -14,7 +14,7 @@ processDocOpt <- function(commandlineArguments) {
   ## TODO make output file configurable
   runParameters$allele <- toupper(commandlineArguments$mhc)
   runParameters$logfile <- commandlineArguments$logfile
-  runParameters$peptidelength <- 
+  runParameters$peptidelength <-
     suppressWarnings(as.integer(commandlineArguments$length))
   runParameters$debug <-
     suppressWarnings(as.logical(commandlineArguments$debug))
@@ -22,15 +22,15 @@ processDocOpt <- function(commandlineArguments) {
     suppressWarnings(as.logical(commandlineArguments$copyinput))
   runParameters$affinity <-
     suppressWarnings(as.numeric(commandlineArguments$affinity))
-  runParameters$rank <- 
+  runParameters$rank <-
     suppressWarnings(as.numeric(commandlineArguments$rank))
-  runParameters$ncores <- 
+  runParameters$ncores <-
     suppressWarnings(as.integer(commandlineArguments$ncores))
   runParameters$single_sequence <-
     suppressWarnings(as.logical(commandlineArguments$single))
   runParameters$structural_variants <-
     suppressWarnings(as.logical(commandlineArguments$structural))
-  runParameters$model <- 
+  runParameters$model <-
     suppressWarnings(as.numeric(commandlineArguments$model))
   runParameters$use_rfModel <- !is.na(runParameters$model)
   runParameters$processing <-
@@ -47,35 +47,52 @@ processDocOpt <- function(commandlineArguments) {
     suppressWarnings(as.numeric(commandlineArguments$panversion))
   runParameters$verbose <-
     suppressWarnings(as.logical(commandlineArguments$verbose))
-    
 
-  data_path <- '/DATA'
-  ## TODO make paths these configurable
-  runParameters$netChop <- file.path(data_path, 'resources', 'predictors',
-    'netchop-3.1', 'bin', 'netChop')
-  runParameters$netMHCpan <- file.path(data_path, 'resources', 'predictors', 
-    paste0('netMHCpan-', format(runParameters$panversion, nsmall = 1)), 
-    'netMHCpan')
+  ## List all potential config dirs
+  potential_config_locs <- 
+    c(getwd(),
+      '~/.config',
+      file.path('~/libs', 'neolution-live'),
+      file.path('~/libs', 'neolution'),
+      sapply(.libPaths(), function(p_dir) file.path(p_dir, 'neolution-live')),
+      sapply(.libPaths(), function(p_dir) file.path(p_dir, 'neolution')))
+
+  config_fn <-
+    sapply(potential_config_locs, list.files, pattern = 'neolution_config.yaml',
+    full.names = T) %>%
+    .[sapply(., length) == 1] %>%
+    .[[1]]
+
+  if (is.null(config_fn) || is.na(config_fn) || length(config_fn) == 0) {
+    stop('Could not find a neolution_config.yaml anywhere')
+  }
+
+  config <- yaml::read_yaml(config_fn)
+  runParameters$netChop <- path.expand(config[['netChop']])
   stopifnot(file.exists(runParameters$netMHCpan))
+  runParameters$netMHCpan <- path.expand(config[['netMHCpan']])
   stopifnot(file.exists(runParameters$netChop))
+  runParameters$selfEpitopeListPath <- 
+    path.expand(config[['selfEpitopeListPath']])
+  stopifnot(dir.exists(runParameters$selfEpitopeListPath))
+  runParameters$randomForestModelPath <- 
+    path.expand(config[['randomForestModelPath']])
+  stopifnot(file.exists(runParameters$randomForestModelPath))
+  runParameters$temporaryDirectoryPath <- 
+    path.expand(config[['temporaryDirectoryPath']])
+  stopifnot(dir.exists(runParameters$temporaryDirectoryPath))
 
-  runParameters$selfEpitopeListPath <- file.path(data_path, 'resources',
-    'neolution_selflists')
-  runParameters$randomForestModelPath <- './resources/rf_model.RData'
-  runParameters$temporaryDirectoryPath <- file.path(data_path, 'NetMHCtmp')
-
-
-  runParameters <- lapply(runParameters, 
+  runParameters <- lapply(runParameters,
     function(x) {
-      if (class(x) == 'character' && x == 'NA') return(NA) 
+      if (class(x) == 'character' && x == 'NA') return(NA)
       else return(x)
     })
 
   if (file.exists(runParameters$file)) {
     runParameters$filename <- basename(runParameters$file)
-    runParameters$filename_no_ext <- 
-      substring(text = runParameters$filename, 
-        first = 1, last = max(unlist(gregexpr(pattern = ".", 
+    runParameters$filename_no_ext <-
+      substring(text = runParameters$filename,
+        first = 1, last = max(unlist(gregexpr(pattern = ".",
             text = runParameters$filename, fixed = TRUE))) - 1)
     if (is.null(runParameters$filepath))
       runParameters$filepath <- dirname(runParameters$file)
@@ -85,7 +102,7 @@ processDocOpt <- function(commandlineArguments) {
 
   if (!is.na(runParameters$allele) && nchar(runParameters$allele) != 5) {
     message('MHC/HLA input should be formatted as follows: A0201')
-  } 
+  }
 
   if (runParameters$peptidelength < 8 || runParameters$peptidelength > 11) {
     message('Peptide length input (-l or --length) should be >=8 and <= 11')
@@ -93,13 +110,13 @@ processDocOpt <- function(commandlineArguments) {
 
   if (runParameters$simple_selfsim && runParameters$extended_selfsim) {
     message("Please choose ONE type of self-similarity check, use -h for help")
-  } 
-  
+  }
+
   if (runParameters$extended_selfsim && runParameters$peptidelength != 9) {
     message("Extended selfsim can only be used for 9-mers, use -h for help")
-  } 
+  }
 
-  if (runParameters$single_sequence && 
+  if (runParameters$single_sequence &&
       (runParameters$simple_selfsim || runParameters$extended_selfsim) &&
       !runParameters$selflist) {
     message(paste('Self-similarity check on single sequences can only be',
