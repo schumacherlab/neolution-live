@@ -1,5 +1,4 @@
-readFastaFile = function(file) {
-  # read data
+readFastaFile <- function(file) {
   lines = readLines(file)
 
   if (length(lines) < 1) {
@@ -27,15 +26,15 @@ readFastaFile = function(file) {
   seqnames = sapply(seq_len(nseq), function(i) gsub(pattern = "^> *", replacement = "", x = lines[ind[i]]))
 
   # put in a table
-  table = data.table(sequence_id = seqnames, sequence = sequences)
-  table$sequence = gsub(pattern = "\\*[A-Z*]*",
+  dtf = data.table(sequence_id = seqnames, sequence = toupper(sequences))
+  dtf$sequence = gsub(pattern = "\\*[A-Z*]*",
                         replacement = "",
-                        x = table$sequence)
+                        x = dtf$sequence)
 
-  return(table)
+  return(dtf)
 }
 
-processVariants = function(sid, variants) {
+processVariants <- function(sid, variants, runParameters) {
   if (runParameters$verbose) message('Processing variants')
 
   # determine if there is any RNA expression data
