@@ -1,6 +1,6 @@
 gen_pep_table <- function(N_start_residues, context, peptidelength, sequences) {
   if (N_start_residues <= 0) {
-    return(data.table)
+    return(data.table())
   }
 
   dtf <- data.table(
@@ -36,26 +36,6 @@ buildPeptideList <- function(sequences, peptidelength, runParameters) {
       dtf <- data.table()
     }
     return(dtf)
-  } else if (runParameters$structural_variants == FALSE) {
-    ## Determine how many peptides can be made
-    N_residues_normal <- stringr::str_length(sequences$peptidecontextnormal)
-    N_residues_tumor <- stringr::str_length(sequences$peptidecontexttumor)
-    N_normal <- N_residues_normal - (peptidelength - 1)
-    N_tumor <- N_residues_tumor - (peptidelength - 1)
-    normal <- gen_pep_table(N_normal, sequences$peptidecontextnormal,
-      peptidelength, sequences)
-    tumor <- gen_pep_table(N_tumor, sequences$peptidecontexttumor,
-      peptidelength, sequences)
-
-    ## select tumor peptides != normal peptides; select corresponding normal
-    ## peptides (NOTE: in case of ins or dels corresponding normal peptide will
-    ## likely be wrong)
-    idxs <- tumor$peptide %ni% normal$peptide
-    normal_idxs <-
-      match(x = tumor$c_term_pos, table = normal$c_term_pos, nomatch = FALSE)
-    tumor <- tumor[idxs]
-    normal <- normal[normal_idxs]
-    return(list(normal, tumor))
   } else if (runParameters$structural_variants) {
     # determine how many peptides can be made
     n_normal_a <- nchar(sequences$a_full_aa_seq) - (peptidelength - 1)
@@ -111,6 +91,29 @@ buildPeptideList <- function(sequences, peptidelength, runParameters) {
     tumor = tumor[tumor$peptide %ni% c(normal_a$peptide, normal_b$peptide)]
 
     return(list(list(normal_a, normal_b), list(tumor)))
+  } else if (!runParameters$structural_variants) {
+    ## Determine how many peptides can be made
+    N_residues_normal <- stringr::str_length(sequences$peptidecontextnormal)
+    N_residues_tumor <- stringr::str_length(sequences$peptidecontexttumor)
+    N_normal <- N_residues_normal - (peptidelength - 1)
+    N_tumor <- N_residues_tumor - (peptidelength - 1)
+    normal_dat <- gen_pep_table(N_normal, sequences$peptidecontextnormal,
+      peptidelength, sequences)
+    tumor_dat <- gen_pep_table(N_tumor, sequences$peptidecontexttumor,
+      peptidelength, sequences)
+
+    if (maartenutils::null_dat(tumor_dat)) 
+      return(list(data.table(), data.table()))
+
+    ## select tumor peptides != normal peptides; select corresponding normal
+    ## peptides (NOTE: in case of ins or dels corresponding normal peptide will
+    ## likely be wrong)
+    idxs <- tumor_dat$peptide %ni% normal_dat$peptide
+    normal_idxs <-
+      match(x = tumor_dat$c_term_pos, table = normal_dat$c_term_pos, nomatch = FALSE)
+    tumor_dat <- tumor_dat[idxs]
+    normal_dat <- normal_dat[normal_idxs]
+    return(list(normal_dat, tumor_dat))
   }
 }
 
@@ -172,7 +175,6 @@ findVariantsContributingToEpitope <- function(predicted_variants, all_variants,
           data <- data.table(contributing_variants = contributing_variants,
             contributing_aa_pos_tumor = contributing_aa_pos_tumor)
         }
-
         return(data)
       })
     return(contributing_variant_info)

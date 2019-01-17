@@ -17,13 +17,12 @@ Options:
   --rank=<rank>                  netMHCpan percentile rank cutoff [default: 1.9].
   --model=<model>                Random forest prediction model cutoff, optional suggested cutoff 0.02 for PBMC 0.01 for TIL screens [default: NA].
   --expression=<expression>      RNA expression cutoff [default: NA].
-  --single=<single>              Single sequence predictions, not paired normal-tumor [default: FALSE].
-  --structural=<structural>      Structural variant predictions [default: FALSE].
+  --run_mode=<run_mode>          Type of predictions to be done [default: paired].
   --selfsim=<selfsim>            Perform simple self-similarity check; compatible with 9- 10- 11-mers [default: FALSE].
   --extselfsim=<extselfsim>      Perform extended self-similarity check; only compatible with 9-mers [default: FALSE].
   --selflist=<selflist>          Add predicted self-epitopes to self-similarity check requires length- & HLA-matched selflist [default: FALSE].
   --panversion=<panversion>      netMHCpan version [default: 3].
-  --debug=<debug>                Run Neolution in debugging mode [default: FALSE].
+  --debug                        Run Neolution in debugging mode [default: FALSE].
   --copyinput=<copyinput>        Copy parsed input files [default: FALSE].
   --logfile=<logfile>            When defined write messages to this filename [default: NA].
   --verbose=<verbose>            Be chatty [default: TRUE].
@@ -31,8 +30,11 @@ Options:
   --usage                        Show help and short example usage." -> doc
 
 
-devtools::load_all('~/libs/neolution')
+# script_dir <- dirname(sys.frame(1)$ofile)
+script_dir <- '~/libs/neolution'
+suppressWarnings(suppressMessages(devtools::load_all(script_dir)))
 runParameters <- processDocOpt(docopt(doc))
+
 performPredictions(runParameters = runParameters, unique_cols = NULL)
 
-# vim: set ft=r
+# vim: set ft=r:

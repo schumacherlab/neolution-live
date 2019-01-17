@@ -4,9 +4,8 @@ Version: 0.1.0.0
 Authors@R: person("Lorenzo", "Fanchi", email = "l.fanchi@nki.nl", role = c("aut", "cre"))
 Maintainers@R: person("Maarten", "Slagter", email = "slagter.maarten@gmail.com", role = c("aut", "cre"))
 Description: Neo-antigen prediction functionality developed mostly by Lorenzo and ported to a more modular R package by Maarten
-Depends: R (>= 3.0.0), data.table, dtplyr, dplyr
+Depends: R (>= 3.0.0), data.table, dplyr
 License: BSD
 LazyData: true
-Imports: gdata, ggthemes, ggplot2 (>= 2.2.0), grid, gridExtra, plyr,
-  tools, Matrix, NMF, utils, dplyr, purrr, yaml
+Imports: plyr, yaml, maartenutils, stringr, parallel, compiler
 Suggests: testthat

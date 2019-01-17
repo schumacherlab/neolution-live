@@ -37,9 +37,9 @@ performSingleSequencePredictions <- function(runParameters,
     message('Performing predictions, this may take a while..')
   }
 
-  if (runParameters$ncores > 1) {
-    doParallel::registerDoParallel(runParameters$ncores)
-  }
+  # if (runParameters$ncores > 1) {
+  #   doParallel::registerDoParallel(cores = runParameters$ncores)
+  # }
 
   ## for each sequence line, make list of peptides and make vector containing
   ## sequence peptide stretches
@@ -71,7 +71,7 @@ performSingleSequencePredictions <- function(runParameters,
       peptidelength = runParameters$peptidelength)
 
     return(affinityAndProcessingPredictions)
-  }, .parallel = runParameters$ncores > 1)
+  }, .parallel = F && (runParameters$ncores > 1))
 
   ## Bind all predictions into one table
   epitopePredictionsAll <- rbindlist(epitopePredictions, use.names = TRUE,
@@ -95,7 +95,7 @@ performSingleSequencePredictions <- function(runParameters,
     if (runParameters$verbose) message('Applying random forest model')
 
     # apply random forest model to all predictions
-    model = get(load())
+    model = get(load(runParameters$rf_model))
 
     setnames(x = epitopePredictionsAll,
       old = c(paste0(runParameters$allele, 'percentile_rank'),

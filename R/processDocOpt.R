@@ -18,18 +18,17 @@ processDocOpt <- function(commandlineArguments) {
     suppressWarnings(as.integer(commandlineArguments$length))
   runParameters$debug <-
     suppressWarnings(as.logical(commandlineArguments$debug))
+  runParameters$copyinput <- commandlineArguments$copyinput %||% F
   runParameters$copyinput <-
-    suppressWarnings(as.logical(commandlineArguments$copyinput))
+    suppressWarnings(as.logical(runParameters$copyinput))
   runParameters$affinity <-
     suppressWarnings(as.numeric(commandlineArguments$affinity))
   runParameters$rank <-
     suppressWarnings(as.numeric(commandlineArguments$rank))
   runParameters$ncores <-
     suppressWarnings(as.integer(commandlineArguments$ncores))
-  runParameters$single_sequence <-
-    suppressWarnings(as.logical(commandlineArguments$single))
-  runParameters$structural_variants <-
-    suppressWarnings(as.logical(commandlineArguments$structural))
+  runParameters$run_mode <- match.arg(commandlineArguments$run_mode, 
+    choices = c('single', 'structural', 'paired'), several.ok = F)
   runParameters$model <-
     suppressWarnings(as.numeric(commandlineArguments$model))
   runParameters$use_rfModel <- !is.na(runParameters$model)
@@ -59,7 +58,7 @@ processDocOpt <- function(commandlineArguments) {
 
   config_fn <-
     sapply(potential_config_locs, list.files, pattern = 'neolution_config.yaml',
-    full.names = T) %>%
+      full.names = T) %>%
     .[sapply(., length) == 1] %>%
     .[[1]]
 
@@ -69,9 +68,8 @@ processDocOpt <- function(commandlineArguments) {
 
   config <- yaml::read_yaml(config_fn)
   runParameters$netChop <- path.expand(config[['netChop']])
-  stopifnot(file.exists(runParameters$netMHCpan))
   runParameters$netMHCpan <- path.expand(config[['netMHCpan']])
-  stopifnot(file.exists(runParameters$netChop))
+  stopifnot(file.exists(runParameters$netMHCpan))
   runParameters$selfEpitopeListPath <- 
     path.expand(config[['selfEpitopeListPath']])
   stopifnot(dir.exists(runParameters$selfEpitopeListPath))
@@ -84,7 +82,7 @@ processDocOpt <- function(commandlineArguments) {
 
   runParameters <- lapply(runParameters,
     function(x) {
-      if (class(x) == 'character' && x == 'NA') return(NA)
+      if (!is.na(x) && class(x) == 'character' && x == 'NA') return(NA)
       else return(x)
     })
 
@@ -116,7 +114,7 @@ processDocOpt <- function(commandlineArguments) {
     message("Extended selfsim can only be used for 9-mers, use -h for help")
   }
 
-  if (runParameters$single_sequence &&
+  if (runParameters$run_mode == 'single' &&
       (runParameters$simple_selfsim || runParameters$extended_selfsim) &&
       !runParameters$selflist) {
     message(paste('Self-similarity check on single sequences can only be',

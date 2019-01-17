@@ -47,7 +47,7 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
 
   columnClassesEmptyTable <- c(
     sapply(variantInfo, class) %>%
-      .[names(.) %nin% c('peptidecontextnormal', 'peptidecontexttumor')] %>%
+      .[names(.) %ni% c('peptidecontextnormal', 'peptidecontexttumor')] %>%
       setNames(NULL),
     'numeric', 'character', 'numeric', 'character', 'character', 'numeric',
     'numeric', 'numeric', 'character', 'character', 'numeric', 'numeric',
@@ -90,9 +90,13 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
   ## For each variant line, make list tumor peptides which are different from
   ## normal (and corresponding normal peptides) and make vector containing
   ## normal and tumor peptide stretches
-  epitopePredictions <- plyr::llply(1:nrow(variantInfo), function(i) {
-    mymessage(sprintf('Processing peptides related to variant %d/%d', 
-        i, nrow(variantInfo)), instance = 'epitopePredictions')
+  # epitopePredictions <- plyr::llply(1:nrow(variantInfo), function(i) {
+  epitopePredictions <- lapply(1:nrow(variantInfo), function(i) {
+    maartenutils::mymessage(
+      sprintf('Processing peptides related to variant %d/%d', 
+        i, nrow(variantInfo)), 
+      instance = 'epitopePredictions')
+    # if (i == 9) browser()
 
     peptideList <- buildPeptideList(sequences = variantInfo[i, ],
       peptidelength = runParameters$peptidelength, 
@@ -106,7 +110,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
     }
 
     ## Do predictions for all peptides
-    normalAndTumorPredictions <- plyr::llply(1:2, function(k) {
+    # normalAndTumorPredictions <- plyr::llply(1:2, function(k) {
+    normalAndTumorPredictions <- lapply(1:2, function(k) {
       l_peptidestretch <- 
         ifelse(k == 1, 'peptidecontextnormal', 'peptidecontexttumor')
 
@@ -144,6 +149,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
         colnames = columnNamesEmptyTable, colclasses = columnClassesEmptyTable)
     }
     return(mergedPredictions)
+  # }, .parallel = (runParameters$ncores > 1))
+  # }, .parallel = F)
   })
 
   ## Bind all relevant predictions into one table
@@ -226,11 +233,7 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
     intersect(col_names, colnames(epitopePredictionsAll)))
 
   if (runParameters$verbose) {
-    message('Writing predictions to disk')
-  }
-
-  if (runParameters$debug) {
-    print(head(epitopePredictionsAll))
+    maartenutils::mymessage('Writing predictions to disk')
   }
 
   ## write predictions to disk

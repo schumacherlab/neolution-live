@@ -208,7 +208,7 @@ performProcessingPredictions <- function(
   tmp_dir <- file.path(temp_root, random_string)
   dir.create(tmp_dir, showWarnings = T)
   stopifnot(dir.exists(tmp_dir))
-  system(sprintf('chmod 777 %s', tmp_dir))
+  system(sprintf('chmod 777 %s', tmp_dir), wait = T)
 
   fasta_fn <- tempfile(fileext = '.fasta', tmpdir = tmp_dir)
   write(x = sprintf(">1\n%s", peptidestretch),

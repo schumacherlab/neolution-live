@@ -10,6 +10,7 @@ messageOptions <- function(runParameters) {
       paste(runParameters$filepath, runParameters$filename, sep = '/'), '\n',
       'MHC/HLA allele:', runParameters$allele, '\n',
       'Peptide length:', runParameters$peptidelength, '\n',
+      'Number of cores:', runParameters$ncores, '\n',
       if (is.numeric(runParameters$model)) {
         paste('Model cutoff:', runParameters$model, '\n')
       } else if (is.numeric(runParameters$rank)) {
@@ -23,9 +24,7 @@ messageOptions <- function(runParameters) {
         paste('Expression cutoff:', runParameters$expression, '\n')
       },
       'Use random forest model:', runParameters$use_rfModel, '\n',
-      'Single seq predictions:', runParameters$single_sequence, '\n',
-      'Structural variants:', runParameters$structural_variants, '\n',
-      'Simple self-similarity:', runParameters$simple_selfsim, '\n',
+      'Runmode:', runParameters$run_mode, '\n',
       'Extended self-similarity:', runParameters$extended_selfsim, '\n',
       'Use self-epitope list:', runParameters$use_selflist, '\n',
       'Branch:', system('git symbolic-ref --short -q HEAD',
@@ -39,10 +38,6 @@ performPredictions <- function(
   runParameters = read_command_line(),
   unique_cols = c('peptide', paste0(runParameters$allele, 'affinity'),
       'processing_score')) {
-
-  # check availability of predictors
-  checkPredictorPaths(paths = c(runParameters$netMHCpan, runParameters$netChop),
-    runParameters = runParameters)
 
   candidate_dirs <- c('output')
   if (runParameters$copyinput) {
@@ -68,17 +63,15 @@ performPredictions <- function(
     maartenutils::mymessage('Performing predictions, this may take a while..')
   }
 
-  if (runParameters$single_sequence) {
+  if (runParameters$run_mode == 'single') {
     performSingleSequencePredictions(runParameters = runParameters,
       unique_cols = unique_cols)
-  } else {
-    if (runParameters$structural_variants) {
-      performStructuralVariantPredictions(runParameters = runParameters,
-        unique_cols = unique_cols)
-    } else {
-      performPairedSequencePredictions(runParameters = runParameters,
-        unique_cols = unique_cols)
-    }
+  } else if (runParameters$run_mode == 'structural') {
+    performStructuralVariantPredictions(runParameters = runParameters,
+      unique_cols = unique_cols)
+  } else if (runParameters$run_mode == 'paired') {
+    performPairedSequencePredictions(runParameters = runParameters,
+      unique_cols = unique_cols)
   }
   maartenutils::mymessage(x = paste0(Sys.time(),' - Neolution run finished'))
 }

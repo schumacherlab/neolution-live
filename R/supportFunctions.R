@@ -1,7 +1,18 @@
-# define negation of %in% operator, returns logical vector for 'NOT IN'
-'%ni%' = Negate('%in%')
+#' Inverse of %in% operator, returns logical vector for 'NOT IN'
+#'
+#'
+`%ni%` <- Negate('%in%')
 
-# drop NA from vector
+
+#' Inverse of %in% operator, returns logical vector for 'NOT IN'
+#'
+#'
+`%||%` <- function(a, b) if (is.null(a)) return(b) else return(a)
+
+
+#' Drop NA from vector
+#' 
+#' 
 dropNa <- function(vector) { vector[!is.na(vector)] }
 
 
@@ -60,19 +71,6 @@ multiMixedOrder <- function(..., na.last = TRUE, decreasing = FALSE) {
     }),
     list(na.last = na.last, decreasing = decreasing)
   ))
-}
-
-
-#' Check for presence of all predictors
-#'
-#'
-checkPredictorPaths <- function(paths, runParameters) {
-  for (fn in paths) {
-    if (!file.exists(fn)) {
-      stopf('Predictor %s not found', fn)
-    }
-  }
-  invisible()
 }
 
 
