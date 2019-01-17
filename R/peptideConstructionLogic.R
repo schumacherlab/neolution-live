@@ -1,25 +1,54 @@
 gen_pep_table <- function(N_start_residues, context, peptidelength, sequences) {
   if (N_start_residues <= 0) {
-    return(data.table())
+    return(NULL)
   }
 
-  dtf <- data.table(
-    peptide = vapply(seq(1, N_start_residues, by=1),
-      function(i) substr(x = context,
-        start = i, stop = i + (peptidelength - 1)), character(1)))
-  dtf[, 'c_term_pos' :=
-    seq(from = peptidelength, to = nchar(context))]
-
-  dtf <- cbind(dtf,
-    sequences[, setdiff(colnames(sequences),
-      c('peptidecontextnormal', 'peptidecontexttumor')), with = F])
-
-  return(dtf)
+  context <- strsplit(context, "")[[1]]
+  peptide_seqs <- vapply(seq(1, N_start_residues), function(i) {
+    paste0(context[seq(i,i+(peptidelength-1))], collapse = '')
+  }, character(1))
+  return(peptide_seqs)
 }
 
 
 buildPeptideList <- function(sequences, peptidelength, runParameters) {
-  if (runParameters$single_sequence) {
+  if (runParameters$run_mode == 'paired') {
+    ## Determine how many peptides can be made
+    N_residues_normal <- stringr::str_length(sequences$peptidecontextnormal)
+    N_residues_tumor <- stringr::str_length(sequences$peptidecontexttumor)
+    N_normal <- N_residues_normal - (peptidelength - 1)
+    N_tumor <- N_residues_tumor - (peptidelength - 1)
+    if (N_tumor <= 0) return(NULL)
+    normal_seqs <- gen_pep_table(N_normal, sequences$peptidecontextnormal,
+      peptidelength, sequences)
+    tumor_seqs <- gen_pep_table(N_tumor, sequences$peptidecontexttumor,
+      peptidelength, sequences)
+
+    ## Filter down to tumor peptides that are not in the normal peptides
+    normal_similar_idxs <- match(tumor_seqs, normal_seqs, nomatch=0L)
+    tumor_seqs <- tumor_seqs[normal_similar_idxs == 0L]
+
+    if (is.null(tumor_seqs) || length(tumor_seqs) == 0L) return(NULL)
+
+    ## C terminal position is directly dependent upon the location of the
+    ## peptide within the vector of substrings
+    c_term_pos <- which(normal_similar_idxs == 0L) + peptidelength - 1L
+
+    ## Find corresponding normal sequence by position. If tumor_seqs is longer
+    ## than normal_seqs, take last entry of normal_seqs. This will obviously not
+    ## work as desired for indels
+    normal_seqs <- normal_seqs[pmin(which(normal_similar_idxs == 0L),
+      length(normal_seqs))]
+
+    ## Postphone cbind until the very last, as it's likely a rather expensive
+    ## operation
+    drop_cols <- c('peptidecontexttumor', 'peptidecontextnormal')
+    return(list(
+      'normal_dat' = cbind(sequences[, !drop_cols, with=FALSE], 
+        'peptide' = normal_seqs, 'c_term_pos' = c_term_pos), 
+      'tumor_dat' = cbind(sequences[, !drop_cols, with=FALSE], 
+        'peptide' = tumor_seqs, 'c_term_pos' = c_term_pos)))
+  } else if (runParameters$run_mode == 'single') {
     ## Determine how many peptides can be made
     N_residues <- stringr::str_length(sequences$sequence)
     N_seq <- N_residues - peptidelength + 1
@@ -36,7 +65,7 @@ buildPeptideList <- function(sequences, peptidelength, runParameters) {
       dtf <- data.table()
     }
     return(dtf)
-  } else if (runParameters$structural_variants) {
+  } else if (runParameters$run_mode == 'structural') {
     # determine how many peptides can be made
     n_normal_a <- nchar(sequences$a_full_aa_seq) - (peptidelength - 1)
     n_normal_b <- nchar(sequences$b_full_aa_seq) - (peptidelength - 1)
@@ -91,29 +120,6 @@ buildPeptideList <- function(sequences, peptidelength, runParameters) {
     tumor = tumor[tumor$peptide %ni% c(normal_a$peptide, normal_b$peptide)]
 
     return(list(list(normal_a, normal_b), list(tumor)))
-  } else if (!runParameters$structural_variants) {
-    ## Determine how many peptides can be made
-    N_residues_normal <- stringr::str_length(sequences$peptidecontextnormal)
-    N_residues_tumor <- stringr::str_length(sequences$peptidecontexttumor)
-    N_normal <- N_residues_normal - (peptidelength - 1)
-    N_tumor <- N_residues_tumor - (peptidelength - 1)
-    normal_dat <- gen_pep_table(N_normal, sequences$peptidecontextnormal,
-      peptidelength, sequences)
-    tumor_dat <- gen_pep_table(N_tumor, sequences$peptidecontexttumor,
-      peptidelength, sequences)
-
-    if (maartenutils::null_dat(tumor_dat)) 
-      return(list(data.table(), data.table()))
-
-    ## select tumor peptides != normal peptides; select corresponding normal
-    ## peptides (NOTE: in case of ins or dels corresponding normal peptide will
-    ## likely be wrong)
-    idxs <- tumor_dat$peptide %ni% normal_dat$peptide
-    normal_idxs <-
-      match(x = tumor_dat$c_term_pos, table = normal_dat$c_term_pos, nomatch = FALSE)
-    tumor_dat <- tumor_dat[idxs]
-    normal_dat <- normal_dat[normal_idxs]
-    return(list(normal_dat, tumor_dat))
   }
 }
 
