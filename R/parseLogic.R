@@ -163,7 +163,7 @@ processVariants <- function(sid, variants, runParameters) {
     }
   }
 
-  if (runParameters$structural_variants) {
+  if (runParameters$run_mode == 'structural') {
     variantssubset$fusion_aa_sequence = gsub(pattern = "\\*[A-Z*]*",
                                              replacement = "",
                                              x = variantssubset$fusion_aa_sequence)

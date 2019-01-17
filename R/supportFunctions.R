@@ -1,3 +1,12 @@
+regexPatterns <- list(
+  file_extension = '\\.[^.]+$', # match file extension (everything after last dot, inclusive)
+  snp_identifier = '[gr]s\\d+', # for matching SNPs
+  gs_identifier = 'gs\\d+', # for matching snps not found in dbSNP, keep boundless (no '^' or '$')
+  rs_identifier = 'rs\\d+', # for matching snps found in dbSNP, keep boundless (no '^' or '$')
+  cosmic_identifier = 'COSM\\d+', # for matching variants found in COSMIC coding muts database, keep boundless
+  seqdata_prefix = '(^.+[ATCG]{7,8})(.+)', # for isolating GCF prefix
+  allele_exclusion = 'C[0-9]{4}') # for excluding particular alleles from analysis
+
 #' Inverse of %in% operator, returns logical vector for 'NOT IN'
 #'
 #'
@@ -7,7 +16,8 @@
 #' Inverse of %in% operator, returns logical vector for 'NOT IN'
 #'
 #'
-`%||%` <- function(a, b) if (is.null(a)) return(b) else return(a)
+`%||%` <- function(a, b) if (is.null(a)) b else a
+`%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
 
 
 #' Drop NA from vector
@@ -43,9 +53,9 @@ writePredictionsToDisk <- function(dtf,
     'tumor_processing_score'),
   filepath, filename, allele, peptidelength, suffix = NULL) {
 
-  if (nrow(dtf) > 0 && !is.null(unique_cols)) {
-    dtf <- unique(x = dtf, 
-      by = intersect(unique_cols, colnames(dtf)))
+  intersect_cols <- intersect(unique_cols, colnames(dtf))
+  if (nrow(dtf) > 0 && !is.null(intersect_cols) && length(intersect_cols) > 0) {
+    dtf <- unique(x = dtf, by = intersect_cols)
   }
 
   write.csv(x = dtf,

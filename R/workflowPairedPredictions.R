@@ -35,7 +35,7 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
   ## prepare vectors with colnames and colclasses for making empty tables, in
   ## case needed
   columnNamesEmptyTable <- c(
-    names(variantInfo) %>%
+      names(variantInfo) %>%
       setdiff(c('peptidecontextnormal', 'peptidecontexttumor')),
     'c_term_pos', 'hla_allele', 'xmer', 'tumor_peptide', 'tumor_c_term_aa',
     paste0('tumor_', runParameters$allele, 'affinity'),
@@ -87,31 +87,28 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
     scoreMatrix <- loadSelfSimilarityMatrix()
   }
 
-  ## For each variant line, make list tumor peptides which are different from
-  ## normal (and corresponding normal peptides) and make vector containing
-  ## normal and tumor peptide stretches
-  # epitopePredictions <- plyr::llply(1:nrow(variantInfo), function(i) {
-  epitopePredictions <- lapply(1:nrow(variantInfo), function(i) {
+  ## For each variant line, list tumor peptides which are different from
+  ## normal (and corresponding normal peptides) and run netChop on entire
+  ## protein sequences
+  epitopePredictionsAll <- plyr::llply(1:nrow(variantInfo), function(i) {
+  # epitopePredictions <- lapply(1:nrow(variantInfo), function(i) {
     maartenutils::mymessage(
       sprintf('Processing peptides related to variant %d/%d', 
         i, nrow(variantInfo)), 
       instance = 'epitopePredictions')
-    # if (i == 9) browser()
 
     peptideList <- buildPeptideList(sequences = variantInfo[i, ],
       peptidelength = runParameters$peptidelength, 
       runParameters = runParameters)
 
-    ## If no tumor peptides found, return empty lists & move to next line
-    if (nrow(peptideList[[2]]) < 1) {
-      emptyPredictions <- emptyTableWithColumnNamesAndColumnClasses(
-        colnames = columnNamesEmptyTable, colclasses = columnClassesEmptyTable)
-      return(emptyPredictions)
+    ## If no tumor peptides found, stop early
+    if (is.null(peptideList) || nrow(peptideList[[2]]) < 1) {
+      return(NULL)
     }
 
     ## Do predictions for all peptides
-    # normalAndTumorPredictions <- plyr::llply(1:2, function(k) {
-    normalAndTumorPredictions <- lapply(1:2, function(k) {
+    normalAndTumorPredictions <- plyr::llply(1:2, function(k) {
+    # normalAndTumorPredictions <- lapply(1:2, function(k) {
       l_peptidestretch <- 
         ifelse(k == 1, 'peptidecontextnormal', 'peptidecontexttumor')
 
@@ -136,25 +133,24 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
       return(dtf)
     })
 
-    ## Merge all info for both tumor only predictions and all predictions
+    ## Merge tumor and normal predictions
     if (nrow(normalAndTumorPredictions[[2]]) > 0) {
-      mergedPredictions <- merge(x = normalAndTumorPredictions[[2]],
-        y = normalAndTumorPredictions[[1]],
-        by = names(variantInfo) %>%
-          setdiff(c('peptidecontextnormal', 'peptidecontexttumor')) %>%
-          c('c_term_pos', 'xmer', 'hla_allele'),
-        all.x = TRUE)
+      mergedPredictions <- merge(
+        normalAndTumorPredictions[[1]],
+        normalAndTumorPredictions[[2]],
+        by = setdiff(c('c_term_pos', 'xmer', 'hla_allele', names(variantInfo)), 
+          c('peptidecontextnormal', 'peptidecontexttumor')),
+        all.y = TRUE, all.x = F)
     } else {
-      mergedPredictions <- emptyTableWithColumnNamesAndColumnClasses(
-        colnames = columnNamesEmptyTable, colclasses = columnClassesEmptyTable)
+      mergedPredictions <- NULL
     }
     return(mergedPredictions)
-  # }, .parallel = (runParameters$ncores > 1))
-  # }, .parallel = F)
-  })
+  }, .parallel = (runParameters$ncores > 1)) %>% rbindlist(use.names = TRUE)
 
-  ## Bind all relevant predictions into one table
-  epitopePredictionsAll <- rbindlist(epitopePredictions, use.names = TRUE)
+  if (maartenutils::null_dat(epitopePredictionsAll)) {
+    return(emptyTableWithColumnNamesAndColumnClasses(
+        colnames = columnNamesEmptyTable, colclasses = columnClassesEmptyTable))
+  }
 
   ## Determine which variants contributed to the formation of predicted epitopes
   if (all(c('variant_id', 'aa_pos_germline', 'aa_pos_tumor_start',

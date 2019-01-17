@@ -1,51 +1,35 @@
-regexPatterns <- list(
-  file_extension = '\\.[^.]+$', # match file extension (everything after last dot, inclusive)
-  snp_identifier = '[gr]s\\d+', # for matching SNPs
-  gs_identifier = 'gs\\d+', # for matching snps not found in dbSNP, keep boundless (no '^' or '$')
-  rs_identifier = 'rs\\d+', # for matching snps found in dbSNP, keep boundless (no '^' or '$')
-  cosmic_identifier = 'COSM\\d+', # for matching variants found in COSMIC coding muts database, keep boundless
-  seqdata_prefix = '(^.+[ATCG]{7,8})(.+)', # for isolating GCF prefix
-  allele_exclusion = 'C[0-9]{4}') # for excluding particular alleles from analysis
+processDocOpt <- function(cla = list()) {
+  if (!is.null(cla) && length(cla) > 0) {
+    cla <- lapply(cla,
+      function(x) {
+        if (!is.na(x) && class(x) == 'character' && x == 'NA') return(NA)
+        else return(x)
+      })
+  }
 
-
-processDocOpt <- function(commandlineArguments) {
-  runParameters <- list()
-  runParameters$file <- commandlineArguments$file
-  ## TODO make output file configurable
-  runParameters$allele <- toupper(commandlineArguments$mhc)
-  runParameters$logfile <- commandlineArguments$logfile
-  runParameters$peptidelength <-
-    suppressWarnings(as.integer(commandlineArguments$length))
-  runParameters$debug <-
-    suppressWarnings(as.logical(commandlineArguments$debug))
-  runParameters$copyinput <- commandlineArguments$copyinput %||% F
-  runParameters$copyinput <-
-    suppressWarnings(as.logical(runParameters$copyinput))
-  runParameters$affinity <-
-    suppressWarnings(as.numeric(commandlineArguments$affinity))
-  runParameters$rank <-
-    suppressWarnings(as.numeric(commandlineArguments$rank))
-  runParameters$ncores <-
-    suppressWarnings(as.integer(commandlineArguments$ncores))
-  runParameters$run_mode <- match.arg(commandlineArguments$run_mode, 
+  rp <- list()
+  rp$file <- cla$file
+  rp$allele <- cla$mhc %||% NA
+  rp$logfile <- cla$logfile %||% NA
+  rp$peptidelength <- suppressWarnings(as.integer(cla$length)) %||% 9
+  rp$debug <- suppressWarnings(as.logical(cla$debug)) %||% F
+  rp$copyinput <- cla$copyinput %||% F
+  rp$copyinput <- suppressWarnings(as.logical(rp$copyinput)) %||% F
+  rp$affinity <- suppressWarnings(as.numeric(cla$affinity)) %||% NA
+  rp$rank <- suppressWarnings(as.numeric(cla$rank)) %||% 1.9
+  rp$ncores <- suppressWarnings(as.integer(cla$ncores)) %||% 1
+  rp$run_mode <- cla$run_mode %||% 'paired'
+  rp$run_mode <- match.arg(rp$run_mode, 
     choices = c('single', 'structural', 'paired'), several.ok = F)
-  runParameters$model <-
-    suppressWarnings(as.numeric(commandlineArguments$model))
-  runParameters$use_rfModel <- !is.na(runParameters$model)
-  runParameters$processing <-
-    suppressWarnings(as.numeric(commandlineArguments$processing))
-  runParameters$expression <-
-    suppressWarnings(as.numeric(commandlineArguments$expression))
-  runParameters$simple_selfsim <-
-    suppressWarnings(as.logical(commandlineArguments$selfsim))
-  runParameters$extended_selfsim <-
-    suppressWarnings(as.logical(commandlineArguments$extselfsim))
-  runParameters$use_selflist <-
-    suppressWarnings(as.logical(commandlineArguments$selflist))
-  runParameters$panversion <-
-    suppressWarnings(as.numeric(commandlineArguments$panversion))
-  runParameters$verbose <-
-    suppressWarnings(as.logical(commandlineArguments$verbose))
+  rp$model <- suppressWarnings(as.numeric(cla$model)) %||% NA
+  rp$use_rfModel <- !is.na(rp$model) %||% F
+  rp$processing <- suppressWarnings(as.numeric(cla$processing)) %||% .5
+  rp$expression <- suppressWarnings(as.numeric(cla$expression)) %||% 0
+  rp$simple_selfsim <- suppressWarnings(as.logical(cla$selfsim)) %||% F
+  rp$extended_selfsim <- suppressWarnings(as.logical(cla$extselfsim)) %||% F
+  rp$use_selflist <- suppressWarnings(as.logical(cla$selflist)) %||% F
+  rp$panversion <- suppressWarnings(as.numeric(cla$panversion)) %||% 3.0
+  rp$verbose <- suppressWarnings(as.logical(cla$verbose)) %||% F
 
   ## List all potential config dirs
   potential_config_locs <- 
@@ -57,7 +41,7 @@ processDocOpt <- function(commandlineArguments) {
       sapply(.libPaths(), function(p_dir) file.path(p_dir, 'neolution')))
 
   config_fn <-
-    sapply(potential_config_locs, list.files, pattern = 'neolution_config.yaml',
+    sapply(potential_config_locs, list.files, pattern = '.*neolution.*\\.yaml',
       full.names = T) %>%
     .[sapply(., length) == 1] %>%
     .[[1]]
@@ -67,58 +51,54 @@ processDocOpt <- function(commandlineArguments) {
   }
 
   config <- yaml::read_yaml(config_fn)
-  runParameters$netChop <- path.expand(config[['netChop']])
-  runParameters$netMHCpan <- path.expand(config[['netMHCpan']])
-  stopifnot(file.exists(runParameters$netMHCpan))
-  runParameters$selfEpitopeListPath <- 
+  rp$netChop <- path.expand(config[['netChop']])
+  rp$netMHCpan <- path.expand(config[['netMHCpan']])
+  stopifnot(file.exists(rp$netMHCpan))
+  rp$selfEpitopeListPath <- 
     path.expand(config[['selfEpitopeListPath']])
-  stopifnot(dir.exists(runParameters$selfEpitopeListPath))
-  runParameters$randomForestModelPath <- 
+  stopifnot(dir.exists(rp$selfEpitopeListPath))
+  rp$randomForestModelPath <- 
     path.expand(config[['randomForestModelPath']])
-  stopifnot(file.exists(runParameters$randomForestModelPath))
-  runParameters$temporaryDirectoryPath <- 
+  stopifnot(file.exists(rp$randomForestModelPath))
+  rp$temporaryDirectoryPath <- 
     path.expand(config[['temporaryDirectoryPath']])
-  stopifnot(dir.exists(runParameters$temporaryDirectoryPath))
+  stopifnot(dir.exists(rp$temporaryDirectoryPath))
 
-  runParameters <- lapply(runParameters,
-    function(x) {
-      if (!is.na(x) && class(x) == 'character' && x == 'NA') return(NA)
-      else return(x)
-    })
-
-  if (file.exists(runParameters$file)) {
-    runParameters$filename <- basename(runParameters$file)
-    runParameters$filename_no_ext <-
-      substring(text = runParameters$filename,
+  if (file.exists(rp$file)) {
+    rp$filename <- basename(rp$file)
+    rp$filename_no_ext <-
+      substring(text = rp$filename,
         first = 1, last = max(unlist(gregexpr(pattern = ".",
-            text = runParameters$filename, fixed = TRUE))) - 1)
-    if (is.null(runParameters$filepath))
-      runParameters$filepath <- dirname(runParameters$file)
+            text = rp$filename, fixed = TRUE))) - 1)
+    if (is.null(rp$filepath))
+      rp$filepath <- dirname(rp$file)
   } else {
     message('Cannot find file, make sure to provide full path to file')
   }
 
-  if (!is.na(runParameters$allele) && nchar(runParameters$allele) != 5) {
+  if (!is.na(rp$allele) && nchar(rp$allele) != 5) {
     message('MHC/HLA input should be formatted as follows: A0201')
+  } else {
+    rp$allele <- toupper(rp$allele)
   }
 
-  if (runParameters$peptidelength < 8 || runParameters$peptidelength > 11) {
+  if (rp$peptidelength < 8 || rp$peptidelength > 11) {
     message('Peptide length input (-l or --length) should be >=8 and <= 11')
   }
 
-  if (runParameters$simple_selfsim && runParameters$extended_selfsim) {
+  if (rp$simple_selfsim && rp$extended_selfsim) {
     message("Please choose ONE type of self-similarity check, use -h for help")
   }
 
-  if (runParameters$extended_selfsim && runParameters$peptidelength != 9) {
+  if (rp$extended_selfsim && rp$peptidelength != 9) {
     message("Extended selfsim can only be used for 9-mers, use -h for help")
   }
 
-  if (runParameters$run_mode == 'single' &&
-      (runParameters$simple_selfsim || runParameters$extended_selfsim) &&
-      !runParameters$selflist) {
+  if (rp$run_mode == 'single' &&
+      (rp$simple_selfsim || rp$extended_selfsim) &&
+      !rp$selflist) {
     message(paste('Self-similarity check on single sequences can only be',
         'performed with a self-epitope list!'))
   }
-  return(runParameters)
+  return(rp)
 }

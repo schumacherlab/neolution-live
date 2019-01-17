@@ -3,32 +3,45 @@
 
 ### Introduction
 
-This pipeline performs live predictions using netMHCpan and netChop to predict peptide affinity and proteasomal processing. RNA expression data and 'similarity-to-self' filters can used to further increase the precision of the predictions. Recently, a random forest model trained on mass spectrometry data was added, which integrates predicted affinity rank, proteasomal processing scores and RNA expression values to a combined model score. This score (0-1) gives the probability of peptide presentation and has been shown to substantially increase the precision and sensitivity over the conventional use of binary cutoff values for the various predicted parameters. This is now the preferred method. Suggested model score cutoff values are:
+This pipeline performs neo-antigen predictions using netMHCpan and netChop. RNA expression 
+data and 'similarity-to-self' filters can additionally be used to further increase the 
+precision of the predictions. Alternatively, we trained a random forest classifier on mass 
+spectrometry data, which integrates predicted affinity rank, proteasomal processing scores 
+and RNA expression values to a combined model score.  This score lies in the range [0-1] 
+and gives the probability of peptide presentation and has been shown to substantially 
+increase the precision and sensitivity over the conventional use of binary cutoff values 
+for the various predicted parameters.  This is now our preferred prediction method.  
+  Suggested model score cutoff values are:
 
-* 0.01 for TIL screens (more inclusive; we picked up low magnitude TIL hits at low prob scores)
+* 0.01 for TIL screens (more inclusive; we picked up low magnitude TIL hits at low 
+  probability scores)
 * 0.02 for PBMC screens (more stringent; unlikely to pick up low magnitude responses with low prob scores in peripheral blood)
 
-As input, the pipeline expects a tsv file with affected germline and tumor transcripts. Additional variant/transcript information can be provided and will be transferred into the output. See **Input file format** paragraph for more information regarding input file generation.
+The pipeline can be supplied with different forms of input. Either As input, the pipeline 
+expects a tsv file with affected germline and tumor transcripts. Additional 
+variant/transcript information can be provided and will be transferred into the output. 
+See **Input file format** paragraph for more information regarding input file generation.
 
 ### Minimal usage example
 
-`Rscript performPredictions.R -f /path/to/variants.tsv -m A0201 -d 0.02 -l 9`
+The only required argument is the input file, other settings will will take default values if these are not supplied
 
-The call should be run from the neolution script directory from the Terminal and will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__, **9-mer** peptides, applying a model prediction cutoff score of 0.02. 
+`neolution --mhc A0201 --model 0.02 --length 9 /path/to/variants.tsv`
 
-**By default, netMHCpan v4.0 will be used and 1/6th of the available cores are used per run for parallel computations.  
-Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cores)!!**
+The call will start neo-antigen predictions for **variants.tsv**, __HLA-A*02:01__, 
+**9-mer** peptides, applying a model prediction cutoff score of 0.02.  
 
-**IMPORTANT:** For additional information regarding the required commandline arguments, read segment below.
+`neolution /path/to/variants.tsv`
+
+Run Neolution using default settings (see below)
+
+##
 
 ### Commandline arguments
 
 #### Required
 
 1. full input file path
-2. hla/mhc type (e.g. A0201)
-3. model prediction or affinity(rank) cutoff value
-4. peptide length (e.g. 9) 
 
 #### Optional
 
@@ -46,7 +59,9 @@ Make sure you *nice* your runs and don't exceed max. HPC load (max. load = # cor
 
 ### Input file format
 
-Required input format is a wide, tab-separated table with the following columns. [Neolution-prep](https://gitlab.nki.nl/l.fanchi/neolution-prep) generates all required data and provides required input file.
+Required input format is a wide, tab-separated table with the following columns. 
+[Neolution-prep](https://gitlab.nki.nl/l.fanchi/neolution-prep) generates all required 
+data and provides required input file.
 
 #### Variant
 
