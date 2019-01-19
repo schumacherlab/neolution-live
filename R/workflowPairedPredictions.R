@@ -6,7 +6,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
   ## import data & clean up
   variantInput <- fread(
     input = file.path(runParameters$filepath, runParameters$filename),
-    na.strings = c('NA', '', '-')) %>% unique
+    na.strings = c('NA', '', '-'), 
+    nThread = runParameters$ncores) %>% unique
 
   sampleId <- gsub(
       ## remove some seq facility-specific info
@@ -87,6 +88,7 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
     scoreMatrix <- loadSelfSimilarityMatrix()
   }
 
+  # maartenutils::mymessage('About to start variant processing')
   ## For each variant line, list tumor peptides which are different from
   ## normal (and corresponding normal peptides) and run netChop on entire
   ## protein sequences
@@ -97,7 +99,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
         i, nrow(variantInfo)), 
       instance = 'epitopePredictions')
 
-    peptideList <- buildPeptideList(sequences = variantInfo[i, ],
+    peptideList <- buildPeptideList(
+      sequences = variantInfo[i, ],
       peptidelength = runParameters$peptidelength, 
       runParameters = runParameters)
 
@@ -112,7 +115,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
       l_peptidestretch <- 
         ifelse(k == 1, 'peptidecontextnormal', 'peptidecontexttumor')
 
-      dtf <- performParallelPredictions(peptides = peptideList[[k]],
+      dtf <- performParallelPredictions(
+        peptides = peptideList[[k]],
         runParameters = runParameters,
         peptidestretch = variantInfo[i, get(l_peptidestretch)],
         allele = runParameters$allele,
@@ -205,9 +209,9 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
 
     epitopePredictionsAll[, model_prediction := rfModelPrediction]
 
-    setnames(x = epitopePredictionsAll,
-      old = c('affMIN', 'chop', 'rna'),
-      new = c(paste0('tumor_', runParameters$allele, 'percentile_rank'),
+    setnames(epitopePredictionsAll,
+      c('affMIN', 'chop', 'rna'),
+      c(paste0('tumor_', runParameters$allele, 'percentile_rank'),
         'tumor_processing_score', 'rna_expression'))
   }
 

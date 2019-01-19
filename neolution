@@ -1,4 +1,4 @@
-#!/usr/bin/env r
+#!/usr/bin/env Rscript
 
 suppressMessages(library(docopt))
 
@@ -30,11 +30,16 @@ Options:
   --usage                        Show help and short example usage." -> doc
 
 
-# script_dir <- dirname(sys.frame(1)$ofile)
-script_dir <- '~/libs/neolution'
-suppressWarnings(suppressMessages(devtools::load_all(script_dir)))
+if (T) {
+  # script_dir <- dirname(sys.frame(1)$ofile)
+  script_dir <- '~/libs/neolution'
+  suppressWarnings(suppressMessages(devtools::load_all(script_dir)))
+} else {
+  library(neolution)
+}
 runParameters <- processDocOpt(docopt(doc))
 
 performPredictions(runParameters = runParameters, unique_cols = NULL)
+# sys.Sleep(200000000000)
 
 # vim: set ft=r:

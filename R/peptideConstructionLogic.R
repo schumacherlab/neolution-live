@@ -1,8 +1,6 @@
 gen_pep_table <- function(N_start_residues, context, peptidelength, sequences) {
-  if (N_start_residues <= 0) {
-    return(NULL)
-  }
-
+  if (N_start_residues <= 0) return(NULL)
+  ## This should be faster than substr() and substring()
   context <- strsplit(context, "")[[1]]
   peptide_seqs <- vapply(seq(1, N_start_residues), function(i) {
     paste0(context[seq(i,i+(peptidelength-1))], collapse = '')

@@ -20,10 +20,12 @@ readFastaFile <- function(file) {
   end = c(end[-1], length(lines))
 
   # get sequences
-  sequences = sapply(seq_len(nseq), function(i) paste(lines[start[i]:end[i]], collapse = ""))
+  sequences = sapply(seq_len(nseq), 
+    function(i) paste(lines[start[i]:end[i]], collapse = ""))
 
   # get names of sequences
-  seqnames = sapply(seq_len(nseq), function(i) gsub(pattern = "^> *", replacement = "", x = lines[ind[i]]))
+  seqnames = sapply(seq_len(nseq), 
+    function(i) gsub(pattern = "^> *", replacement = "", x = lines[ind[i]]))
 
   # put in a table
   dtf = data.table(sequence_id = seqnames, sequence = toupper(sequences))

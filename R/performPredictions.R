@@ -35,7 +35,7 @@ messageOptions <- function(runParameters) {
 }
 
 performPredictions <- function(
-  runParameters = read_command_line(),
+  runParameters = list(),
   unique_cols = c('peptide', paste0(runParameters$allele, 'affinity'),
       'processing_score')) {
 
@@ -63,15 +63,18 @@ performPredictions <- function(
     maartenutils::mymessage('Performing predictions, this may take a while..')
   }
 
-  if (runParameters$run_mode == 'single') {
+  if (runParameters$run_mode == 'paired') {
+    performPairedSequencePredictions(runParameters = runParameters,
+      unique_cols = unique_cols)
+  } else if (runParameters$run_mode == 'single') {
     performSingleSequencePredictions(runParameters = runParameters,
       unique_cols = unique_cols)
   } else if (runParameters$run_mode == 'structural') {
     performStructuralVariantPredictions(runParameters = runParameters,
       unique_cols = unique_cols)
-  } else if (runParameters$run_mode == 'paired') {
-    performPairedSequencePredictions(runParameters = runParameters,
-      unique_cols = unique_cols)
+  } else {
+    ## Not possible due to match.arg call in processDocOpt()
   }
+
   maartenutils::mymessage(x = paste0(Sys.time(),' - Neolution run finished'))
 }

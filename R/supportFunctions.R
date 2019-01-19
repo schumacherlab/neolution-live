@@ -55,14 +55,14 @@ writePredictionsToDisk <- function(dtf,
 
   intersect_cols <- intersect(unique_cols, colnames(dtf))
   if (nrow(dtf) > 0 && !is.null(intersect_cols) && length(intersect_cols) > 0) {
-    dtf <- unique(x = dtf, by = intersect_cols)
+    dtf <- unique(dtf, by=intersect_cols)
   }
 
-  write.csv(x = dtf,
+  write.csv(dtf,
     file = file.path(filepath, 'predictions_output',
-      paste0(paste(filename, allele, peptidelength, sep = '_'),
+      paste0(paste(filename, allele, peptidelength, sep='_'),
         'mer_epitopes', suffix, '.csv')),
-    row.names = FALSE)
+    row.names=FALSE)
   invisible()
 }
 

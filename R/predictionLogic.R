@@ -24,13 +24,11 @@ performParallelPredictions <- function(peptides, peptidestretch, allele,
           return(data.table())
         }
 
-        dtf <- merge(x = peptides[[x]],
-          y = unique(x = affinityPredictions[[x]],
-            by = 'peptide'),
+        dtf <- merge(peptides[[x]],
+          unique(affinityPredictions[[x]], by = 'peptide'),
           by = 'peptide')
 
-        dtf <- merge(x = dtf,
-          y = processingPredictions[[x]],
+        dtf <- merge(dtf, processingPredictions[[x]],
           by = 'c_term_pos')
         return(dtf)
       })
@@ -40,7 +38,7 @@ performParallelPredictions <- function(peptides, peptidestretch, allele,
   } else {
     if (maartenutils::null_dat(peptides)) {
       predictions <- emptyTableWithColumnNamesAndColumnClasses(
-        colnames = c(names(peptides), "xmer", "hla_allele",
+        colnames = c(names(peptides), 'xmer', 'hla_allele',
           paste0(allele, 'affinity'),
           paste0(allele, 'percentile_rank'),
           'c_term_aa', 'processing_score'),
@@ -49,7 +47,7 @@ performParallelPredictions <- function(peptides, peptidestretch, allele,
           'numeric', 'character', 'numeric', 'numeric', 'character', 'numeric'))
     } else {
       affinityPredictions <- performAffinityPredictions(
-        peptides = peptides$peptide,
+        peptides = unique(peptides$peptide),
         allele = allele,
         runParameters = runParameters,
         peptidelength = peptidelength)
@@ -58,14 +56,8 @@ performParallelPredictions <- function(peptides, peptidestretch, allele,
         peptidestretch = peptidestretch,
         runParameters = runParameters)
 
-      predictions <- merge(
-        x = peptides,
-        y = unique(x = affinityPredictions, by = 'peptide'),
-        by = 'peptide')
-
-      predictions <- merge(
-        x = predictions,
-        y = processingPredictions,
+      predictions <- merge(peptides, affinityPredictions, by = 'peptide')
+      predictions <- merge(predictions, processingPredictions, 
         by = 'c_term_pos')
 
       predictions[, xmer := peptidelength]
@@ -95,7 +87,7 @@ performAffinityPredictions <- function(
     dir.create(file.path(runParameters$temporaryDirectoryPath,
         randomString))
 
-    # write peptides to disk in temp dir
+    ## write peptides to disk in temp dir
     invisible(sapply(seq(1, length(peptides), 1),
         function(x)
           write(x = sprintf('%s', peptides[x]),
@@ -104,7 +96,7 @@ performAffinityPredictions <- function(
             append = TRUE,
             sep = "\n")))
 
-    # perform predictions
+    ## perform predictions
     if (runParameters$panversion >= 3) {
       command <- paste0(# "nice -n 9 ",
         runParameters$netMHCpan,
@@ -209,11 +201,10 @@ performProcessingPredictions <- function(
   system(sprintf('chmod 777 %s', tmp_dir), wait = T)
 
   fasta_fn <- tempfile(fileext = '.fasta', tmpdir = tmp_dir)
-  write(x = sprintf(">1\n%s", peptidestretch),
-    file = fasta_fn, append = F, sep = "\n")
+  write(x = sprintf('>1\n%s', peptidestretch),
+    file = fasta_fn, append = F, sep = '\n')
   output <- paste(netChop, '--threshold',
-    processing_threshold, '--method netchop --noplot',
-    fasta_fn) %>%
+    processing_threshold, '--method netchop --noplot', fasta_fn) %>%
     system(intern = T)
   unlink(tmp_dir, recursive = T)
 

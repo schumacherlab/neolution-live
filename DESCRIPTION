@@ -1,11 +1,11 @@
-Package: Neolution
-Title: Schumacher lab neo-antigen prediction pipeline
-Version: 0.1.0.0
+Package: neolution
+Title: Neolution-live
+Version: 1.0.0.0
 Authors@R: person("Lorenzo", "Fanchi", email = "l.fanchi@nki.nl", role = c("aut", "cre"))
 Maintainers@R: person("Maarten", "Slagter", email = "slagter.maarten@gmail.com", role = c("aut", "cre"))
-Description: Neo-antigen prediction functionality developed mostly by Lorenzo and ported to a more modular R package by Maarten
-Depends: R (>= 3.0.0), data.table, dplyr
+Description: Schumacher lab neo-antigen prediction pipeline
+Depends: R (>= 3.0.0), data.table, dplyr, maartenutils
 License: BSD
 LazyData: true
-Imports: plyr, yaml, maartenutils, stringr, parallel, compiler
+Imports: compiler, yaml
 Suggests: testthat

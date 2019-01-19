@@ -2,8 +2,10 @@ performStructuralVariantPredictions = function() {
   if (runParameters$verbose) message('Starting structural variant workflow')
 
   # import data & clean up
-  variantInput = unique(fread(input = file.path(runParameters$filepath, runParameters$filename),
-                              na.strings = c("NA", "", "-")))
+  variantInput <- data.table <- fread(
+    input = file.path(runParameters$filepath, runParameters$filename),
+    nThread = runParameters$ncores, na.strings = c("NA", "", "-")) %>%
+    unique
 
   sampleId = toupper(gsub(pattern = paste("[-_]tumor|[-_]kitchensink|[-_]mdup|[-_]ra|[-_]bq|[-_]table|[-_]complete|[-_]merged|[-_]varcontext|[-_]rna", # substitute various suffixes
                                           "_[ATCG]{8}|_S1_LMG_TR1_001|_L[0-9]{3}_t", # remove some seq facility-specific info
