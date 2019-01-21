@@ -88,6 +88,7 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
     scoreMatrix <- loadSelfSimilarityMatrix()
   }
 
+  par_bool <- (runParameters$ncores > 1)
   # maartenutils::mymessage('About to start variant processing')
   ## For each variant line, list tumor peptides which are different from
   ## normal (and corresponding normal peptides) and run netChop on entire
@@ -149,7 +150,7 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
       mergedPredictions <- NULL
     }
     return(mergedPredictions)
-  }, .parallel = (runParameters$ncores > 1)) %>% rbindlist(use.names = TRUE)
+  }, .parallel = par_bool) %>% rbindlist(use.names = TRUE)
 
   if (maartenutils::null_dat(epitopePredictionsAll)) {
     return(emptyTableWithColumnNamesAndColumnClasses(
@@ -164,7 +165,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
       findVariantsContributingToEpitope(
         predicted_variants = epitopePredictionsAll, 
         all_variants = variantInput,
-        runParameters = runParameters) %>% rbindlist(use.names = TRUE)
+        runParameters = runParameters) %>% 
+      rbindlist(use.names = TRUE)
 
     epitopePredictionsAll[, contributing_variants :=
       allContributingVariantsInfo[, contributing_variants]]
@@ -192,6 +194,10 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
   ## on mass spec data
   if (runParameters$use_rfModel &&
     is.numeric(epitopePredictionsAll$rna_expression)) {
+    if (runParameters$verbose) {
+      maartenutils::mymessage('Starting RF predictions', 
+        instance = 'epitopePredictions')
+    }
 
     ## apply random forest model to all predictions
     model_rna <- get(load(runParameters$randomForestModelPath))
@@ -233,7 +239,8 @@ performPairedSequencePredictions <- function(runParameters, unique_cols) {
     intersect(col_names, colnames(epitopePredictionsAll)))
 
   if (runParameters$verbose) {
-    maartenutils::mymessage('Writing predictions to disk')
+    maartenutils::mymessage('Writing predictions to disk', 
+      instance = 'epitopePredictions')
   }
 
   ## write predictions to disk

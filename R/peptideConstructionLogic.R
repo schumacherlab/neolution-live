@@ -1,4 +1,5 @@
-gen_pep_table <- function(N_start_residues, context, peptidelength, sequences) {
+gen_pep_table <- function(N_start_residues, context, 
+  peptidelength, sequences) {
   if (N_start_residues <= 0) return(NULL)
   ## This should be faster than substr() and substring()
   context <- strsplit(context, "")[[1]]
@@ -121,18 +122,19 @@ buildPeptideList <- function(sequences, peptidelength, runParameters) {
   }
 }
 
-findVariantsContributingToEpitope <- function(predicted_variants, all_variants,
-  runParameters) {
+findVariantsContributingToEpitope <- function(
+  predicted_variants, all_variants, runParameters) {
   if (runParameters$verbose) message('Determining contributing variants')
 
   if (nrow(predicted_variants) > 0) {
-    contributing_variant_info = lapply(seq(1, nrow(predicted_variants), 1),
+    contributing_variant_info <- lapply(seq(1, nrow(predicted_variants)),
       function(x) {
-        transcript_variants = subset(x = all_variants,
-          subset = transcript_id == predicted_variants[x, ]$transcript_id)
+        ## Transcripts affected by the variant
+        transcript_variants <- subset(all_variants,
+          transcript_id == predicted_variants[x, ]$transcript_id)
 
-        epitope_variants = unique(subset(x = transcript_variants,
-            subset = sapply(seq(1, nrow(transcript_variants), 1),
+        epitope_variants <- unique(subset(transcript_variants,
+            sapply(seq(1, nrow(transcript_variants)),
               function(y) {
                 any(c((predicted_variants[x, ]$c_term_pos - runParameters$peptidelength) :
                     predicted_variants[x, ]$c_term_pos)[-1] >=
@@ -143,9 +145,8 @@ findVariantsContributingToEpitope <- function(predicted_variants, all_variants,
               })
             ))
 
-
         epitope_variants[, aa_pos_tumor_start :=
-          ifelse(test = aa_pos_tumor_start <= predicted_variants[x, ]$c_term_pos -
+          ifelse(aa_pos_tumor_start <= predicted_variants[x, ]$c_term_pos -
             runParameters$peptidelength + 1,
           yes = 1,
           no = runParameters$peptidelength - (predicted_variants[x, ]$c_term_pos -
@@ -155,7 +156,7 @@ findVariantsContributingToEpitope <- function(predicted_variants, all_variants,
             yes = runParameters$peptidelength,
             no = runParameters$peptidelength -
               (predicted_variants[x, ]$c_term_pos - aa_pos_tumor_stop))]
-        setkey(x = epitope_variants, aa_pos_tumor_start)
+        setkey(epitope_variants, aa_pos_tumor_start)
 
         contributing_variants <-
           paste(epitope_variants$variant_id,

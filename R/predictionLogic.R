@@ -196,16 +196,38 @@ performProcessingPredictions <- function(
     sample(size = 8, replace = T) %>%
     paste(collapse = '')
   tmp_dir <- file.path(temp_root, random_string)
-  dir.create(tmp_dir, showWarnings = T)
+  dir.create(tmp_dir, showWarnings = F)
   stopifnot(dir.exists(tmp_dir))
   system(sprintf('chmod 777 %s', tmp_dir), wait = T)
 
   fasta_fn <- tempfile(fileext = '.fasta', tmpdir = tmp_dir)
   write(x = sprintf('>1\n%s', peptidestretch),
     file = fasta_fn, append = F, sep = '\n')
-  output <- paste(netChop, '--threshold',
-    processing_threshold, '--method netchop --noplot', fasta_fn) %>%
-    system(intern = T)
+  
+  if (F) {
+    ## Try to get rid of the python wrapper
+    netchop_dir <- 
+      '/DATA/resources/predictors/IEDB_NetChop/netchop_3_1_executable'
+    netchop <- file.path(netchop_dir, 'bin', 'clepred')
+    stopifnot(file.exists(netchop))
+    netchop_bdir <- dirname(netchop)
+    com <- paste(
+      sprintf('export NETCHOP=%s;', netchop_dir), 
+      netchop, 
+      '-blsyn', file.path(netchop_dir, 'etc/Cterm.3.0/data/synlist.bl'),
+      '-seqsyn', file.path(netchop_dir, 'etc/Cterm.3.0/data/synlist.seq'),
+      '-hmmmat', file.path(netchop_dir, 
+        'etc/Cterm.3.0/data/all-modified2_shuffled.swt.1.wlc.200.w.3.mat'),
+      '-t', processing_threshold, 
+      '-type 1', 
+      '-tdir', tmp_dir, 
+      fasta_fn)
+    output <- system(com, intern = T)
+  } else {
+    output <- paste(netChop, '--threshold',
+      processing_threshold, '--method netchop --noplot', fasta_fn) %>%
+      system(intern = T)
+  }
   unlink(tmp_dir, recursive = T)
 
   if (length(output) > 17) {

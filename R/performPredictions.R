@@ -4,6 +4,7 @@
 messageOptions <- function(runParameters) {
   # collect information on run; print to console and write to log
   runStart = format(Sys.time(), '%Y%m%d-%H%M')
+  message(sessionInfo())
   message(
     paste(Sys.time(),' - Neolution run start\n',
       'Input file:',

@@ -40,6 +40,5 @@ if (T) {
 runParameters <- processDocOpt(docopt(doc))
 
 performPredictions(runParameters = runParameters, unique_cols = NULL)
-# sys.Sleep(200000000000)
 
 # vim: set ft=r:
