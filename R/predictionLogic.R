@@ -42,8 +42,7 @@ performParallelPredictions <- function(peptides, peptidestretch, allele,
           paste0(allele, 'affinity'),
           paste0(allele, 'percentile_rank'),
           'c_term_aa', 'processing_score'),
-        colclasses = c(unlist(lapply(peptides, class),
-            use.names = FALSE),
+        colclasses = c(unlist(lapply(peptides, class), use.names = FALSE),
           'numeric', 'character', 'numeric', 'numeric', 'character', 'numeric'))
     } else {
       affinityPredictions <- performAffinityPredictions(
